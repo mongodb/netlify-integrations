@@ -1,8 +1,9 @@
-# yaml-language-server: $schema=https://sdk.netlify.com/sdk/config-schema.json
 config:
-  slug: snooty-cache-plugin
   name: snooty-cache-plugin
-  description: for internal use 
-  integrationLevel: site
+  description: for internal use
+  slug: '-f82apan-snooty-cache-plugin'
   scopes:
-    site: ["read", "write"]
+    site:
+      - read
+      - write
+  integrationLevel: site
