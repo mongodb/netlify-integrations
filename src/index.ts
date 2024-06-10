@@ -16,6 +16,23 @@ async function getCacheFilePaths(): Promise<string[]> {
 }
 const integration = new NetlifyIntegration();
 
+integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
+  const files: string[] = await cache.list();
+
+  const cacheFiles = files.filter((filePath) => filePath.endsWith(".cache.gz"));
+
+  if (!cacheFiles.length) {
+    console.log("No snooty cache files found");
+
+    return;
+  }
+  // Don't want to restore duplicates, only restore snooty cache files
+  console.log("restoring snooty cache files");
+  await Promise.all(
+    cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
+  );
+});
+
 integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run, cache } }) => {
