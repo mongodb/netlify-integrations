@@ -1,7 +1,7 @@
 config:
   name: snooty-cache-plugin
   description: for internal use
-  slug: '-f82apan-snooty-cache-plugin'
+  slug: 5i534w69--f82apan-snooty-cache-plugin
   scopes:
     site:
       - read

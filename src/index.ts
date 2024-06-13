@@ -6,20 +6,15 @@ import { promisify } from "util";
 
 const readdirAsync = promisify(readdir);
 
-async function getCacheFilePaths(): Promise<string[]> {
-  const filesPaths = await readdirAsync(process.cwd());
+const getCacheFilePaths = (filesPaths: string[]): string[] =>
+  filesPaths.filter((filePath) => filePath.endsWith(".cache.gz"));
 
-  const cacheFilePaths = filesPaths.filter((filePath) =>
-    filePath.endsWith(".cache.gz")
-  );
-  return cacheFilePaths;
-}
 const integration = new NetlifyIntegration();
 
 integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
   const files: string[] = await cache.list();
 
-  const cacheFiles = files.filter((filePath) => filePath.endsWith(".cache.gz"));
+  const cacheFiles = getCacheFilePaths(files);
 
   if (!cacheFiles.length) {
     console.log("No snooty cache files found");
@@ -39,8 +34,11 @@ integration.addBuildEventHandler(
     console.log("Creating cache files...");
     await run.command("./snooty-parser/snooty/snooty create-cache .");
     console.log("Cache files created");
+    const filesPaths = await readdirAsync(process.cwd());
 
-    const cacheFiles = await getCacheFilePaths();
+    const cacheFiles = getCacheFilePaths(filesPaths);
+
+    // TODO: Add the ability to check frontend and parser versions
 
     await Promise.all(
       cacheFiles.map(async (filePath) => {
