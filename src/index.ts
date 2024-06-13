@@ -23,9 +23,10 @@ integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
   }
   // Don't want to restore duplicates, only restore snooty cache files
   console.log("restoring snooty cache files");
-  await Promise.all(
-    cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
-  );
+  await Promise.all([
+    await cache.restore("./snooty-parser"),
+    ...cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile)),
+  ]);
 });
 
 integration.addBuildEventHandler(
@@ -38,14 +39,13 @@ integration.addBuildEventHandler(
 
     const cacheFiles = getCacheFilePaths(filesPaths);
 
-    // TODO: Add the ability to check frontend and parser versions
-
-    await Promise.all(
-      cacheFiles.map(async (filePath) => {
+    await Promise.all([
+      await cache.save("./snooty-parser/"),
+      ...cacheFiles.map(async (filePath) => {
         console.log(`Adding cache file: ${filePath}`);
         await cache.save(filePath);
-      })
-    );
+      }),
+    ]);
   }
 );
 
