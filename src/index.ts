@@ -3,9 +3,8 @@ import { NetlifyIntegration } from "@netlify/sdk";
 
 const integration = new NetlifyIntegration();
 
-integration.addBuildEventHandler("onPreBuild", () => {
+integration.addBuildEventHandler("onSuccess", () => {
   console.log("Hello there.");
 });
-  
-export { integration };
 
+export { integration };

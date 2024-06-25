@@ -3,6 +3,10 @@ config:
   slug: netlify-search-integration
   name: netlify-search-integration
   description:  Generate and upload search manifests to Atlas from an AST
-  integrationLevel: site
+  integrationLevel: team-and-site
   scopes:
     site: ["read", "write"]
+    env: 
+      - read
+    user: 
+      - read
