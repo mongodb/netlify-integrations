@@ -10,7 +10,7 @@ const integration = new NetlifyIntegration();
 
 integration.addBuildEventHandler("onSuccess", async () => {
   const filesPaths = await readdirAsync(process.cwd());
-  console.log("Hello there.");
+  console.log("Hello here.");
   console.log(filesPaths);
 });
 
