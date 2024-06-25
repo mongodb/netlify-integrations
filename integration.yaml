@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://sdk.netlify.com/sdk/config-schema.json
+config:
+  slug: netlify-search-integration
+  name: netlify-search-integration
+  description:  Generate and upload search manifests to Atlas from an AST
+  integrationLevel: site
+  scopes:
+    site: ["read", "write"]
