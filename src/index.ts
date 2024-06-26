@@ -31,7 +31,7 @@ const generateManifest = (filePath: any) => {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  // const astFile = new AdmZip(filePath);
+  const astFile = new AdmZip(filePath);
   // console.log("astFile: ", astFile);
   // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
