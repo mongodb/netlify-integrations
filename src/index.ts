@@ -44,9 +44,9 @@ integration.addBuildEventHandler("onSuccess", async () => {
 
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
-  // inflate(filePath[0], (err, buffer) => {
-  //   console.log(buffer.toString("utf8"));
-  // });
+  Zlib.inflate(filePath[0], (err, buffer) => {
+    console.log(buffer.toString("utf8"));
+  });
   // const astFile = await new AdmZip();
   // const manifest = await generateManifest(filePath);
   // console.log("manifest: ", manifest);
