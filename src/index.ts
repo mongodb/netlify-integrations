@@ -2,7 +2,6 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir } from "fs";
-import AdmZip from "adm-zip";
 
 const readdirAsync = promisify(readdir);
 
