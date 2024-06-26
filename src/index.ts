@@ -2,7 +2,7 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir } from "fs";
-import { inflate } from "zlib";
+import { inflate } from "node:zlib";
 
 const readdirAsync = promisify(readdir);
 
