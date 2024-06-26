@@ -25,13 +25,13 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generateManifest = (filePath: any) => {
+const generateManifest = async (filePath: any) => {
   console.log("generating manifest function");
   const manifest: Manifest = {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  const astFile = new AdmZip(filePath);
+  const astFile = await new AdmZip(filePath);
   // console.log("astFile: ", astFile);
   // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
