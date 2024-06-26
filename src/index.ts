@@ -2,7 +2,7 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir } from "fs";
-import Zlib from "node:zlib";
+import Zlib from "zlib";
 
 const readdirAsync = promisify(readdir);
 
@@ -45,6 +45,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
   Zlib.inflate(filePath[0], (err, buffer) => {
+    console.log("Trying to read file");
     console.log(buffer.toString("utf8"));
   });
   // const astFile = await new AdmZip();
