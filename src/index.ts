@@ -44,7 +44,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
 
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
-  const astFile = await new AdmZip();
+  // const astFile = await new AdmZip();
   // const manifest = await generateManifest(filePath);
   // console.log("manifest: ", manifest);
 });
