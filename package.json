@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
+    "adm-zip": "^0.5.14",
     "typescript": "^5.5.2"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.5"
   }
 }

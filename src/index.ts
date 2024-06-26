@@ -1,8 +1,9 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { readdir } from "fs";
-
+import AdmZip from "adm-zip";
 import { promisify } from "util";
+import { isAsteriskToken } from "typescript";
 
 const readdirAsync = promisify(readdir);
 
@@ -25,12 +26,15 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generate_manifest = (filePath: any) => {
+const generateManifest = (filePath: any) => {
   console.log("generating manifest function");
   const manifest: Manifest = {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
+  const astFile = new AdmZip(filePath);
+  console.log("astFile: ", astFile);
+  astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
 };
 integration.addBuildEventHandler("onSuccess", async () => {
@@ -40,7 +44,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
 
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
-  const manifest = generate_manifest(filePath);
+  const manifest = generateManifest(filePath);
   console.log(manifest);
 });
 
