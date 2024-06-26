@@ -45,7 +45,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
   const manifest = generateManifest(filePath);
-  console.log(manifest);
+  console.log("manifest: ", manifest);
 });
 
 export { integration };
