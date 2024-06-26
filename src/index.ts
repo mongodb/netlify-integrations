@@ -34,9 +34,10 @@ const generateManifest = (filePath: any) => {
   };
   const astFile = new AdmZip(filePath);
   console.log("astFile: ", astFile);
-  astFile.getEntries().forEach((entry) => console.log("one Entry"));
+  // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
 };
+
 integration.addBuildEventHandler("onSuccess", async () => {
   const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
     filePath.match("bundle.zip")
