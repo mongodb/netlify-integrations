@@ -1,9 +1,8 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { readdir } from "fs";
-import AdmZip from "adm-zip";
 import { promisify } from "util";
-import { isAsteriskToken } from "typescript";
+import AdmZip from "adm-zip";
 
 const readdirAsync = promisify(readdir);
 
@@ -32,8 +31,8 @@ const generateManifest = (filePath: any) => {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  const astFile = new AdmZip(filePath);
-  console.log("astFile: ", astFile);
+  // const astFile = new AdmZip(filePath);
+  // console.log("astFile: ", astFile);
   // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
 };
