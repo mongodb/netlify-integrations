@@ -26,13 +26,13 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generateManifest = (filePath: any) => {
+const generateManifest = async (filePath: any) => {
   console.log("generating manifest function");
   const manifest: Manifest = {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  const astFile = new AdmZip();
+  const astFile = await new AdmZip();
   // console.log("astFile: ", astFile);
   // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
@@ -45,7 +45,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
 
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
-  const manifest = generateManifest(filePath);
+  const manifest = await generateManifest(filePath);
   console.log("manifest: ", manifest);
 });
 
