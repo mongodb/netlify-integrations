@@ -1,12 +1,10 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
+import { readdir } from "fs";
+import AdmZip from "adm-zip";
 
-const fs = require("fs");
-const AdmZip = require("adm-zip");
-
-const readdirAsync = promisify(fs.readdir);
-const admZipAsync = promisify(AdmZip);
+const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
 
@@ -46,9 +44,9 @@ integration.addBuildEventHandler("onSuccess", async () => {
 
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
-  const astFile = await admZipAsync();
-  const manifest = await generateManifest(filePath);
-  console.log("manifest: ", manifest);
+  const astFile = await new AdmZip();
+  // const manifest = await generateManifest(filePath);
+  // console.log("manifest: ", manifest);
 });
 
 export { integration };
