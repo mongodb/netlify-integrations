@@ -2,7 +2,7 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { readdir } from "fs";
 import { promisify } from "util";
-const AdmZip = require("adm-zip");
+import AdmZip from "adm-zip";
 
 const readdirAsync = promisify(readdir);
 
@@ -25,13 +25,13 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generateManifest = async (filePath: any) => {
+const generateManifest = (filePath: any) => {
   console.log("generating manifest function");
   const manifest: Manifest = {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  const astFile = await new AdmZip(filePath);
+  const astFile = new AdmZip();
   // console.log("astFile: ", astFile);
   // astFile.getEntries().forEach((entry) => console.log("one Entry"));
   return manifest;
