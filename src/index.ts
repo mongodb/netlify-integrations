@@ -1,10 +1,11 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
-import { readdir } from "fs";
 import { promisify } from "util";
-import AdmZip from "adm-zip";
 
-const readdirAsync = promisify(readdir);
+const fs = require("fs");
+const AdmZip = require("adm-zip");
+
+const readdirAsync = promisify(fs.readdir);
 
 const integration = new NetlifyIntegration();
 
