@@ -50,9 +50,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
     const inp = createReadStream("bundle.zip");
     const out = createWriteStream("destination");
     inp.pipe(unzip).pipe(out);
-    const newFile = (await readdirAsync(process.cwd())).filter((newFile) =>
-      newFile.match("destination")
-    );
+    const newFile = await readdirAsync(process.cwd());
     console.log("newFile:", newFile);
   } catch (e) {
     console.log("error: ", e);
