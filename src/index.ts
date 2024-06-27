@@ -39,12 +39,12 @@ const generateManifest = async (filePath: any) => {
 };
 
 integration.addBuildEventHandler("onSuccess", async () => {
-  const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
-    filePath.match("bundle.zip")
-  );
+  // const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
+  //   filePath.match("bundle.zip")
+  // );
 
-  console.log("Hello, logging bundle.zip.");
-  console.log(filePath[0]);
+  // console.log("Hello, logging bundle.zip.");
+  // console.log(filePath[0]);
 
   try {
     const zip = new AdmZip();
