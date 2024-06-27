@@ -1,8 +1,10 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir } from "fs";
-import { deflate, unzip } from "node:zlib";
+import { readdir, createReadStream, createWriteStream } from "fs";
+import { createUnzip, deflate, unzip } from "node:zlib";
+import { pipelin } from "node:stream";
+import { create } from "domain";
 
 const readdirAsync = promisify(readdir);
 
@@ -45,13 +47,18 @@ integration.addBuildEventHandler("onSuccess", async () => {
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
 
-  unzip(filePath[0], (err, buffer) => {
-    if (err) {
-      console.error("An error occurred:", err);
-      process.exitCode = 1;
-    }
-    console.log(buffer.toString());
-  });
+  const unzip = createUnzip();
+  const inp = createReadStream("bundle.zip");
+  const out = createWriteStream("destination");
+  inp.pipe(unzip).pipe(out);
+
+  // unzip(filePath[0], (err, buffer) => {
+  //   if (err) {
+  //     console.error("An error occurred:", err);
+  //     process.exitCode = 1;
+  //   }
+  //   console.log(buffer.toString());
+  // });
 
   // zlib.unzip(filePath[0], (er: any, buffer: any) => {
   //   console.log("Trying to read file");

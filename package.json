@@ -10,10 +10,10 @@
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
+    "decompress": "^4.2.1",
     "lts": "^1.2.0",
     "node-gyp": "^10.1.0",
-    "typescript": "^5.5.2",
-    "zlib": "^1.0.5"
+    "typescript": "^5.5.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.9"
