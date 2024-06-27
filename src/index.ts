@@ -3,7 +3,6 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, createReadStream, createWriteStream } from "fs";
 import { createUnzip, deflate, unzip } from "node:zlib";
-import { pipelin } from "node:stream";
 import { create } from "domain";
 
 const readdirAsync = promisify(readdir);
