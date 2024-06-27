@@ -35,13 +35,14 @@ const generateManifest = async (filePath: any) => {
 };
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+  console.log(await readdirAsync(process.cwd()));
   const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
     filePath.match("bundle.zip")
   );
   console.log("Hello, logging files");
-  console.log(filePath);
+  console.log(filePath[0]);
 
-  await run.command("unzip bundle.zip -d ./ast");
+  await run.command("unzip bundle.zip");
   const newFile = await readdirAsync(process.cwd());
   console.log("newFile:", newFile);
   console.log("finished piping");
