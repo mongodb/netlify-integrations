@@ -45,7 +45,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   await run.command("unzip bundle.zip");
   process.chdir("documents");
   const newFile = await readdirAsync(process.cwd());
-  console.log(process.cwd);
+  console.log(process.cwd());
   console.log("finished piping");
 });
 
