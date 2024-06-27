@@ -47,9 +47,9 @@ integration.addBuildEventHandler("onSuccess", async () => {
   console.log(filePath[0]);
 
   const unzip = createUnzip();
-  const inp = createReadStream("bundle.zip");
-  const out = createWriteStream("destination");
-  inp.pipe(unzip).pipe(out);
+  // const inp = createReadStream("bundle.zip");
+  // const out = createWriteStream("destination");
+  // inp.pipe(unzip).pipe(out);
 
   // unzip(filePath[0], (err, buffer) => {
   //   if (err) {
