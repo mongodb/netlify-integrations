@@ -3,7 +3,6 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, createReadStream, createWriteStream } from "fs";
 import { createUnzip, deflate, unzip } from "node:zlib";
-import { create } from "domain";
 
 const readdirAsync = promisify(readdir);
 
@@ -46,7 +45,11 @@ integration.addBuildEventHandler("onSuccess", async () => {
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
 
-  const unzip = createUnzip();
+  try {
+    const unzip = createUnzip();
+  } catch (e) {
+    console.log("error: ", e);
+  }
   // const inp = createReadStream("bundle.zip");
   // const out = createWriteStream("destination");
   // inp.pipe(unzip).pipe(out);
