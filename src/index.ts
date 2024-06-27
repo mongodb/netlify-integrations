@@ -53,7 +53,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
     const newFile = (await readdirAsync(process.cwd())).filter((newFile) =>
       newFile.match("destination")
     );
-    console.log(newFile);
+    console.log("newFile:", newFile);
   } catch (e) {
     console.log("error: ", e);
   }
