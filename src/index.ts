@@ -31,9 +31,7 @@ const generateManifest = async (filePath: any) => {
     includeInGlobalSearch: true,
     documents: [] as ManifestEntry[],
   };
-  // const astFile = await new AdmZip();
-  // console.log("astFile: ", astFile);
-  // astFile.getEntries().forEach((entry) => console.log("one Entry"));
+
   return manifest;
 };
 
@@ -41,39 +39,18 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
     filePath.match("bundle.zip")
   );
-
   console.log("Hello, logging bundle.zip.");
   console.log(filePath[0]);
 
   try {
-    const inp = createReadStream("bundle.zip");
-    const out = createWriteStream("destination");
-
     await run.command("unzip bundle.zip");
-    // await extract("bundle.zip", { dir: "destination" });
-    // const newFile = await readdirAsync(process.cwd());
-    // console.log("newFile:", newFile);
+    const newFile = await readdirAsync(process.cwd());
+    console.log("newFile:", newFile);
   } catch (e) {
     console.log("error: ", e);
   }
 
   console.log("finished piping");
-
-  // unzip(filePath[0], (err, buffer) => {
-  //   if (err) {
-  //     console.error("An error occurred:", err);
-  //     process.exitCode = 1;
-  //   }
-  //   console.log(buffer.toString());
-  // });
-
-  // zlib.unzip(filePath[0], (er: any, buffer: any) => {
-  //   console.log("Trying to read file");
-  //   console.log(buffer.toString("utf8"));
-  // });
-  // const astFile = await new AdmZip();
-  // const manifest = await generateManifest(filePath);
-  // console.log("manifest: ", manifest);
 });
 
 export { integration };
