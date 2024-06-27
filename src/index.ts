@@ -50,6 +50,7 @@ integration.addBuildEventHandler("onSuccess", async () => {
     const inp = createReadStream("bundle.zip");
     const out = createWriteStream("destination");
     inp.pipe(unzip).pipe(out);
+    console.log("finished piping");
   } catch (e) {
     console.log("error: ", e);
   }
