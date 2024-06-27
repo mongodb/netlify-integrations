@@ -1,8 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir, createReadStream, createWriteStream } from "fs";
-import extract from "extract-zip";
+import { readdir } from "fs";
 
 const readdirAsync = promisify(readdir);
 
