@@ -2,7 +2,6 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, createReadStream, createWriteStream } from "fs";
-import { createUnzip, deflate, unzip } from "node:zlib";
 import extract from "extract-zip";
 
 const readdirAsync = promisify(readdir);
@@ -38,7 +37,7 @@ const generateManifest = async (filePath: any) => {
   return manifest;
 };
 
-integration.addBuildEventHandler("onSuccess", async () => {
+integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
     filePath.match("bundle.zip")
   );
@@ -50,9 +49,10 @@ integration.addBuildEventHandler("onSuccess", async () => {
     const inp = createReadStream("bundle.zip");
     const out = createWriteStream("destination");
 
-    await extract("bundle.zip", { dir: "destination" });
-    const newFile = await readdirAsync(process.cwd());
-    console.log("newFile:", newFile);
+    await run.command("unzip bundle.zip");
+    // await extract("bundle.zip", { dir: "destination" });
+    // const newFile = await readdirAsync(process.cwd());
+    // console.log("newFile:", newFile);
   } catch (e) {
     console.log("error: ", e);
   }

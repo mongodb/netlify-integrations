@@ -13,7 +13,8 @@
     "extract-zip": "^2.0.1",
     "lts": "^1.2.0",
     "node-gyp": "^10.1.0",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "unzip": "^0.1.11"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.5.5",
