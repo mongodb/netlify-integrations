@@ -66,12 +66,12 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     )[0] ?? "";
 
   console.log("unzipping zipfile");
-  await run.command("unzip -j bundle.zip");
+  await run.command("unzip bundle.zip");
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
-  process.chdir("documents");
-  const entries = await readdirAsync(process.cwd());
+  // process.chdir("documents");
+  const entries = await readdirAsync("documents");
   console.log(entries);
 
   // for (const entry in entries) {
