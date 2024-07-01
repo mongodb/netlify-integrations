@@ -71,7 +71,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   //go into documents directory and get list of file entries
   // process.chdir("documents");
-  const entries = readdirSync("documents");
+  const entries = readdirSync("documents", { recursive: true });
   console.log(entries);
 
   // for (const entry in entries) {
