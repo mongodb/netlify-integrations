@@ -66,7 +66,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     )[0] ?? "";
 
   console.log("unzipping zipfile");
-  await run.command("unzip bundle.zip");
+  await run.command("unzip -j bundle.zip");
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
