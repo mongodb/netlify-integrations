@@ -33,7 +33,7 @@ const generateManifest = async (
 
   //unzip ziplfile
   console.log("unzipping zipfile");
-  run.command("unzip bundle.zip");
+  // run.command("unzip bundle.zip");
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
