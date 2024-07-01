@@ -38,6 +38,7 @@ const generateManifest = async (
   //go into documents directory and get list of file entries
   process.chdir("documents");
   const entries = await readdirAsync(process.cwd());
+  console.log(entries);
 
   //create Manifest object
   const manifest: Manifest = {
@@ -47,7 +48,10 @@ const generateManifest = async (
 
   //iterate over entries and add each eligible entry to Manifest object
   for (const entry in entries) {
-    console.log(entries);
+    console.log("entries");
+    if (entry.includes("documents")) {
+      console.log("found a document");
+    }
   }
   return manifest;
 };
