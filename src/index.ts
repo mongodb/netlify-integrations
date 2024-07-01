@@ -70,15 +70,15 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
-  process.chdir("documents");
-  const entries = await readdirAsync(process.cwd());
+  // process.chdir("documents");
+  // const entries = await readdirAsync(process.cwd());
 
-  for (const entry in entries) {
-    console.log("entries");
-    if (entry.includes("documents")) {
-      console.log("found a document");
-    }
-  }
+  // for (const entry in entries) {
+  //   console.log("entries");
+  //   if (entry.includes("documents")) {
+  //     console.log("found a document");
+  //   }
+  // }
 
   // generateManifest(filePath, true, run);
   console.log("outside of generate manifest");
