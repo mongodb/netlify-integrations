@@ -33,7 +33,7 @@ const generateManifest = async (
 
   //unzip ziplfile
   console.log("unzipping zipfile");
-  await run.command("unzip bundle.zip");
+  run.command("unzip bundle.zip");
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
@@ -66,6 +66,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     )[0] ?? "";
 
   generateManifest(filePath, true, run);
+  console.log("outside of generate manifest");
 });
 
 export { integration };
