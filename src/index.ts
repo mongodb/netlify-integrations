@@ -38,7 +38,8 @@ const generateManifest = async (
   //go into documents directory and get list of file entries
   process.chdir("documents");
   const entries = await readdirAsync(process.cwd());
-  console.log(entries);
+
+  console.log("before entries", entries, "after entries");
 
   //create Manifest object
   const manifest: Manifest = {
