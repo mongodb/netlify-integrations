@@ -74,12 +74,14 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // process.chdir("documents");
   const entries = readdirSync("documents", { recursive: true }).map(
     (fileName) => {
+      //use a joins here instead
       return filePath + "/" + fileName;
     }
   );
   console.log(entries);
 
   for (const entry in entries) {
+    console.log(entry);
     if (entry.includes("documents")) {
       console.log("found a document");
     }
