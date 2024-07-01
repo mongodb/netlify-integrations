@@ -24,29 +24,42 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generateManifest = async (filePath: any) => {
-  console.log("generating manifest function");
+const generateManifest = async (
+  filePath: string,
+  includeInGlobalSearch: boolean,
+  run?: any
+) => {
+  console.log("Running generating manifest function");
+
+  //unzip ziplfile
+  console.log("unzipping zipfile");
+  await run.command("unzip bundle.zip");
+
+  //go into documents directory and get list of file entries
+  process.chdir("documents");
+  const entries = await readdirAsync(process.cwd());
+
+  //create Manifest object
   const manifest: Manifest = {
-    includeInGlobalSearch: true,
+    includeInGlobalSearch: includeInGlobalSearch,
     documents: [] as ManifestEntry[],
   };
 
+  //iterate over entries and add each eligible entry to Manifest object
+  for (const entry in entries) {
+    console.log(entries);
+  }
   return manifest;
 };
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-  console.log(await readdirAsync(process.cwd()));
-  const filePath = (await readdirAsync(process.cwd())).filter((filePath) =>
-    filePath.match("bundle.zip")
-  );
-  console.log("Hello, logging files");
-  console.log(filePath[0]);
+  // Get content repo zipfile in AST representation.
+  const filePath =
+    (await readdirAsync(process.cwd())).filter((filePath) =>
+      filePath.match("bundle.zip")
+    )[0] ?? "";
 
-  await run.command("unzip bundle.zip");
-  process.chdir("documents");
-  const newFile = await readdirAsync(process.cwd());
-  console.log(process.cwd());
-  console.log("finished piping");
+  generateManifest(filePath, true, run);
 });
 
 export { integration };
