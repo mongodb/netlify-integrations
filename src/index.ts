@@ -1,7 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir } from "fs";
+import { readdir, readdirSync } from "fs";
 
 const readdirAsync = promisify(readdir);
 
@@ -71,7 +71,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   //go into documents directory and get list of file entries
   // process.chdir("documents");
-  const entries = await readdirAsync("documents");
+  const entries = readdirSync("documents");
   console.log(entries);
 
   // for (const entry in entries) {
