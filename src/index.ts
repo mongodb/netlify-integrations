@@ -2,6 +2,7 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, readdirSync } from "fs";
+import path from "path";
 
 const readdirAsync = promisify(readdir);
 
@@ -71,15 +72,18 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   //go into documents directory and get list of file entries
   // process.chdir("documents");
-  const entries = readdirSync("documents", { recursive: true });
+  const entries = readdirSync("documents", { recursive: true }).map(
+    (fileName) => {
+      return filePath + "/" + fileName;
+    }
+  );
   console.log(entries);
 
-  // for (const entry in entries) {
-  //   console.log(entry);
-  //   if (entry.includes("documents")) {
-  //     console.log("found a document");
-  //   }
-  // }
+  for (const entry in entries) {
+    if (entry.includes("documents")) {
+      console.log("found a document");
+    }
+  }
 
   // generateManifest(filePath, true, run);
   console.log("outside of generate manifest");
