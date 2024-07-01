@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://sdk.netlify.com/sdk/config-schema.json
+config:
+  slug: chatbot-netlify-integration
+  name: chatbot-netlify-integration
+  description: uploads site ast for chatbot rag ingestion
+  integrationLevel: site
+  scopes:
+    site: ["read", "write"]

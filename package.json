@@ -1,0 +1,15 @@
+{
+  "name": "chatbot-netlify-integration",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "netlify-integration build -a",
+    "dev": "netlify-integration dev -a",
+    "preview": "netlify-integration preview"
+  },
+  "dependencies": {
+    "@netlify/sdk": "^1.59.0",
+    "typescript": "^5.5.2"
+  }
+}
