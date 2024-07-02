@@ -11,5 +11,9 @@
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
     "typescript": "^5.5.2"
+  },
+  "devDependencies": {
+    "@netlify/build": "^29.50.2",
+    "execa": "^6.1.0"
   }
 }
