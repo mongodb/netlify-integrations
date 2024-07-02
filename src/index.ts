@@ -71,14 +71,14 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log("Bundle unzipped");
 
   //go into documents directory and get list of file entries
-  // process.chdir("documents");
   const entries = readdirSync("documents", { recursive: true }).map(
     (fileName) => {
       //use a joins here instead
       return fileName;
     }
   );
-  console.log(entries);
+
+  process.chdir("documents");
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
