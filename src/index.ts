@@ -25,38 +25,17 @@ interface ManifestEntry {
   facets: any;
 }
 
-const generateManifest = async (
-  filePath: string,
-  includeInGlobalSearch: boolean,
-  run?: any
-) => {
-  console.log("Running generating manifest function");
+// const generateManifest = async (
+//   filePath: string,
+//   includeInGlobalSearch: boolean,
+//   run?: any
+// ) => {
+// };
 
-  //unzip ziplfile
-  console.log("unzipping zipfile");
-  // run.command("unzip bundle.zip");
-  console.log("Bundle unzipped");
-
-  //go into documents directory and get list of file entries
-  process.chdir("documents");
-  const entries = await readdirAsync(process.cwd());
-
-  console.log("before entries", entries, "after entries");
-
-  //create Manifest object
-  const manifest: Manifest = {
-    includeInGlobalSearch: includeInGlobalSearch,
-    documents: [] as ManifestEntry[],
-  };
-
-  //iterate over entries and add each eligible entry to Manifest object
-  for (const entry in entries) {
-    console.log("entries");
-    if (entry.includes("documents")) {
-      console.log("found a document");
-    }
-  }
-  return manifest;
+const processManifest = (decodedFile: any) => {
+  //put file into Document object
+  //export Document object
+  return decodedFile;
 };
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
@@ -69,6 +48,12 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log("unzipping zipfile");
   await run.command("unzip bundle.zip");
   console.log("Bundle unzipped");
+
+  //   create Manifest object
+  //   const manifest: Manifest = {
+  //     includeInGlobalSearch: includeInGlobalSearch,
+  //     documents: [] as ManifestEntry[],
+  //   };
 
   //go into documents directory and get list of file entries
   const entries = readdirSync("documents", { recursive: true }).map(
@@ -85,11 +70,11 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     if (!entry.includes("images") && entry.includes("bson")) {
       console.log("found document:" + entry);
 
-      //the file is opened and read
-      const readFile = BSON.deserialize(readFileSync(entry));
-      console.log(readFile);
-      //decode bson data with python's decode_all, Decode BSON data to multiple documents.
+      //the file is read and decoded
+      const decoded = BSON.deserialize(readFileSync(entry));
+      console.log(JSON.parse(JSON.stringify(decoded)));
       //Enter proccess snooty manifest bson function
+      const processedDoc = processManifest(decoded);
       //"""Return indexing data from a page's AST for search purposes."""
 
       //add document to manifest object
