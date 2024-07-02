@@ -72,7 +72,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
-      console.log(JSON.parse(JSON.stringify(decoded[0])));
+      console.log(decoded.ast);
       //Enter proccess snooty manifest bson function
       const processedDoc = processManifest(decoded);
       //"""Return indexing data from a page's AST for search purposes."""
