@@ -1,7 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir, readdirSync, open } from "fs";
+import { readdir, readdirSync, readFileSync, open } from "fs";
 import { BSON, EJSON, ObjectId } from "bson";
 
 const readdirAsync = promisify(readdir);
@@ -81,14 +81,11 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(entries);
 
   for (const entry of entries) {
-    console.log(entry);
     if (!entry.includes("images")) {
       console.log("found a document");
 
       //the file is opened and read
-      const readFile = open(entry, "r", function (err, f) {
-        console.log("f", f);
-      });
+      const readFile = readFileSync(entry);
       console.log(readFile);
       //decode bson data with python's decode_all, Decode BSON data to multiple documents.
       //Enter proccess snooty manifest bson function
