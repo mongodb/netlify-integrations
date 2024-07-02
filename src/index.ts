@@ -3,7 +3,7 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, readdirSync, readFileSync, open } from "fs";
 import { BSON, EJSON, ObjectId } from "bson";
-import { Document } from "./document";
+// import { Document } from "./document";
 
 const readdirAsync = promisify(readdir);
 
