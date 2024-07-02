@@ -74,7 +74,8 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const entries = readdirSync("documents", { recursive: true }).map(
     (fileName) => {
       //use a joins here instead
-      return fileName;
+      if (fileName.includes("bson")) return fileName;
+      else return "";
     }
   );
 
@@ -82,7 +83,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      console.log("found a document");
+      console.log("found document:" + entry);
 
       //the file is opened and read
       const readFile = readFileSync(entry);
