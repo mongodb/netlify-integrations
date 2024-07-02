@@ -75,7 +75,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const entries = readdirSync("documents", { recursive: true }).map(
     (fileName) => {
       //use a joins here instead
-      return filePath + "/" + fileName;
+      return fileName;
     }
   );
   console.log(entries);
