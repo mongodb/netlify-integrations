@@ -80,10 +80,19 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   );
   console.log(entries);
 
-  for (const entry in entries) {
+  for (const entry of entries) {
     console.log(entry);
-    if (entry.includes("documents")) {
+    if (!entry.includes("images")) {
       console.log("found a document");
+
+      //the file is opened and read
+      const readFile = JSON.stringify(entry);
+      console.log(readFile);
+      //decode bson data with python's decode_all, Decode BSON data to multiple documents.
+      //Enter proccess snooty manifest bson function
+      //"""Return indexing data from a page's AST for search purposes."""
+
+      //add document to manifest object
     }
   }
 
