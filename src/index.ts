@@ -81,7 +81,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(entries);
 
   for (const entry of entries) {
-    if (!entry.includes("images")) {
+    if (!entry.includes("images") && entry.includes("bson")) {
       console.log("found a document");
 
       //the file is opened and read
