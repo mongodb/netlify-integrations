@@ -86,7 +86,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
       console.log("found document:" + entry);
 
       //the file is opened and read
-      const readFile = readFileSync(entry);
+      const readFile = BSON.deserialize(readFileSync(entry));
       console.log(readFile);
       //decode bson data with python's decode_all, Decode BSON data to multiple documents.
       //Enter proccess snooty manifest bson function
