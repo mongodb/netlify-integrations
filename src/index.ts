@@ -3,7 +3,7 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
 import { readdir, readdirSync, readFileSync, open } from "fs";
 import { BSON, EJSON, ObjectId } from "bson";
-// import { Document } from "./document";
+import { Document } from "./document";
 
 const readdirAsync = promisify(readdir);
 
@@ -36,7 +36,7 @@ interface ManifestEntry {
 const processManifest = (decodedFile: any) => {
   //put file into Document object
   //export Document object
-  // const doc = new Document(decodedFile);
+  const doc = new Document(decodedFile);
   return decodedFile;
 };
 
