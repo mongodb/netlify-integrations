@@ -71,8 +71,6 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      console.log("found document:" + entry);
-
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
