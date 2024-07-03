@@ -1,6 +1,5 @@
 import { NetlifyIntegration } from "@netlify/sdk";
-
-var jp = require("jsonpath");
+import * as jp from "jsonpath";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -39,11 +38,10 @@ export class Document {
     let keywords: string[] | null = null;
     let description: string[] | null = null;
 
-    const jsonPathExpr = jp.parse({
-      path: "$..children[?(@.type=='heading')].children",
-      json: this.tree,
-    });
-    let results = jp.query(this.tree, jsonPathExpr);
+    let results = jp.query(
+      this.tree,
+      "$..children[?(@.type=='heading')].children"
+    );
     if (results) {
       results = results[0].value;
       //check if robots, set to false if no robots
