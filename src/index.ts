@@ -6,16 +6,30 @@ import { promisify } from "util";
 const readdirAsync = promisify(readdir);
 const integration = new NetlifyIntegration();
 
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-  console.log("=========== Chatbot Data Upload Integration ================");
-  await run.command("unzip bundle.zip -d bundle");
-  const zipPages = readdirAsync(`${process.cwd()}/bundle/documents`, {
-    recursive: true,
-  });
+integration.addBuildEventHandler(
+  "onSuccess",
+  async ({ utils: { run, git } }) => {
+    console.log("=========== Chatbot Data Upload Integration ================");
+    await run.command("unzip bundle.zip -d bundle");
 
-  console.log("ZipPages: ", zipPages);
+    const zipContents = await readdirAsync(
+      `${process.cwd()}/bundle/documents`,
+      {
+        recursive: true,
+      }
+    );
 
-  console.log("=========== Chatbot Data Upload Integration ================");
-});
+    const bsonPages = zipContents.filter((fileName) => {
+      const splitFile = fileName.toString().split(".");
+
+      console.log("splitFile: ", splitFile);
+
+      return splitFile[splitFile.length - 1] === "bson";
+    });
+    console.log("ZipPages: ", bsonPages);
+
+    console.log("=========== Chatbot Data Upload Integration ================");
+  }
+);
 
 export { integration };
