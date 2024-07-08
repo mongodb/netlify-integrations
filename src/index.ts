@@ -10,6 +10,26 @@ const readFileAsync = promisify(readFile);
 const integration = new NetlifyIntegration();
 const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 
+interface StaticAsset {
+  checksum: string;
+  key: string;
+  updated_at?: Date;
+}
+interface PageAst {
+  type: string;
+  position: Record<string, unknown>;
+  children: PageAst[];
+  fileid: string;
+  options: Record<string, unknown>;
+}
+interface Page {
+  page_id: string;
+  filename: string;
+  ast: PageAst;
+  source: string;
+  static_assets: StaticAsset[];
+}
+
 integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run, git } }) => {
@@ -25,21 +45,16 @@ integration.addBuildEventHandler(
     const bsonPages = zipContents.filter((fileName) => {
       const splitFile = fileName.toString().split(".");
 
-      console.log("splitFile: ", splitFile);
-
       return splitFile[splitFile.length - 1] === "bson";
     });
-    console.log("ZipPages: ", bsonPages);
 
     const pageAstObjects = await Promise.all(
       bsonPages.map(async (bsonFileName) => {
         const rawData = await readFileAsync(`${ZIP_PATH}/${bsonFileName}`);
 
-        return deserialize(rawData);
+        return deserialize(rawData) as Page;
       })
     );
-
-    console.log("pageAstObjects", pageAstObjects);
 
     console.log("=========== Chatbot Data Upload Integration ================");
   }
