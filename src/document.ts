@@ -1,5 +1,5 @@
 import { NetlifyIntegration } from "@netlify/sdk";
-import jsonpath from "JSONPath";
+import jsonpath from "jsonpath";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
