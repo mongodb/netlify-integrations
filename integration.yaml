@@ -1,8 +1,9 @@
-# yaml-language-server: $schema=https://sdk.netlify.com/sdk/config-schema.json
 config:
-  slug: redoc-integration
   name: redoc-integration
   description: creates redoc pages  from OpenAPI spec
-  integrationLevel: site
+  slug: '-spg1kfd-redoc-integration'
   scopes:
-    site: ["read", "write"]
+    site:
+      - read
+      - write
+  integrationLevel: site
