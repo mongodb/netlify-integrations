@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
+    "@types/jsonpath": "^0.2.4",
     "bson": "^6.8.0",
     "fs": "^0.0.1-security",
     "JSONPath": "^0.11.2",
