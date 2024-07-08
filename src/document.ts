@@ -39,7 +39,7 @@ export class Document {
     let description: string | null = null; //this can be optional??
 
     let results = JSONPath({
-      path: "$..children[?(@.type=='heading')].children",
+      path: "$..children[?(@.name=='meta')]..options",
       json: this.tree,
     });
     console.log("results:", results);
