@@ -23,9 +23,10 @@ export class Document {
     console.log("called doc");
     //find metadata
     [this.robots, this.keywords, this.description] = this.findMetadata();
-    this.paragraphs = this.findParagraphs();
     //find paragraphs
+    this.paragraphs = this.findParagraphs();
     //find code
+    this.code = this.findCode();
     //find title, headings
     //find slug
     //find preview
@@ -75,5 +76,22 @@ export class Document {
       paragraphs += r;
     }
     return paragraphs;
+  }
+
+  findCode() {
+    console.log("finding code");
+
+    let results = JSONPath({
+      path: "$..children[?(@.type=='code')]",
+      json: this.tree,
+    });
+
+    let codeContents = [];
+    for (let r of results) {
+      const lang = r.value.get("lang", null);
+      codeContents.push({ lang: lang, value: r.value["value"] });
+    }
+
+    return codeContents;
   }
 }
