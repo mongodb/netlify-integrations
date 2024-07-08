@@ -64,10 +64,16 @@ export class Document {
 
   findParagraphs() {
     console.log("Finding paragraphs");
+    let paragraphs = "";
 
     let results = JSONPath({
       path: "$..children[?(@.type=='paragraph')]..value",
       json: this.tree,
     });
+
+    for (let r of results) {
+      paragraphs += r;
+    }
+    return paragraphs;
   }
 }
