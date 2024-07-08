@@ -42,7 +42,7 @@ export class Document {
       path: "$..children[?(@.type=='heading')].children",
       json: this.tree,
     });
-    console.log("results:", results);
+    // console.log("results:", results);
     // console.log("value:", results[0][0].value);
     // if (results) {
     //   const val = results[0].value;
