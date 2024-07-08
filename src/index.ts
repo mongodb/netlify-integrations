@@ -36,7 +36,7 @@ interface ManifestEntry {
 const processManifest = (decodedFile: any) => {
   //put file into Document object
   //export Document object
-  // const doc = new Document(decodedFile);
+  const doc = new Document(decodedFile);
   console.log("new document created");
   return decodedFile;
 };
