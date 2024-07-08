@@ -1,5 +1,5 @@
 import { NetlifyIntegration } from "@netlify/sdk";
-import jsonpath from "jsonpath";
+import { JSONPath } from "jsonpath-plus";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -38,10 +38,10 @@ export class Document {
     let keywords: string[] | null = null;
     let description: string[] | null = null;
 
-    let results = jsonpath.query(
-      this.tree,
-      "$..children[?(@.type=='heading')].children"
-    );
+    let results = JSONPath({
+      path: "$..children[?(@.type=='heading')].children",
+      json: this.tree,
+    });
     if (results) {
       const val = results[0].value;
       //check if robots, set to false if no robots
