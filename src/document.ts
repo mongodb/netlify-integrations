@@ -1,5 +1,4 @@
 import { NetlifyIntegration } from "@netlify/sdk";
-// @ts-ignore
 import jsonpath from "JSONPath";
 
 export class Document {
