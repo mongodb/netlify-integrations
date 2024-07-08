@@ -18,9 +18,8 @@ export class Document {
   reasons: any;
 
   constructor(doc: any) {
-    this.tree = doc.ast;
+    this.tree = doc;
     console.log("called doc");
-    console.log(this.tree);
     //find metadata
     [this.robots, this.keywords, this.description] = this.findMetadata();
     this.paragraphs = this.findParagraphs();
