@@ -45,11 +45,9 @@ export class Document {
     if (results) {
       const val = results[0].value;
       //check if robots, set to false if no robots
-      if (val.robots) {
-        // && results["robots"] && results["robots"] == "None") ||
-        // ( instanceof Array).includes("noindex")
+      if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
         robots = false;
-      }
+
       if (val.includes("keywords")) {
         keywords = val.keywords;
       }
