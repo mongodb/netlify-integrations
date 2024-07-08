@@ -43,7 +43,7 @@ export class Document {
       json: this.tree,
     });
     console.log("results:", results);
-    console.log("value:", results[0]);
+    console.log("value:", results[0][0].value);
     // if (results) {
     //   const val = results[0].value;
     //   //check if robots, set to false if no robots
@@ -64,5 +64,10 @@ export class Document {
 
   findParagraphs() {
     console.log("Finding paragraphs");
+
+    let results = JSONPath({
+      path: "$..children[?(@.type=='paragraph')]..value",
+      json: this.tree,
+    });
   }
 }
