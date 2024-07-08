@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
+    "bson": "^6.8.0",
     "typescript": "^5.5.2"
   },
   "devDependencies": {
