@@ -3,32 +3,13 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { deserialize } from "bson";
 import { readdir, readFile } from "fs";
 import { promisify } from "util";
+import { Page } from "./check-diffs";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
 
 const integration = new NetlifyIntegration();
 const ZIP_PATH = `${process.cwd()}/bundle/documents`;
-
-interface StaticAsset {
-  checksum: string;
-  key: string;
-  updated_at?: Date;
-}
-interface PageAst {
-  type: string;
-  position: Record<string, unknown>;
-  children: PageAst[];
-  fileid: string;
-  options: Record<string, unknown>;
-}
-interface Page {
-  page_id: string;
-  filename: string;
-  ast: PageAst;
-  source: string;
-  static_assets: StaticAsset[];
-}
 
 integration.addBuildEventHandler(
   "onSuccess",
