@@ -20,6 +20,7 @@ export class Document {
   constructor(doc: any) {
     this.tree = doc.ast;
     console.log("called doc");
+    console.log(this.tree);
     //find metadata
     [this.robots, this.keywords, this.description] = this.findMetadata();
     this.paragraphs = this.findParagraphs();
@@ -33,17 +34,16 @@ export class Document {
 
   findMetadata() {
     console.log("Finding metadata");
-    let robots: Boolean = true;
-    //keywords is supposed to be an array of arrays of strings??
-    let keywords: string[] | null = null;
-    let description: string[] | null = null;
+    let robots: Boolean = true; //can be set in the rst if the page is supposed to be crawled
+    let keywords: string[] | null = null; //keywords is an optional list of strings
+    let description: string | null = null; //this can be optional??
 
     let results = JSONPath({
       path: "$..children[?(@.type=='heading')].children",
       json: this.tree,
     });
     console.log("results:", results);
-    console.log("value:", results[0][0].value);
+    // console.log("value:", results[0][0].value);
     // if (results) {
     //   const val = results[0].value;
     //   //check if robots, set to false if no robots
