@@ -43,19 +43,18 @@ export class Document {
       "$..children[?(@.type=='heading')].children"
     );
     if (results) {
-      results = results[0].value;
+      const val = results[0].value;
       //check if robots, set to false if no robots
-      if (
-        (results.includes("robots") && results["robots"] == "None") ||
-        results["robots"].includes("noindex")
-      ) {
+      if (val.robots) {
+        // && results["robots"] && results["robots"] == "None") ||
+        // ( instanceof Array).includes("noindex")
         robots = false;
       }
-      if (results.includes("keywords")) {
-        keywords = results["keywords"];
+      if (val.includes("keywords")) {
+        keywords = val.keywords;
       }
-      if (results.includes("description")) {
-        keywords = results["description"];
+      if (val.includes("description")) {
+        keywords = val.description;
       }
       return [robots, keywords, description];
     }
