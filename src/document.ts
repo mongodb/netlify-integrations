@@ -1,5 +1,6 @@
 import { NetlifyIntegration } from "@netlify/sdk";
-import * as jp from "jsonpath";
+// @ts-ignore
+import jsonpath from "JSONPath";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -38,7 +39,7 @@ export class Document {
     let keywords: string[] | null = null;
     let description: string[] | null = null;
 
-    let results = jp.query(
+    let results = jsonpath.query(
       this.tree,
       "$..children[?(@.type=='heading')].children"
     );
