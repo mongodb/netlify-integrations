@@ -1,7 +1,14 @@
 // Documentation: https://sdk.netlify.com
+import { deserialize } from "bson";
+import { readdir, readFile } from "fs";
+import { promisify } from "util";
 import { NetlifyIntegration } from "@netlify/sdk";
 
+const readdirAsync = promisify(readdir);
+const readFileAsync = promisify(readFile);
+
 const integration = new NetlifyIntegration();
+const BUNDLE_PATH = `${process.cwd()}/bundle`;
 const REDOC_CLI_VERSION = "1.2.3";
 
 // handle installing redoc cli if it's not already installed
@@ -27,10 +34,18 @@ integration.addBuildEventHandler(
 );
 
 // handle building the redoc pages
-integration.addBuildEventHandler(
-  "onPostBuild",
-  async ({ utils: { run } }) => {}
-);
+integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
+  console.log("=========== Chatbot Data Upload Integration ================");
+  await run.command("unzip bundle.zip -d bundle");
+
+  const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
+
+  const siteMetadata = deserialize(siteBson);
+
+  console.log(siteMetadata);
+
+  console.log("=========== Chatbot Data Upload Integration ================");
+});
 
 // cache redoc
 integration.addBuildEventHandler(

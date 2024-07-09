@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.2",
+    "bson": "^6.8.0",
     "typescript": "^5.5.3"
   },
   "devDependencies": {
     "@netlify/build": "^29.50.5",
+    "@types/node": "^20.14.10",
     "execa": "^6.1.0"
   }
 }
