@@ -121,7 +121,7 @@ export class Document {
       json: this.tree,
     });
 
-    console.log(`\n\r headings results: ${results.length}, ${results}`);
+    // console.log(`\n\r headings results: ${results.length}, ${results}`);
 
     //no heading nodes found?? page doesn't have title, or headings
     if (!results.length) return [title, headings];
@@ -133,6 +133,7 @@ export class Document {
         path: "$..value",
         json: r.value,
       });
+      console.log(`\n\r parts results for heading: ${r}, parts: ${parts}`);
       //add a check in case there is no value field found
 
       // for (let part of parts) {
