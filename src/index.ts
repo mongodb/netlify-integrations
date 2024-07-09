@@ -11,14 +11,14 @@ integration.addBuildEventHandler(
     const hasRedoc = await cache.has("redoc");
     if (hasRedoc) return;
 
-    run.command(`
+    await run.command(`
     git clone -b @dop/redoc-cli@${REDOC_CLI_VERSION} --depth 1 https://github.com/mongodb-forks/redoc.git redoc \
     # Install dependencies for Redoc CLI
     && cd redoc/ \
     && npm ci --prefix cli/ --omit=dev
   `);
 
-    cache.save("redoc");
+    await cache.save("redoc");
   }
 );
 
