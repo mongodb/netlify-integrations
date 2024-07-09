@@ -1,10 +1,10 @@
 import { deserialize } from "bson";
-import { readdir, readFile } from "fs";
+import { writeFile, readFile } from "fs";
 import { promisify } from "util";
 import { NetlifyIntegration } from "@netlify/sdk";
 
-const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
+const writeFileAsync = promisify(writeFile);
 
 const integration = new NetlifyIntegration();
 const BUNDLE_PATH = `${process.cwd()}/bundle`;
@@ -49,12 +49,8 @@ interface GetOASpecParams {
   source: string;
   output: string;
   pageSlug: string;
-  repoPath: string;
   siteUrl: string;
-  activeResourceVersion?: string;
-  resourceVersions?: string[];
-  apiVersion?: string;
-  resourceVersion?: string;
+  siteTitle: string;
 }
 
 export const normalizePath = (path: string) => path.replace(/\/+/g, `/`);
@@ -63,10 +59,6 @@ export const normalizeUrl = (url: string) => {
   urlObject.pathname = normalizePath(urlObject.pathname);
   return urlObject.href;
 };
-interface RedocBuildOptions {
-  ignoreIncompatibleTypes?: boolean;
-}
-
 export interface RedocVersionOptions {
   active: {
     apiVersion: string;
@@ -76,19 +68,16 @@ export interface RedocVersionOptions {
   resourceVersions: string[];
 }
 
-async function getOASpec({
+async function getOASpecCommand({
   source,
   sourceType,
   pageSlug,
   output,
-  apiVersion,
-  resourceVersion,
-  resourceVersions,
   siteUrl,
+  siteTitle,
 }: GetOASpecParams) {
   try {
     let spec = "";
-    let isSuccessfulBuild = true;
     if (sourceType === "local") {
       const localFilePath = `source${source}`;
       spec = localFilePath;
@@ -100,65 +89,57 @@ async function getOASpec({
 
     const path = `${output}/${pageSlug}/index.html`;
     const finalFilename = normalizePath(path);
-
-    return isSuccessfulBuild;
+    await writeFileAsync(
+      `${process.cwd()}/options.json`,
+      JSON.stringify({ siteUrl, siteTitle })
+    );
+    return `node ${process.cwd()}/redoc/cli/index.js build ${spec} --output ${finalFilename} --options ${process.cwd()}/options.json`;
   } catch (e) {
     console.error(e);
-    return false;
+    return "";
   }
 }
 
 // handle building the redoc pages
-integration.addBuildEventHandler(
-  "onPostBuild",
-  async ({ utils: { run, status }, constants }) => {
-    console.log("=========== Redoc Integration Begin ================");
-    await run.command("unzip bundle.zip -d bundle");
+integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
+  console.log("=========== Redoc Integration Begin ================");
+  await run.command("unzip bundle.zip -d bundle");
 
-    const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
+  const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
 
-    const buildMetadata = deserialize(siteBson);
-    const siteTitle: string = buildMetadata["title"];
-    const openapiPages: OASPagesMetadata | undefined =
-      buildMetadata["openapi_pages"];
-    const metadata = {
-      siteTitle,
-      openapiPages,
-    };
-    console.log("buildMetadata", buildMetadata);
+  const buildMetadata = deserialize(siteBson);
+  const siteTitle: string = buildMetadata["title"];
+  const openapiPages: OASPagesMetadata | undefined =
+    buildMetadata["openapi_pages"];
 
-    if (!openapiPages) {
-      console.log("No OpenAPI pages found");
-      return;
-    }
+  console.log("buildMetadata", buildMetadata);
 
-    const openapiPagesEntries = Object.entries(openapiPages);
-    const siteUrl = process.env.DEPLOY_PRIME_URL || "";
-    console.log("siteUrl", siteUrl);
-
-    for (const [pageSlug, data] of openapiPagesEntries) {
-      const {
-        source_type: sourceType,
-        source,
-        api_version: apiVersion,
-        resource_versions: resourceVersions,
-      } = data;
-
-      // await getOASpec({
-      //   source,
-      //   sourceType,
-      //   output,
-      //   pageSlug,
-      //   repoPath,
-      //   apiVersion,
-      //   siteUrl,
-      //   resourceVersions,
-      // });
-    }
-
-    console.log("=========== Redoc Integration End ================");
+  if (!openapiPages) {
+    console.log("No OpenAPI pages found");
+    return;
   }
-);
+
+  const openapiPagesEntries = Object.entries(openapiPages);
+  const siteUrl = process.env.DEPLOY_PRIME_URL || "";
+  console.log("siteUrl", siteUrl);
+
+  for (const [pageSlug, data] of openapiPagesEntries) {
+    const { source_type: sourceType, source } = data;
+
+    const command = await getOASpecCommand({
+      source,
+      sourceType,
+      output: `${process.cwd()}/snooty/public`,
+      pageSlug,
+      siteUrl,
+      siteTitle,
+    });
+
+    await run.command(command);
+  }
+
+  console.log("=========== Redoc Integration End ================");
+});
 
 // cache redoc
 integration.addBuildEventHandler("onSuccess", async ({ utils: { cache } }) => {
