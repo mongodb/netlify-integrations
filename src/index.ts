@@ -15,8 +15,11 @@ const REDOC_CLI_VERSION = "1.2.3";
 integration.addBuildEventHandler(
   "onPreBuild",
   async ({ utils: { run, cache } }) => {
+    console.log("Running redoc prebuild");
     const hasRedoc = await cache.has("redoc");
     if (hasRedoc) {
+      console.log("Restoring redoc from cache");
+
       cache.restore("redoc");
       return;
     }
