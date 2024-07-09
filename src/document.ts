@@ -114,7 +114,7 @@ export class Document {
     console.log("Finding headings and title");
     let headings: string[] = [];
     let title: string | undefined | null = null;
-    // Get all headings nodes
+    // Get the children of headings nodes
 
     let results = JSONPath({
       path: "$..children[?(@.type=='heading')].children",
@@ -130,12 +130,10 @@ export class Document {
       let heading = [];
       const parts = JSONPath({
         path: "$..value",
-        json: r.value,
+        json: r,
       });
       console.log(
-        `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${
-          r.value
-        }`
+        `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
       );
       //add a check in case there is no value field found
 
