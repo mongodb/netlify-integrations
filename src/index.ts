@@ -50,11 +50,12 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
 });
 
 // cache redoc
-integration.addBuildEventHandler(
-  "onPostBuild",
-  async ({ utils: { cache } }) => {
+integration.addBuildEventHandler("onSuccess", async ({ utils: { cache } }) => {
+  const hasRedoc = await cache.has("redoc");
+  if (!hasRedoc) {
+    console.log("saving redoc to cache");
     await cache.save("redoc");
   }
-);
+});
 
 export { integration };
