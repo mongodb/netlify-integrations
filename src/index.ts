@@ -42,7 +42,7 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
 
   const siteMetadata = deserialize(siteBson);
 
-  console.log(siteMetadata);
+  console.log("siteMetadata", siteMetadata);
 
   console.log("=========== Redoc Integration ================");
 });
