@@ -27,6 +27,7 @@ export class Document {
     this.paragraphs = this.findParagraphs();
     //find code
     this.code = this.findCode();
+
     //find title, headings
     //find slug
     //find preview
@@ -43,22 +44,26 @@ export class Document {
       path: "$..children[?(@.name=='meta')]..options",
       json: this.tree,
     });
-    console.log("results:", results);
+    console.log("\n\r metadata results:", results);
     // console.log("value:", results[0][0].value);
-    // if (results) {
-    //   const val = results[0].value;
-    //   //check if robots, set to false if no robots
-    //   if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
-    //     robots = false;
+    if (results.length) {
+      if (results.length > 1)
+        console.log(
+          "length of results is greater than one, it's: " + results.length
+        );
+      const val = results[0];
+      //check if robots, set to false if no robots
+      if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
+        robots = false;
 
-    //   if (val.includes("keywords")) {
-    //     keywords = val.keywords;
-    //   }
-    //   if (val.includes("description")) {
-    //     keywords = val.description;
-    //   }
-    //   return [robots, keywords, description];
-    // }
+      if (val.includes("keywords")) {
+        keywords = val.keywords;
+      }
+      if (val.includes("description")) {
+        keywords = val.description;
+      }
+      return [robots, keywords, description];
+    }
 
     return [];
   }
@@ -86,12 +91,14 @@ export class Document {
       json: this.tree,
     });
 
-    let codeContents = [];
-    for (let r of results) {
-      const lang = r.value.get("lang", null);
-      codeContents.push({ lang: lang, value: r.value["value"] });
-    }
+    console.log("\n\r paragraph results:", results);
 
-    return codeContents;
+    let codeContents = [];
+    // for (let r of results) {
+    //   const lang = r.value.get("lang", null);
+    //   codeContents.push({ lang: lang, value: r.value["value"] });
+    // }
+
+    return [];
   }
 }
