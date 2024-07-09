@@ -127,13 +127,12 @@ export class Document {
     if (!results.length) return [title, headings];
 
     for (let r of results) {
-      console.log;
       let heading = [];
       const parts = JSONPath({
         path: "$..value",
         json: r.value,
       });
-      console.log(`\n\r parts results for heading: ${r}, parts: ${parts}`);
+      console.log(`\n\r parts results for heading: ${r}, value: ${r.value}`);
       //add a check in case there is no value field found
 
       // for (let part of parts) {
