@@ -132,7 +132,11 @@ export class Document {
         path: "$..value",
         json: r.value,
       });
-      console.log(`\n\r parts results for heading: ${r}, value: ${r.value}`);
+      console.log(
+        `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${
+          r.value
+        }`
+      );
       //add a check in case there is no value field found
 
       // for (let part of parts) {
