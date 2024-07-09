@@ -56,12 +56,9 @@ export class Document {
       if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
         robots = false;
 
-      if (val.includes("keywords")) {
-        keywords = val.keywords;
-      }
-      if (val.includes("description")) {
-        keywords = val.description;
-      }
+      keywords = val.keywords ?? null;
+      description = val.description ?? null;
+
       return [robots, keywords, description];
     }
 
@@ -95,7 +92,7 @@ export class Document {
 
     let codeContents = [];
     // for (let r of results) {
-    //   const lang = r.value.get("lang", null);
+    //   const lang = r.get("lang", null);
     //   codeContents.push({ lang: lang, value: r.value["value"] });
     // }
 
