@@ -121,12 +121,13 @@ export class Document {
       json: this.tree,
     });
 
-    console.log("\n\r headings results:", results);
+    console.log(`\n\r headings results: ${results.length}, ${results}`);
 
     //no heading nodes found?? page doesn't have title, or headings
     if (!results.length) return [title, headings];
 
     for (let r of results) {
+      console.log;
       let heading = [];
       const parts = JSONPath({
         path: "$..value",
@@ -134,11 +135,11 @@ export class Document {
       });
       //add a check in case there is no value field found
 
-      for (let part of parts) {
-        // add a check in case there is no value field found
-        heading.push(part.value);
-      }
-      headings.push(heading.join());
+      // for (let part of parts) {
+      //   // add a check in case there is no value field found
+      //   heading.push(part.value);
+      // }
+      // headings.push(heading.join());
     }
 
     title = headings.shift();
@@ -146,10 +147,52 @@ export class Document {
   }
 
   deriveSlug() {
-    return;
+    console.log("Deriving slug");
+
+    let page_id = this.tree["filename"].split(".")[0];
+    if (page_id == "index") page_id = "";
+    return page_id;
   }
 
   derivePreview() {
+    console.log("Deriving document search preview");
+    //set preview to the meta description if one is specified
+
+    if (this.description) return this.description;
+
+    // Set preview to the paragraph value that's a child of a 'target' element
+    // (for reference pages that lead with a target definition)
+
+    let results = JSONPath({
+      path: "$..children[?(@.type=='target')].children[?(@.type=='paragraph')]",
+      json: this.tree,
+    });
+
+    if (!results.length) {
+      //  Otherwise attempt to set preview to the first content paragraph on the page,
+      //   excluding admonitions.
+      results = JSONPath({
+        path: "$..children[?(@.type=='section')].children[?(@.type=='paragraph')]",
+        json: this.tree,
+      });
+    }
+
+    if (results.length) {
+      let str_list = [];
+
+      //get value in results
+      const first = JSONPath({
+        path: "$..value",
+        json: results[0],
+      });
+
+      for (let f of first) {
+        str_list.push(f.value);
+      }
+      return str_list.join();
+    }
+
+    //else, give up and don't provide a preview
     return;
   }
 
