@@ -1,7 +1,7 @@
-headersOrigin = "config"
-plugins = []
 functionsDirectory = "/Users/brandonly/Documents/gitrepos/redoc-integration/.ntli/site/netlify/functions"
 functionsDirectoryOrigin = "config"
+headersOrigin = "config"
+plugins = []
 redirects = []
 
 [dev]

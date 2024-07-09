@@ -1,4 +1,3 @@
-// Documentation: https://sdk.netlify.com
 import { deserialize } from "bson";
 import { readdir, readFile } from "fs";
 import { promisify } from "util";
