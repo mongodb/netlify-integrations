@@ -15,8 +15,12 @@ integration.addBuildEventHandler(
     }
 
     await run.command(
-      `git clone -b @dop/redoc-cli@${REDOC_CLI_VERSION} --depth 1 https://github.com/mongodb-forks/redoc.git redoc && cd redoc/ && npm ci --prefix cli/ --omit=dev`
+      `git clone -b @dop/redoc-cli@${REDOC_CLI_VERSION} --depth 1 https://github.com/mongodb-forks/redoc.git redoc`
     );
+
+    await run.command("npm ci --prefix cli/ --omit=dev", {
+      cwd: `${process.cwd()}/redoc`,
+    });
 
     await cache.save("redoc");
   }
