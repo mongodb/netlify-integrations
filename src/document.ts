@@ -136,17 +136,13 @@ export class Document {
         `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
       );
 
-      if (typeof parts != "string") {
-        console.log(`\n\r length of parts: ${parts.length}`);
+      //add a check in case there is no parts found
+
+      for (let part of parts) {
+        // add a check in case there is no value field found
+        heading.push(part);
       }
-
-      //add a check in case there is no value field found
-
-      // for (let part of parts) {
-      //   // add a check in case there is no value field found
-      //   heading.push(part.value);
-      // }
-      // headings.push(heading.join());
+      headings.push(heading.join());
     }
 
     title = headings.shift();
