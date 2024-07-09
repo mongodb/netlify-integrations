@@ -44,8 +44,7 @@ export class Document {
       path: "$..children[?(@.name=='meta')]..options",
       json: this.tree,
     });
-    console.log("\n\r metadata results:", results);
-    // console.log("value:", results[0][0].value);
+    // console.log("\n\r metadata results:", results);
     if (results.length) {
       if (results.length > 1)
         console.log(
@@ -58,7 +57,9 @@ export class Document {
 
       keywords = val.keywords ?? null;
       description = val.description ?? null;
-
+      console.log(
+        `robots: ${robots}, keywords: ${keywords}, description: ${description}`
+      );
       return [robots, keywords, description];
     }
 
@@ -74,6 +75,7 @@ export class Document {
       json: this.tree,
     });
 
+    console.log("\n\r paragraph results:", results);
     for (let r of results) {
       paragraphs += r;
     }
@@ -88,14 +90,14 @@ export class Document {
       json: this.tree,
     });
 
-    console.log("\n\r paragraph results:", results);
+    console.log("\n\r code results:", results);
 
     let codeContents = [];
-    // for (let r of results) {
-    //   const lang = r.get("lang", null);
-    //   codeContents.push({ lang: lang, value: r.value["value"] });
-    // }
-
-    return [];
+    for (let r of results) {
+      const lang = r.lang ?? null;
+      codeContents.push({ lang: lang, value: r.value });
+    }
+    console.log(`codeContents: ${codeContents}`);
+    return codeContents;
   }
 }
