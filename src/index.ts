@@ -35,7 +35,7 @@ integration.addBuildEventHandler(
 
 // handle building the redoc pages
 integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
-  console.log("=========== Chatbot Data Upload Integration ================");
+  console.log("=========== Redoc Integration ================");
   await run.command("unzip bundle.zip -d bundle");
 
   const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
@@ -44,7 +44,7 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
 
   console.log(siteMetadata);
 
-  console.log("=========== Chatbot Data Upload Integration ================");
+  console.log("=========== Redoc Integration ================");
 });
 
 // cache redoc
