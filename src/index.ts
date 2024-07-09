@@ -112,8 +112,6 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
   const openapiPages: OASPagesMetadata | undefined =
     buildMetadata["openapi_pages"];
 
-  console.log("buildMetadata", buildMetadata);
-
   if (!openapiPages) {
     console.log("No OpenAPI pages found");
     return;
@@ -121,7 +119,6 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
 
   const openapiPagesEntries = Object.entries(openapiPages);
   const siteUrl = process.env.DEPLOY_PRIME_URL || "";
-  console.log("siteUrl", siteUrl);
 
   for (const [pageSlug, data] of openapiPagesEntries) {
     const { source_type: sourceType, source } = data;
