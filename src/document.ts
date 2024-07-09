@@ -135,6 +135,11 @@ export class Document {
       console.log(
         `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
       );
+
+      if (typeof parts != "string") {
+        console.log(`\n\r length of parts: ${parts.length}`);
+      }
+
       //add a check in case there is no value field found
 
       // for (let part of parts) {
