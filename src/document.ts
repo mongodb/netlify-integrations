@@ -29,9 +29,18 @@ export class Document {
     this.code = this.findCode();
 
     //find title, headings
-    //find slug
-    //find preview
-    //find facets
+    [this.title, this.headings] = this.findHeadings();
+
+    //derive slug
+    this.slug = this.deriveSlug();
+
+    //derive preview
+    this.preview = this.derivePreview();
+
+    //derive facets
+    this.facets = this.deriveFacets();
+
+    //noindex, reasons
   }
 
   findMetadata() {
@@ -99,5 +108,52 @@ export class Document {
     }
     console.log(`codeContents: ${codeContents}`);
     return codeContents;
+  }
+
+  findHeadings() {
+    console.log("Finding headings and title");
+    let headings: string[] = [];
+    let title: string | undefined | null = null;
+    // Get all headings nodes
+
+    let results = JSONPath({
+      path: "$..children[?(@.type=='heading')].children",
+      json: this.tree,
+    });
+
+    console.log("\n\r headings results:", results);
+
+    //no heading nodes found?? page doesn't have title, or headings
+    if (!results.length) return [title, headings];
+
+    for (let r of results) {
+      let heading = [];
+      const parts = JSONPath({
+        path: "$..value",
+        json: r.value,
+      });
+      //add a check in case there is no value field found
+
+      for (let part of parts) {
+        // add a check in case there is no value field found
+        heading.push(part.value);
+      }
+      headings.push(heading.join());
+    }
+
+    title = headings.shift();
+    return [title, headings];
+  }
+
+  deriveSlug() {
+    return;
+  }
+
+  derivePreview() {
+    return;
+  }
+
+  deriveFacets() {
+    return;
   }
 }
