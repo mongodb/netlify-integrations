@@ -9,14 +9,14 @@ integration.addBuildEventHandler(
   "onPreBuild",
   async ({ utils: { run, cache } }) => {
     const hasRedoc = await cache.has("redoc");
-    if (hasRedoc) return;
+    if (hasRedoc) {
+      cache.restore("redoc");
+      return;
+    }
 
-    await run.command(`
-    git clone -b @dop/redoc-cli@${REDOC_CLI_VERSION} --depth 1 https://github.com/mongodb-forks/redoc.git redoc \
-    # Install dependencies for Redoc CLI
-    && cd redoc/ \
-    && npm ci --prefix cli/ --omit=dev
-  `);
+    await run.command(
+      `git clone -b @dop/redoc-cli@${REDOC_CLI_VERSION} --depth 1 https://github.com/mongodb-forks/redoc.git redoc && cd redoc/ && npm ci --prefix cli/ --omit=dev`
+    );
 
     await cache.save("redoc");
   }
@@ -26,6 +26,14 @@ integration.addBuildEventHandler(
 integration.addBuildEventHandler(
   "onPostBuild",
   async ({ utils: { run } }) => {}
+);
+
+// cache redoc
+integration.addBuildEventHandler(
+  "onPostBuild",
+  async ({ utils: { cache } }) => {
+    await cache.save("redoc");
+  }
 );
 
 export { integration };
