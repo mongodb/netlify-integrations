@@ -1,5 +1,6 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { JSONPath } from "jsonpath-plus";
+import { Facet } from "./createFacets";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -38,9 +39,10 @@ export class Document {
     this.preview = this.derivePreview();
 
     //derive facets
-    this.facets = this.deriveFacets();
+    this.facets = deriveFacets();
 
     //noindex, reasons
+    [this.noIndex, this.reasons] = this.getNoIndex();
   }
 
   findMetadata() {
@@ -104,6 +106,7 @@ export class Document {
     let codeContents = [];
     for (let r of results) {
       const lang = r.lang ?? null;
+      //check value on this
       codeContents.push({ lang: lang, value: r.value });
     }
     console.log(`codeContents: ${codeContents}`);
@@ -152,9 +155,9 @@ export class Document {
   deriveSlug() {
     console.log("Deriving slug");
 
-    let page_id = this.tree["filename"].split(".")[0];
-    if (page_id == "index") page_id = "";
-    return page_id;
+    let pageId = this.tree["filename"].split(".")[0];
+    if (pageId == "index") pageId = "";
+    return pageId;
   }
 
   derivePreview() {
@@ -181,7 +184,7 @@ export class Document {
     }
 
     if (results.length) {
-      let str_list = [];
+      let strList = [];
 
       //get value in results
       const first = JSONPath({
@@ -189,17 +192,71 @@ export class Document {
         json: results[0],
       });
 
+      //TO DO: check value on this
       for (let f of first) {
-        str_list.push(f.value);
+        strList.push(f.value);
       }
-      return str_list.join();
+      return strList.join();
     }
 
     //else, give up and don't provide a preview
     return;
   }
 
-  deriveFacets() {
-    return;
+  getNoIndex() {
+    //TO DO determine what the index/no index rules should be
+    console.log("Determining indexability");
+
+    let noIndex = false;
+    let reasons: string[] = [];
+
+    //if :robots: None in metadata, do not index
+    if (!this.robots) {
+      noIndex = true;
+      reasons.push("robots=None or robots=noindex in meta directive");
+    }
+
+    if (!this.title) {
+      noIndex = true;
+      reasons.push("This page has no headings");
+    }
+
+    console.log(`NoIndex: ${noIndex} because of ${JSON.stringify(reasons)}`);
+    return [noIndex, reasons];
   }
+
+  //recursive function to look within facets.sub_facets<facets[]>
+  //TO DO: create Facet class
+  //TO DO: redo how we access documentFacets to mutate it
 }
+
+const deriveFacets = (tree: any) => {
+  //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
+
+  const insertKeyVals = (facet: any, prefix = "d") => {
+    const key = prefix + facet.category;
+    documentFacets.key = documentFacets.key ?? [];
+    documentFacets.key.push(facet.value);
+
+    if (!facet.subFacets) return;
+
+    for (let subFacet of facet.subFacets) {
+      insertKeyVals(subFacet, key + ">" + facet.value + ">");
+    }
+  };
+
+  const createFacet = (facetEntry: any) => {
+    const facet = new Facet(facetEntry);
+    insertKeyVals(facet);
+  };
+
+  let documentFacets: any = {};
+  if (tree["facets"]) {
+    for (let facetEntry of tree["facets"]) {
+      new Facet(facetEntry);
+      createFacet(facetEntry);
+    }
+  }
+  console.log("Document facets:" + JSON.stringify(documentFacets));
+  return documentFacets;
+};
