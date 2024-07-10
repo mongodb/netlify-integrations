@@ -1,5 +1,6 @@
 import { AnyBulkWriteOperation, FindCursor } from "mongodb";
 import isEqual from "fast-deep-equal";
+import { bulkWrite, db } from "./connector";
 
 interface PreviousPageMapping {
   [key: string]: {
