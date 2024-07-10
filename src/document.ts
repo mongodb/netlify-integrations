@@ -39,7 +39,7 @@ export class Document {
     this.preview = this.derivePreview();
 
     //derive facets
-    this.facets = deriveFacets();
+    this.facets = deriveFacets(this.tree);
 
     //noindex, reasons
     [this.noIndex, this.reasons] = this.getNoIndex();
