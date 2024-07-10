@@ -246,7 +246,11 @@ const deriveFacets = (tree: any) => {
   };
 
   const createFacet = (facetEntry: any) => {
-    const facet = new Facet(facetEntry);
+    const facet = new Facet(
+      facetEntry.category,
+      facetEntry.value,
+      facetEntry.sub_facets
+    );
     insertKeyVals(facet);
   };
 
