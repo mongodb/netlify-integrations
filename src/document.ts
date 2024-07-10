@@ -233,7 +233,7 @@ export class Document {
 const deriveFacets = (tree: any) => {
   //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
 
-  const insertKeyVals = (facet: any, prefix = "d") => {
+  const insertKeyVals = (facet: any, prefix = "") => {
     const key = prefix + facet.category;
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
