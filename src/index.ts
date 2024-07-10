@@ -25,9 +25,9 @@ integration.addBuildEventHandler(
   async ({ utils: { run, cache } }) => {
     console.log("Running redoc prebuild");
     const hasRedoc = await cache.has("redoc");
+
     if (hasRedoc) {
       console.log("Restoring redoc from cache");
-
       cache.restore("redoc");
       return;
     }
@@ -68,7 +68,7 @@ export interface RedocVersionOptions {
   resourceVersions: string[];
 }
 
-async function getOASpecCommand({
+async function getBuildOasSpecCommand({
   source,
   sourceType,
   pageSlug,
@@ -78,7 +78,10 @@ async function getOASpecCommand({
 }: GetOASpecParams) {
   try {
     let spec = "";
-    if (sourceType === "local") {
+
+    if (sourceType === "url") {
+      spec = source;
+    } else if (sourceType === "local") {
       const localFilePath = `source${source}`;
       spec = localFilePath;
     } else {
@@ -108,9 +111,9 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
   const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
 
   const buildMetadata = deserialize(siteBson);
-  const siteTitle: string = buildMetadata["title"];
+  const siteTitle: string = buildMetadata.title;
   const openapiPages: OASPagesMetadata | undefined =
-    buildMetadata["openapi_pages"];
+    buildMetadata.openapi_pages;
 
   if (!openapiPages) {
     console.log("No OpenAPI pages found");
@@ -123,7 +126,7 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
   for (const [pageSlug, data] of openapiPagesEntries) {
     const { source_type: sourceType, source } = data;
 
-    const command = await getOASpecCommand({
+    const command = await getBuildOasSpecCommand({
       source,
       sourceType,
       output: `${process.cwd()}/snooty/public`,
