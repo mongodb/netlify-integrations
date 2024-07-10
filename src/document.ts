@@ -235,8 +235,8 @@ const deriveFacets = (tree: any) => {
 
   const insertKeyVals = (facet: any, prefix = "d") => {
     const key = prefix + facet.category;
-    documentFacets.key = documentFacets.key ?? [];
-    documentFacets.key.push(facet.value);
+    documentFacets[key] = documentFacets[key] ?? [];
+    documentFacets[key].push(facet.value);
 
     if (!facet.subFacets) return;
 
@@ -253,7 +253,6 @@ const deriveFacets = (tree: any) => {
   let documentFacets: any = {};
   if (tree["facets"]) {
     for (let facetEntry of tree["facets"]) {
-      new Facet(facetEntry);
       createFacet(facetEntry);
     }
   }
