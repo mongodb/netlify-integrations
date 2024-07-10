@@ -10,14 +10,16 @@ export class Facet {
     this.value = value;
     this.subFacets = [];
 
-    for (let subFacet of subFacets) {
-      this.subFacets.push(
-        new Facet(
-          subFacet["category"],
-          subFacet["value"],
-          subFacet["sub_facets"] ?? []
-        )
-      );
+    if (subFacets) {
+      for (let subFacet of subFacets) {
+        this.subFacets.push(
+          new Facet(
+            subFacet["category"],
+            subFacet["value"],
+            subFacet["sub_facets"] ?? []
+          )
+        );
+      }
     }
   }
 }
