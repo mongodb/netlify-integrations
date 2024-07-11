@@ -129,7 +129,7 @@ export const updatePages = async (pages: Page[], collection: string) => {
         currentPages: pages,
         updateTime,
       }),
-      ...markUnseenPagesAsDeleted(),
+      ...markUnseenPagesAsDeleted({ prevPageIds, updateTime }),
     ];
     console.timeEnd(diffsTimerLabel);
 
@@ -151,7 +151,29 @@ export const updatePages = async (pages: Page[], collection: string) => {
   }
 };
 
-function markUnseenPagesAsDeleted() {
+interface MarkUnseenPagesAsDeletedParams {
+  updateTime: Date;
+  prevPageIds: Set<string>;
+}
+function markUnseenPagesAsDeleted({
+  prevPageIds,
+  updateTime,
+}: MarkUnseenPagesAsDeletedParams) {
+  const operations: AnyBulkWriteOperation[] = [];
+  prevPageIds.forEach((unseenPageId) => {
+    const operation = {
+      updateOne: {
+        filter: { page_id: unseenPageId, github_username: GITHUB_USER },
+        update: {
+          $set: {
+            deleted: true,
+            updated_at: updateTime,
+          },
+        },
+      },
+    };
+    operations.push(operation);
+  });
   return [];
 }
 
