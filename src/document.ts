@@ -1,6 +1,7 @@
 import { NetlifyIntegration } from "@netlify/sdk";
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
+import { ManifestEntry } from ".";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -8,20 +9,20 @@ export class Document {
   robots: any;
   keywords: any;
   description: any;
-  paragraphs: any;
-  code: any;
+  paragraphs: string;
+  code: { lang: string; value: any }[];
   title: any;
   headings: any;
-  slug: any;
-  preview: any;
+  slug: string;
+  preview: string;
   facets: any;
   noIndex: any;
   reasons: any;
 
   constructor(doc: any) {
     this.tree = doc;
-    // this.tree.ast = JSON.stringify(this.tree.ast);
-    console.log("called doc");
+
+    console.log("called doc constructor");
     //find metadata
     [this.robots, this.keywords, this.description] = this.findMetadata();
     //find paragraphs
@@ -66,15 +67,14 @@ export class Document {
       if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
         robots = false;
 
-      keywords = val.keywords ?? null;
-      description = val.description ?? null;
+      keywords = val?.keywords ?? null;
+      description = val?.description ?? null;
       console.log(
         `robots: ${robots}, keywords: ${keywords}, description: ${description}`
       );
-      return [robots, keywords, description];
     }
 
-    return [];
+    return [robots, keywords, description];
   }
 
   findParagraphs() {
@@ -116,7 +116,7 @@ export class Document {
   findHeadings() {
     console.log("Finding headings and title");
     let headings: string[] = [];
-    let title: string | undefined | null = null;
+    let title: string | null = null;
     // Get the children of headings nodes
 
     let results = JSONPath({
@@ -148,14 +148,14 @@ export class Document {
       headings.push(heading.join());
     }
 
-    title = headings.shift();
+    title = headings.shift() ?? null;
     return [title, headings];
   }
 
   deriveSlug() {
     console.log("Deriving slug");
 
-    let pageId = this.tree["filename"].split(".")[0];
+    let pageId = this.tree["filename"]?.split(".")[0];
     if (pageId == "index") pageId = "";
     return pageId;
   }
@@ -200,7 +200,7 @@ export class Document {
     }
 
     //else, give up and don't provide a preview
-    return;
+    return "";
   }
 
   getNoIndex() {
@@ -225,9 +225,27 @@ export class Document {
     return [noIndex, reasons];
   }
 
-  //recursive function to look within facets.sub_facets<facets[]>
-  //TO DO: create Facet class
-  //TO DO: redo how we access documentFacets to mutate it
+  exportAsManifest = () => {
+    // Generate the manifest dictionary entry from the AST source
+
+    if (this.noIndex) {
+      console.info("Refusing to index");
+      return null;
+    }
+
+    const document = new ManifestEntry({
+      slug: this.slug,
+      title: this.title,
+      headings: this.headings,
+      paragraphs: this.paragraphs,
+      code: this.code,
+      preview: this.preview,
+      keywords: this.keywords,
+      facets: this.facets,
+    });
+
+    return document;
+  };
 }
 
 const deriveFacets = (tree: any) => {
@@ -235,6 +253,7 @@ const deriveFacets = (tree: any) => {
 
   const insertKeyVals = (facet: any, prefix = "") => {
     const key = prefix + facet.category;
+    //TODO: check this logic
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
 

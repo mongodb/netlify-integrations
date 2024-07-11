@@ -9,21 +9,54 @@ const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
 
-interface Manifest {
-  url?: URL;
-  includeInGlobalSearch: boolean;
+class Manifest {
+  url?: string;
+  global: boolean;
   documents: ManifestEntry[];
+
+  constructor(includeInGlobalSearch: boolean, url: string = "") {
+    this.url = url;
+    this.global = includeInGlobalSearch;
+    this.documents = [];
+  }
+
+  addDocument(document: ManifestEntry | null) {
+    //Add a document to the manifest
+    if (document) this.documents.push(document);
+  }
+
+  export() {
+    //return the manifest as json
+    const manifest = {
+      url: this.url,
+      includeInGlobalSearch: this.global,
+      documents: this.documents,
+    };
+
+    return JSON.stringify(manifest);
+  }
 }
 
-interface ManifestEntry {
+export class ManifestEntry {
   slug: string;
   title?: string[];
   headings?: string[][];
   paragraphs: string;
-  code: {};
+  code: { lang: string; value: any }[];
   preview?: string;
   tags: string[];
   facets: any;
+
+  constructor(entry: any) {
+    this.slug = entry.slug;
+    this.title = entry.title;
+    this.headings = entry.headings;
+    this.paragraphs = entry.paragraphs;
+    this.code = entry.code;
+    this.preview = entry.preview;
+    this.tags = entry.tags;
+    this.facets = entry.facets;
+  }
 }
 
 // const generateManifest = async (
@@ -36,9 +69,8 @@ interface ManifestEntry {
 const processManifest = (decodedFile: any) => {
   //put file into Document object
   //export Document object
-  const doc = new Document(decodedFile);
-  console.log("new document created");
-  return decodedFile;
+  const doc = new Document(decodedFile).exportAsManifest();
+  return doc;
 };
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
@@ -52,11 +84,8 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   await run.command("unzip bundle.zip");
   console.log("Bundle unzipped");
 
-  //   create Manifest object
-  //   const manifest: Manifest = {
-  //     includeInGlobalSearch: includeInGlobalSearch,
-  //     documents: [] as ManifestEntry[],
-  //   };
+  // create Manifest object
+  const manifest = new Manifest(true);
 
   //go into documents directory and get list of file entries
   const entries = readdirSync("documents", { recursive: true }).map(
@@ -80,6 +109,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
       //"""Return indexing data from a page's AST for search purposes."""
 
       //add document to manifest object
+      manifest.addDocument(processedDoc);
     }
   }
 
