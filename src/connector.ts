@@ -4,7 +4,7 @@
 // If no, the helper should be implemented in that service, not here
 
 import * as mongodb from "mongodb";
-import { ObjectId, Db, Document } from "mongodb";
+import { Db } from "mongodb";
 
 // We should only ever have one client active at a time.
 const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
@@ -30,33 +30,6 @@ export const db = async () => {
   return dbInstance;
 };
 
-// all docs should be inserted with the buildId for the run.
-export const insert = async (
-  docs: any[],
-  collection: string,
-  buildId: ObjectId,
-  printTime = false
-) => {
-  const timerLabel = `insert - ${collection}`;
-  if (printTime) console.time(timerLabel);
-  const insertSession = await db();
-  try {
-    return insertSession.collection(collection).insertMany(
-      docs.map((d) => ({
-        ...d,
-        build_id: buildId,
-        created_at: new Date(),
-      })),
-      { ordered: false }
-    );
-  } catch (error) {
-    console.error(`Error at insertion time for ${collection}: ${error}`);
-    throw error;
-  } finally {
-    if (printTime) console.timeEnd(timerLabel);
-  }
-};
-
 export const bulkWrite = async (
   operations: mongodb.AnyBulkWriteOperation[],
   collection: string
@@ -71,37 +44,6 @@ export const bulkWrite = async (
       .bulkWrite(operations, { ordered: false });
   } catch (error) {
     console.error(`Error at bulk write time for ${collection}: ${error}`);
-    throw error;
-  }
-};
-
-// Upsert wrapper, requires an _id field.
-export const bulkUpsertAll = async (items: Document[], collection: string) => {
-  const operations: mongodb.AnyBulkWriteOperation[] = [];
-  items.forEach((item: Document) => {
-    const op = {
-      updateOne: {
-        filter: { _id: item._id },
-        update: { $set: item },
-        upsert: true,
-      },
-    };
-    operations.push(op);
-  });
-  return bulkWrite(operations, collection);
-};
-
-export const deleteDocuments = async (_ids: ObjectId[], collection: string) => {
-  const deleteSession = await db();
-  try {
-    const query = {
-      _id: { $in: _ids },
-    };
-    const res = await deleteSession.collection(collection).deleteMany(query);
-    console.log(`Deleted ${res.deletedCount} documents in ${collection}`);
-    return res;
-  } catch (error) {
-    console.error(`Error at delete time for ${collection}: ${error}`);
     throw error;
   }
 };
