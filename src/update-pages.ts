@@ -207,36 +207,35 @@ export function checkForPageDiffs({
 
     // Update the document if page's current AST is different from previous build's.
     // New pages should always count as having a "different" AST
-    if (!isEqual(page.ast, prevPageData?.ast)) {
-      const operation = {
-        updateOne: {
-          filter: {
-            page_id: currentPageId,
-            github_username: page.github_username,
-          },
-          update: {
-            $set: {
-              page_id: currentPageId,
-              filename: page.filename,
-              ast: page.ast,
-              static_assets: findUpdatedAssets(
-                page.static_assets,
-                updateTime,
-                prevPageData?.static_assets
-              ),
-              updated_at: updateTime,
-              deleted: false,
-              // Track the last build ID to update the content
-            },
-            $setOnInsert: {
-              created_at: updateTime,
-            },
-          },
-          upsert: true,
+    if (isEqual(page.ast, prevPageData?.ast)) return;
+    const operation = {
+      updateOne: {
+        filter: {
+          page_id: currentPageId,
+          github_username: page.github_username,
         },
-      };
-      operations.push(operation);
-    }
+        update: {
+          $set: {
+            page_id: currentPageId,
+            filename: page.filename,
+            ast: page.ast,
+            static_assets: findUpdatedAssets(
+              page.static_assets,
+              updateTime,
+              prevPageData?.static_assets
+            ),
+            updated_at: updateTime,
+            deleted: false,
+            // Track the last build ID to update the content
+          },
+          $setOnInsert: {
+            created_at: updateTime,
+          },
+        },
+        upsert: true,
+      },
+    };
+    operations.push(operation);
   });
   return operations;
 }
