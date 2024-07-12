@@ -15,6 +15,7 @@ export interface StaticAsset {
   updated_at?: Date;
 }
 export interface PageAst {
+  [key: string]: unknown;
   type: string;
   position: Record<string, unknown>;
   children: PageAst[];
@@ -34,7 +35,7 @@ export interface UpdatedPage extends Page {
   updated_at: Date;
   deleted: boolean;
 }
-const GITHUB_USER = "docs-builder-bot";
+export const GITHUB_USER = "docs-builder-bot";
 
 export const createPageAstMapping = async (docsCursor: FindCursor) => {
   // Create mapping for page id and its AST
