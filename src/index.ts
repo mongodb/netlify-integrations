@@ -1,41 +1,14 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir, readdirSync, readFileSync, open } from "fs";
-import { BSON, EJSON, ObjectId } from "bson";
+import { readdir, readdirSync, readFileSync } from "fs";
+import { BSON } from "bson";
 import { Document } from "./document";
+import { Manifest } from "./manifest";
 
 const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
-
-class Manifest {
-  url?: string;
-  global: boolean;
-  documents: ManifestEntry[];
-
-  constructor(includeInGlobalSearch: boolean, url: string = "") {
-    this.url = url;
-    this.global = includeInGlobalSearch;
-    this.documents = [];
-  }
-
-  addDocument(document: ManifestEntry | null) {
-    //Add a document to the manifest
-    if (document) this.documents.push(document);
-  }
-
-  export() {
-    //return the manifest as json
-    const manifest = {
-      url: this.url,
-      includeInGlobalSearch: this.global,
-      documents: this.documents,
-    };
-
-    return JSON.stringify(manifest);
-  }
-}
 
 export class ManifestEntry {
   slug: string;
@@ -58,13 +31,6 @@ export class ManifestEntry {
     this.facets = entry.facets;
   }
 }
-
-// const generateManifest = async (
-//   filePath: string,
-//   includeInGlobalSearch: boolean,
-//   run?: any
-// ) => {
-// };
 
 const processManifest = (decodedFile: any) => {
   //put file into Document object
