@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "netlify-integration build -a test",
+    "build": "netlify-integration build -a vitest",
     "dev": "netlify-integration dev -a",
     "preview": "netlify-integration preview",
     "test": "vitest"
