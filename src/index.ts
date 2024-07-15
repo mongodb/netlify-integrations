@@ -39,6 +39,7 @@ const processManifest = (decodedFile: any) => {
   return doc;
 };
 
+//Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
   const filePath =
@@ -66,14 +67,12 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      // console.log(entry);
+      console.log(entry);
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
       //Enter proccess snooty manifest bson function
       const processedDoc = processManifest(decoded);
-      //"""Return indexing data from a page's AST for search purposes."""
-
       //add document to manifest object
       manifest.addDocument(processedDoc);
     }
