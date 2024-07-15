@@ -1,3 +1,4 @@
+import { NetlifyIntegration } from "@netlify/sdk";
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import { ManifestEntry } from ".";
