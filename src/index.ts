@@ -80,9 +80,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
       filePath.match("bundle.zip")
     )[0] ?? "";
 
-  console.log("unzipping zipfile");
+  // console.log("unzipping zipfile");
   await run.command("unzip bundle.zip");
-  console.log("Bundle unzipped");
+  // console.log("Bundle unzipped");
 
   // create Manifest object
   const manifest = new Manifest(true);
@@ -100,7 +100,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      console.log(entry);
+      // console.log(entry);
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
