@@ -111,6 +111,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
       //the file is read and decoded
+      console.log(entry);
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
       //Enter proccess snooty manifest bson function
