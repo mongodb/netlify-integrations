@@ -90,9 +90,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
       filePath.match("bundle.zip")
     )[0] ?? "";
 
-  console.log("unzipping zipfile");
+  // console.log("unzipping zipfile");
   await run.command("unzip bundle.zip");
-  console.log("Bundle unzipped");
+  // console.log("Bundle unzipped");
 
   // create Manifest object
   const manifest = new Manifest(true);
