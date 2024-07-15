@@ -23,10 +23,14 @@ class Manifest {
   addDocument(document: ManifestEntry | null) {
     //Add a document to the manifest
     if (document) {
-      writeFile(`${document.slug}`, JSON.stringify(document), (err) => {
-        // In case of a error throw err.
-        if (err) throw err;
-      });
+      writeFile(
+        `Output of ${document.slug}`,
+        JSON.stringify(document),
+        (err) => {
+          // In case of a error throw err.
+          if (err) throw err;
+        }
+      );
       this.documents.push(document);
     }
   }
@@ -106,7 +110,6 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      console.log(entry);
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
