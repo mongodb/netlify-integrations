@@ -4,48 +4,11 @@ import { promisify } from "util";
 import { readdir, readdirSync, readFileSync, writeFile } from "fs";
 import { BSON, EJSON, ObjectId } from "bson";
 import { Document } from "./document";
+import { Manifest } from "./manifest";
 
 const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
-
-class Manifest {
-  url?: string;
-  global: boolean;
-  documents: ManifestEntry[];
-
-  constructor(includeInGlobalSearch: boolean, url: string = "") {
-    this.url = url;
-    this.global = includeInGlobalSearch;
-    this.documents = [];
-  }
-
-  addDocument(document: ManifestEntry | null) {
-    //Add a document to the manifest
-    if (document) {
-      writeFile(
-        `Output of ${document.slug}`,
-        JSON.stringify(document),
-        (err) => {
-          // In case of a error throw err.
-          if (err) throw err;
-        }
-      );
-      this.documents.push(document);
-    }
-  }
-
-  export() {
-    //return the manifest as json
-    const manifest = {
-      url: this.url,
-      includeInGlobalSearch: this.global,
-      documents: this.documents,
-    };
-
-    return JSON.stringify(manifest);
-  }
-}
 
 export class ManifestEntry {
   slug: string;
@@ -69,13 +32,6 @@ export class ManifestEntry {
   }
 }
 
-// const generateManifest = async (
-//   filePath: string,
-//   includeInGlobalSearch: boolean,
-//   run?: any
-// ) => {
-// };
-
 const processManifest = (decodedFile: any) => {
   //put file into Document object
   //export Document object
@@ -83,6 +39,7 @@ const processManifest = (decodedFile: any) => {
   return doc;
 };
 
+//Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
   const filePath =
@@ -110,16 +67,17 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   for (const entry of entries) {
     if (!entry.includes("images") && entry.includes("bson")) {
-      //the file is read and decoded
-      console.log(entry);
-      const decoded = BSON.deserialize(readFileSync(entry));
-      // console.log(decoded.ast);
-      //Enter proccess snooty manifest bson function
-      const processedDoc = processManifest(decoded);
-      //"""Return indexing data from a page's AST for search purposes."""
-
-      //add document to manifest object
-      manifest.addDocument(processedDoc);
+      try {
+        console.log(entry);
+        //the file is read and decoded
+        const decoded = BSON.deserialize(readFileSync(entry));
+        // proccess snooty manifest
+        const processedDoc = processManifest(decoded);
+        //add document to manifest object
+        manifest.addDocument(processedDoc);
+      } catch (e) {
+        console.log(`error found: ${e}`);
+      }
     }
   }
 
