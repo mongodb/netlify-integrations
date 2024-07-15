@@ -1,7 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { promisify } from "util";
-import { readdir, readdirSync, readFileSync, writeFile } from "fs";
+import { readdir, readdirSync, readFileSync, open } from "fs";
 import { BSON, EJSON, ObjectId } from "bson";
 import { Document } from "./document";
 
@@ -22,13 +22,7 @@ class Manifest {
 
   addDocument(document: ManifestEntry | null) {
     //Add a document to the manifest
-    if (document) {
-      writeFile(`${document.slug}`, JSON.stringify(document), (err) => {
-        // In case of a error throw err.
-        if (err) throw err;
-      });
-      this.documents.push(document);
-    }
+    if (document) this.documents.push(document);
   }
 
   export() {
@@ -119,7 +113,6 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     }
   }
 
-  console.log(readdirSync(process.cwd()));
   // generateManifest(filePath, true, run);
   console.log("outside of generate manifest");
 });
