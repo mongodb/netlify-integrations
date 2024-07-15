@@ -86,7 +86,7 @@ export class Document {
       json: this.tree,
     });
 
-    // console.log("\n\r paragraph results:", results);
+    console.log("\n\r paragraph results:", results);
     for (let r of results) {
       paragraphs += r;
     }
@@ -101,7 +101,7 @@ export class Document {
       json: this.tree,
     });
 
-    // console.log("\n\r code results:", results);
+    console.log("\n\r code results:", results);
 
     let codeContents = [];
     for (let r of results) {
@@ -109,7 +109,7 @@ export class Document {
       //check value on this
       codeContents.push({ lang: lang, value: r.value });
     }
-    // console.log(`codeContents: ${codeContents}`);
+    console.log(`codeContents: ${codeContents}`);
     return codeContents;
   }
 
@@ -135,9 +135,9 @@ export class Document {
         path: "$..value",
         json: r,
       });
-      // console.log(
-      //   `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
-      // );
+      console.log(
+        `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
+      );
 
       //add a check in case there is no parts found
 
