@@ -7,7 +7,6 @@
     "build": "netlify-integration build -a",
     "dev": "netlify-integration dev -a",
     "preview": "netlify-integration preview",
-    "test": "vitest"
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
@@ -15,8 +14,7 @@
     "fs": "^0.0.1-security",
     "jsonpath-plus": "^9.0.0",
     "lts": "^1.2.0",
-    "typescript": "^5.5.2",
-    "vitest": "^2.0.3"
+    "typescript": "^5.5.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.9"
