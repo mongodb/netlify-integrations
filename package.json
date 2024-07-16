@@ -6,7 +6,6 @@
   "scripts": {
     "build": "netlify-integration build -a",
     "dev": "netlify-integration dev -a",
-    "preview": "netlify-integration preview"
   },
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
