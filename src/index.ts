@@ -15,7 +15,7 @@ integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run, git } }) => {
     console.log("=========== Chatbot Data Upload Integration ================");
-    await run.command("unzip bundle.zip -d bundle");
+    await run.command("unzip -o bundle.zip -d bundle");
 
     console.log(git.deletedFiles);
 
