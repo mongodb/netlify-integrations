@@ -46,9 +46,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   await run.command("unzip -o bundle.zip");
   // console.log("Bundle unzipped");
 
-  generateManifest();
+  await generateManifest();
 
-  console.log("outside of generate manifest");
+  console.log("=========== finished generating manifests ================");
 });
 
 export { integration };
