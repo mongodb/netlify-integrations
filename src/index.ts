@@ -2,9 +2,8 @@ import { deserialize } from "bson";
 import { writeFile, readFile } from "fs";
 import { promisify } from "util";
 import { NetlifyIntegration } from "@netlify/sdk";
-
-const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
+import { readFileAsync } from "./utils/fs-async";
+import { getBuildOasSpecCommand } from "./build-pages";
 
 const integration = new NetlifyIntegration();
 const BUNDLE_PATH = `${process.cwd()}/bundle`;
@@ -43,65 +42,6 @@ integration.addBuildEventHandler(
     await cache.save("redoc");
   }
 );
-
-interface GetOASpecParams {
-  sourceType: string;
-  source: string;
-  output: string;
-  pageSlug: string;
-  siteUrl: string;
-  siteTitle: string;
-}
-
-export const normalizePath = (path: string) => path.replace(/\/+/g, `/`);
-export const normalizeUrl = (url: string) => {
-  const urlObject = new URL(url);
-  urlObject.pathname = normalizePath(urlObject.pathname);
-  return urlObject.href;
-};
-export interface RedocVersionOptions {
-  active: {
-    apiVersion: string;
-    resourceVersion: string;
-  };
-  rootUrl: string;
-  resourceVersions: string[];
-}
-
-async function getBuildOasSpecCommand({
-  source,
-  sourceType,
-  pageSlug,
-  output,
-  siteUrl,
-  siteTitle,
-}: GetOASpecParams) {
-  try {
-    let spec = "";
-
-    if (sourceType === "url") {
-      spec = source;
-    } else if (sourceType === "local") {
-      const localFilePath = `source${source}`;
-      spec = localFilePath;
-    } else {
-      throw new Error(
-        `Unsupported source type "${sourceType}" for ${pageSlug}`
-      );
-    }
-
-    const path = `${output}/${pageSlug}/index.html`;
-    const finalFilename = normalizePath(path);
-    await writeFileAsync(
-      `${process.cwd()}/options.json`,
-      JSON.stringify({ siteUrl, siteTitle })
-    );
-    return `node ${process.cwd()}/redoc/cli/index.js build ${spec} --output ${finalFilename} --options ${process.cwd()}/options.json`;
-  } catch (e) {
-    console.error(e);
-    return "";
-  }
-}
 
 // handle building the redoc pages
 integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
