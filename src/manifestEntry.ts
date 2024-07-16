@@ -1,3 +1,4 @@
+//change this to an interface
 export class ManifestEntry {
   slug: string;
   title?: string[];
