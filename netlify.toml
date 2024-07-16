@@ -1,5 +1,5 @@
 [build]
-command="netlify-integration build -a"
+command="netlify-integration build -a --packages=external"
 publish=".ntli/site/static"
 
 [functions]
