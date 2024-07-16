@@ -10,35 +10,6 @@ const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
 
-export class ManifestEntry {
-  slug: string;
-  title?: string[];
-  headings?: string[][];
-  paragraphs: string;
-  code: { lang: string; value: any }[];
-  preview?: string;
-  tags: string[];
-  facets: any;
-
-  constructor(entry: any) {
-    this.slug = entry.slug;
-    this.title = entry.title;
-    this.headings = entry.headings;
-    this.paragraphs = entry.paragraphs;
-    this.code = entry.code;
-    this.preview = entry.preview;
-    this.tags = entry.tags;
-    this.facets = entry.facets;
-  }
-}
-
-const processManifest = (decodedFile: any) => {
-  //put file into Document object
-  //export Document object
-  const doc = new Document(decodedFile).exportAsManifest();
-  return doc;
-};
-
 //Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
@@ -48,7 +19,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     )[0] ?? "";
 
   // console.log("unzipping zipfile");
-  await run.command("unzip bundle.zip");
+  await run.command("unzip -o bundle.zip -d bundle");
   // console.log("Bundle unzipped");
 
   // create Manifest object
@@ -71,8 +42,10 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
       //the file is read and decoded
       const decoded = BSON.deserialize(readFileSync(entry));
       // console.log(decoded.ast);
-      //Enter proccess snooty manifest bson function
-      const processedDoc = processManifest(decoded);
+
+      //put file into Document object
+      //export Document object
+      const processedDoc = new Document(decoded).exportAsManifest();
       //add document to manifest object
       manifest.addDocument(processedDoc);
     }

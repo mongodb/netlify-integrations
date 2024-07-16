@@ -1,4 +1,4 @@
-import { ManifestEntry } from ".";
+import { ManifestEntry } from "./manifestEntry";
 import { writeFile } from "fs";
 
 export class Manifest {
