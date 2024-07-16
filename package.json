@@ -15,10 +15,10 @@
     "fs": "^0.0.1-security",
     "jsonpath-plus": "^9.0.0",
     "lts": "^1.2.0",
-    "typescript": "^5.5.2",
-    "vitest": "^2.0.3"
+    "typescript": "^5.5.2"
   },
   "devDependencies": {
-    "@types/node": "^20.14.9"
+    "@types/node": "^20.14.9",
+    "vitest": "^2.0.3"
   }
 }
