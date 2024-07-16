@@ -1,6 +1,4 @@
 import { deserialize } from "bson";
-import { writeFile, readFile } from "fs";
-import { promisify } from "util";
 import { NetlifyIntegration } from "@netlify/sdk";
 import { readFileAsync } from "./utils/fs-async";
 import { getBuildOasSpecCommand } from "./build-pages";
@@ -46,7 +44,7 @@ integration.addBuildEventHandler(
 // handle building the redoc pages
 integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
   console.log("=========== Redoc Integration Begin ================");
-  await run.command("unzip bundle.zip -d bundle");
+  await run.command("unzip -o bundle.zip -d bundle");
 
   const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
 
