@@ -14,6 +14,8 @@ export const teardown = async () => {
   await client.close();
 };
 
+const SNOOTY_DB_NAME = "snooty_dotcomstg";
+
 // cached db object, so we can handle initial connection process once if unitialized
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
@@ -21,7 +23,7 @@ export const db = async () => {
   if (!dbInstance) {
     try {
       await client.connect();
-      dbInstance = client.db(process.env.SNOOTY_DB_NAME);
+      dbInstance = client.db(SNOOTY_DB_NAME);
     } catch (error) {
       console.error(`Error at db client connection: ${error}`);
       throw error;

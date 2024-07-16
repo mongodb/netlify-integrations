@@ -139,7 +139,8 @@ export const updatePages = async (pages: Page[], collection: string) => {
       console.time(bulkWriteTimerLabel);
 
       try {
-        await bulkWrite(operations, collection);
+        console.log(operations);
+        // await bulkWrite(operations, collection);
       } finally {
         console.timeEnd(bulkWriteTimerLabel);
       }

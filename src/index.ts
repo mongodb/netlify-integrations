@@ -3,7 +3,7 @@ import { NetlifyIntegration } from "@netlify/sdk";
 import { deserialize } from "bson";
 import { readdir, readFile } from "fs";
 import { promisify } from "util";
-import { Page } from "./update-pages";
+import { Page, updatePages } from "./update-pages";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
@@ -37,6 +37,7 @@ integration.addBuildEventHandler(
       })
     );
 
+    await updatePages(pageAstObjects, "updated_documents");
     console.log("=========== Chatbot Data Upload Integration ================");
   }
 );

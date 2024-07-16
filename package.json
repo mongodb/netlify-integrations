@@ -19,6 +19,7 @@
     "@netlify/build": "^29.50.2",
     "@types/node": "^20.14.9",
     "execa": "^6.1.0",
+    "mongodb-memory-server": "^9.4.0",
     "vitest": "^2.0.2"
   }
 }
