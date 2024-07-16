@@ -1,6 +1,6 @@
 [build]
-command="netlify-integration build -a --packages=external"
-publish=".ntli/site/static"
+command = "netlify-integration build -a --packages=external"
+publish = ".ntli/site/static"
 
 [functions]
 directory=".ntli/site/netlify/functions"
