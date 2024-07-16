@@ -104,9 +104,6 @@ export const updatePages = async (pages: Page[], collection: string) => {
     return;
   }
 
-  const timerLabel = "page document updates";
-  console.time(timerLabel);
-
   try {
     const updateTime = new Date();
     // Find all pages that share the same project name + branch. Expects page IDs
@@ -120,9 +117,6 @@ export const updatePages = async (pages: Page[], collection: string) => {
     const { mapping: prevPageDocsMapping, pageIds: prevPageIds } =
       await createPageAstMapping(previousPagesCursor);
 
-    const diffsTimerLabel = "finding page differences";
-    console.time(diffsTimerLabel);
-
     const operations = [
       ...checkForPageDiffs({
         prevPageDocsMapping,
@@ -132,24 +126,14 @@ export const updatePages = async (pages: Page[], collection: string) => {
       }),
       ...markUnseenPagesAsDeleted({ prevPageIds, updateTime }),
     ];
-    console.timeEnd(diffsTimerLabel);
 
     if (operations.length > 0) {
-      const bulkWriteTimerLabel = "page document update writes";
-      console.time(bulkWriteTimerLabel);
-
-      try {
-        console.log(operations);
-        // await bulkWrite(operations, collection);
-      } finally {
-        console.timeEnd(bulkWriteTimerLabel);
-      }
+      console.log(operations);
+      // await bulkWrite(operations, collection);
     }
   } catch (error) {
     console.error(`Error when trying to update pages: ${error}`);
     throw error;
-  } finally {
-    console.timeEnd(timerLabel);
   }
 };
 
