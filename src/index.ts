@@ -19,7 +19,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     )[0] ?? "";
 
   // console.log("unzipping zipfile");
-  await run.command("unzip -o bundle.zip -d bundle");
+  await run.command("unzip bundle.zip");
   // console.log("Bundle unzipped");
 
   // create Manifest object
