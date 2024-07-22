@@ -1,7 +1,13 @@
-import { beforeEach, describe, it } from "vitest";
+import { beforeEach, describe, it, vi } from "vitest";
 import { GITHUB_USER, Page, updatePages } from "../src/update-pages";
+import * as mongodb from "mongodb";
+import { getMockDb } from "./utils/mockDb";
 
+vi.mock("mongodb", async (importOriginal) => {});
 const COLLECTION_NAME = "updated_documents";
+
+const db = await getMockDb();
+vi.spyOn(mongodb, "MongoClient");
 
 beforeEach(() => {});
 describe("Update Pages Unit Tests", () => {
