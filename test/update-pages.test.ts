@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
-import { GITHUB_USER, Page, updatePages } from "../src/update-pages";
+import {
+  GITHUB_USER,
+  Page,
+  UpdatedPage,
+  updatePages,
+} from "../src/update-pages";
+import { getMockDb } from "./utils/mockDb";
 
 const COLLECTION_NAME = "updated_documents";
 
@@ -51,5 +57,14 @@ describe("Update Pages Unit Tests", async () => {
     ];
 
     await updatePages(testPages, COLLECTION_NAME);
+    await updatePages(testPages, COLLECTION_NAME);
+
+    const db = await getMockDb();
+    const updatedDocuments = db.collection(COLLECTION_NAME);
+    const allDocuments = updatedDocuments.find<UpdatedPage>({});
+
+    for await (const doc of allDocuments) {
+      console.log(doc);
+    }
   });
 });
