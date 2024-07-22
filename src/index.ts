@@ -37,7 +37,7 @@ integration.addBuildEventHandler(
       })
     );
 
-    // await updatePages(pageAstObjects, "updated_documents");
+    await updatePages(pageAstObjects, "updated_documents");
     console.log("=========== Chatbot Data Upload Integration ================");
   }
 );

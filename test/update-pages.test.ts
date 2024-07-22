@@ -1,7 +1,9 @@
-import { describe, it } from "vitest";
+import { beforeEach, describe, it } from "vitest";
 import { GITHUB_USER, Page, updatePages } from "../src/update-pages";
 
 const COLLECTION_NAME = "updated_documents";
+
+beforeEach(() => {});
 describe("Update Pages Unit Tests", () => {
   it("", async () => {
     const testPages: Page[] = [

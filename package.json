@@ -10,7 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@netlify/sdk": "^1.59.0",
+    "@netlify/sdk": "^1.60.2-pr-1468.1",
     "bson": "^6.8.0",
     "mongodb": "^6.8.0",
     "typescript": "^5.5.2"
