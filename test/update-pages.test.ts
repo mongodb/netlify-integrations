@@ -1,16 +1,18 @@
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { GITHUB_USER, Page, updatePages } from "../src/update-pages";
-// import { getMockDb } from "./utils/mockDb";
+
 const COLLECTION_NAME = "updated_documents";
 
 beforeEach(() => {
   vi.mock("../src/connector", async () => {
-    const { getMockDb } = await import("./utils/mockDb");
-
-    const db = await getMockDb();
+    const { getMockDb, teardownMockDbClient } = await import("./utils/mockDb");
 
     return {
-      db: async () => db,
+      teardown: teardownMockDbClient,
+      db: async () => {
+        const db = await getMockDb();
+        return db;
+      },
     };
   });
 });
