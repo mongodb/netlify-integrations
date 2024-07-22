@@ -1,17 +1,28 @@
-import { beforeEach, describe, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { GITHUB_USER, Page, updatePages } from "../src/update-pages";
-import * as mongodb from "mongodb";
-import { getMockDb } from "./utils/mockDb";
-
-vi.mock("mongodb", async (importOriginal) => {});
+// import { getMockDb } from "./utils/mockDb";
 const COLLECTION_NAME = "updated_documents";
 
-const db = await getMockDb();
-vi.spyOn(mongodb, "MongoClient");
+beforeEach(() => {
+  vi.mock("../src/connector", async () => {
+    const { getMockDb } = await import("./utils/mockDb");
 
-beforeEach(() => {});
-describe("Update Pages Unit Tests", () => {
-  it("", async () => {
+    const db = await getMockDb();
+
+    return {
+      db: async () => db,
+    };
+  });
+});
+
+afterEach(async () => {
+  const { teardownMockDbClient } = await import("./utils/mockDb");
+
+  await teardownMockDbClient();
+});
+
+describe("Update Pages Unit Tests", async () => {
+  it("updates pages runs successfully", async () => {
     const testPages: Page[] = [
       {
         page_id: "page0.txt",

@@ -1,22 +1,25 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import * as mongodb from "mongodb";
 
-const mongod = new MongoMemoryServer();
-
 let client: mongodb.MongoClient;
 
-export async function teardownMockDb() {
+export async function teardownMockDbClient() {
   if (!client) return;
 
   await client.close();
 }
 
-export async function getMockDb() {
+export async function getMockDbClient() {
   if (client) return client;
+  const mongod = await MongoMemoryServer.create();
 
   const uri = mongod.getUri();
   client = new mongodb.MongoClient(uri);
   await client.connect();
-
   return client;
+}
+
+export async function getMockDb() {
+  const client = await getMockDbClient();
+  return client.db("test_db");
 }
