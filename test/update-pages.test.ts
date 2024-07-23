@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   GITHUB_USER,
   Page,
@@ -55,16 +55,27 @@ describe("Update Pages Unit Tests", async () => {
         static_assets: [],
       },
     ];
+    const NUM_RUNS = 2;
+    for (let i = 0; i < NUM_RUNS; i++) {
+      await updatePages(testPages, COLLECTION_NAME);
 
-    await updatePages(testPages, COLLECTION_NAME);
-    await updatePages(testPages, COLLECTION_NAME);
+      let now = new Date().getTime();
+
+      const oneSecLater = now + 1000;
+
+      while (now < oneSecLater) {
+        now = new Date().getTime();
+      }
+    }
 
     const db = await getMockDb();
     const updatedDocuments = db.collection(COLLECTION_NAME);
-    const allDocuments = updatedDocuments.find<UpdatedPage>({});
-
-    for await (const doc of allDocuments) {
-      console.log(doc);
+    const documentsCursor = updatedDocuments.find<UpdatedPage>({});
+    const documents = [];
+    for await (const doc of documentsCursor) {
+      documents.push(doc);
     }
+
+    expect(documents.length).toEqual(1);
   });
 });
