@@ -1,7 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { deserialize } from "bson";
-import { readdir, readFile } from "fs";
+import { readdir, readFile, existsSync } from "fs";
 import { promisify } from "util";
 import { Page, updatePages } from "./update-pages";
 
@@ -11,33 +11,33 @@ const readFileAsync = promisify(readFile);
 const integration = new NetlifyIntegration();
 const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 
-integration.addBuildEventHandler(
-  "onSuccess",
-  async ({ utils: { run, git } }) => {
-    console.log("=========== Chatbot Data Upload Integration ================");
-    await run.command("unzip -o bundle.zip -d bundle");
+integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+  console.log("=========== Chatbot Data Upload Integration ================");
 
-    const zipContents = await readdirAsync(ZIP_PATH, {
-      recursive: true,
-    });
+  const bundleDirExists = existsSync(`${process.cwd()}/bundle`);
 
-    const bsonPages = zipContents.filter((fileName) => {
-      const splitFile = fileName.toString().split(".");
+  if (!bundleDirExists) await run.command("unzip -o bundle.zip -d bundle");
 
-      return splitFile[splitFile.length - 1] === "bson";
-    });
+  const zipContents = await readdirAsync(ZIP_PATH, {
+    recursive: true,
+  });
 
-    const pageAstObjects = await Promise.all(
-      bsonPages.map(async (bsonFileName) => {
-        const rawData = await readFileAsync(`${ZIP_PATH}/${bsonFileName}`);
+  const bsonPages = zipContents.filter((fileName) => {
+    const splitFile = fileName.toString().split(".");
 
-        return deserialize(rawData) as Page;
-      })
-    );
+    return splitFile[splitFile.length - 1] === "bson";
+  });
 
-    await updatePages(pageAstObjects, "updated_documents");
-    console.log("=========== Chatbot Data Upload Integration ================");
-  }
-);
+  const pageAstObjects = await Promise.all(
+    bsonPages.map(async (bsonFileName) => {
+      const rawData = await readFileAsync(`${ZIP_PATH}/${bsonFileName}`);
+
+      return deserialize(rawData) as Page;
+    })
+  );
+
+  await updatePages(pageAstObjects, "updated_documents");
+  console.log("=========== Chatbot Data Upload Integration ================");
+});
 
 export { integration };
