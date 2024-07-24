@@ -9,7 +9,7 @@ import { getMockDb } from "./utils/mockDb";
 
 const COLLECTION_NAME = "updated_documents";
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.mock("../src/connector", async () => {
     const { getMockDb, teardownMockDbClient } = await import("./utils/mockDb");
 
@@ -29,8 +29,50 @@ afterEach(async () => {
   await teardownMockDbClient();
 });
 
-describe("Update Pages Unit Tests", async () => {
-  it("updates pages runs successfully", async () => {
+describe("Update Pages Unit Tests", () => {
+  it("inserts a new document", async () => {
+    const testPages: Page[] = [
+      {
+        page_id: "page0.txt",
+        filename: "page0.txt",
+        github_username: GITHUB_USER,
+        source: "",
+        ast: {
+          type: "root",
+          fileid: "page0.txt",
+          options: {},
+          children: [],
+          foo: "foo",
+          bar: { foo: "foo" },
+          position: {
+            start: {
+              line: {
+                $numberInt: "0",
+              },
+            },
+          },
+        },
+        static_assets: [],
+      },
+    ];
+    await updatePages(testPages, COLLECTION_NAME);
+
+    const db = await getMockDb();
+    const updatedDocuments = db.collection(COLLECTION_NAME);
+    const documentsCursor = updatedDocuments.find<UpdatedPage>({});
+    const documents = [];
+    for await (const doc of documentsCursor) {
+      documents.push(doc);
+    }
+
+    expect(documents.length).toEqual(1);
+    const document = documents[0];
+
+    expect(document.created_at.getTime()).toEqual(
+      document.updated_at.getTime()
+    );
+  });
+  it("updates the original document and provides a new time stamp", async () => {
     const testPages: Page[] = [
       {
         page_id: "page0.txt",
@@ -77,5 +119,10 @@ describe("Update Pages Unit Tests", async () => {
     }
 
     expect(documents.length).toEqual(1);
+    const document = documents[0];
+
+    expect(document.created_at.getTime()).toBeLessThan(
+      document.updated_at.getTime()
+    );
   });
 });

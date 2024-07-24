@@ -10,7 +10,10 @@ export async function teardownMockDbClient() {
 }
 
 export async function getMockDbClient() {
-  if (client) return client;
+  if (client) {
+    await client.connect();
+    return client;
+  }
   const mongod = await MongoMemoryServer.create();
 
   const uri = mongod.getUri();
