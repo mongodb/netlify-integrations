@@ -160,7 +160,7 @@ function markUnseenPagesAsDeleted({
     };
     operations.push(operation);
   });
-  return [];
+  return operations;
 }
 
 interface CheckForPageDiffsParams {
