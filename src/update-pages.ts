@@ -129,7 +129,6 @@ export const updatePages = async (pages: Page[], collection: string) => {
     ];
 
     if (operations.length > 0) {
-      console.log(operations);
       await bulkWrite(operations, collection);
     }
   } catch (error) {

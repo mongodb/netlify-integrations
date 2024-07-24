@@ -17,8 +17,6 @@ integration.addBuildEventHandler(
     console.log("=========== Chatbot Data Upload Integration ================");
     await run.command("unzip -o bundle.zip -d bundle");
 
-    console.log(git.deletedFiles);
-
     const zipContents = await readdirAsync(ZIP_PATH, {
       recursive: true,
     });
