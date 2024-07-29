@@ -1,7 +1,7 @@
 import { deserialize } from "bson";
 import { NetlifyIntegration } from "@netlify/sdk";
 import { readFileAsync } from "./utils/fs-async";
-import { getBuildOasSpecCommand } from "./build-pages";
+import { buildOpenAPIPages } from "./build-pages";
 
 const integration = new NetlifyIntegration();
 const BUNDLE_PATH = `${process.cwd()}/bundle`;
@@ -61,20 +61,7 @@ integration.addBuildEventHandler("onPostBuild", async ({ utils: { run } }) => {
   const openapiPagesEntries = Object.entries(openapiPages);
   const siteUrl = process.env.DEPLOY_PRIME_URL || "";
 
-  for (const [pageSlug, data] of openapiPagesEntries) {
-    const { source_type: sourceType, source } = data;
-
-    const command = await getBuildOasSpecCommand({
-      source,
-      sourceType,
-      output: `${process.cwd()}/snooty/public`,
-      pageSlug,
-      siteUrl,
-      siteTitle,
-    });
-
-    await run.command(command);
-  }
+  await buildOpenAPIPages(openapiPagesEntries, { siteTitle, siteUrl }, run);
 
   console.log("=========== Redoc Integration End ================");
 });

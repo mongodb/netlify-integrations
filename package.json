@@ -9,8 +9,10 @@
     "preview": "netlify-integration preview"
   },
   "dependencies": {
-    "@netlify/sdk": "^1.59.2",
+    "@netlify/sdk": "^1.60.2-pr-1468.3",
     "bson": "^6.8.0",
+    "mongodb": "^6.8.0",
+    "node-fetch": "^3.3.2",
     "typescript": "^5.5.3"
   },
   "devDependencies": {
