@@ -184,35 +184,56 @@ export async function buildOpenAPIPages(
     let isSuccessfulBuild = true;
 
     if (resourceVersions) {
-      // if a resource versions array is provided, then we can loop through the resourceVersions array and call the getOASpec
-      // for each minor version
-      for (const resourceVersion of resourceVersions) {
-        const command = await getBuildOasSpecCommand({
-          source,
-          sourceType,
-          output: `${process.cwd()}/snooty/public`,
-          pageSlug,
-          siteUrl,
-          siteTitle,
-          apiVersion,
-          resourceVersions,
-          resourceVersion,
-        });
-      }
+      const isRunSuccessfulArray = await Promise.all(
+        resourceVersions.map(async (resourceVersion) => {
+          // if a resource versions array is provided, then we can loop through the resourceVersions array and call the getOASpec
+          // for each minor version
+          try {
+            const command = await getBuildOasSpecCommand({
+              source,
+              sourceType,
+              output: `${process.cwd()}/snooty/public`,
+              pageSlug,
+              siteUrl,
+              siteTitle,
+              apiVersion,
+              resourceVersions,
+              resourceVersion,
+            });
+
+            await run.command(command);
+
+            return true;
+          } catch (e) {
+            console.error("an error occurred", e);
+
+            return false;
+          }
+        })
+      );
+      isSuccessfulBuild = isRunSuccessfulArray.every(
+        (isSuccessful) => isSuccessful
+      );
     }
 
-    const command = await getBuildOasSpecCommand({
-      source,
-      sourceType,
-      output: `${process.cwd()}/snooty/public`,
-      pageSlug,
-      siteUrl,
-      siteTitle,
-      apiVersion,
-      resourceVersions,
-    });
+    try {
+      const command = await getBuildOasSpecCommand({
+        source,
+        sourceType,
+        output: `${process.cwd()}/snooty/public`,
+        pageSlug,
+        siteUrl,
+        siteTitle,
+        apiVersion,
+      });
+      await run.command(command);
 
-    await run.command(command);
+      isSuccessfulBuild = true;
+    } catch (e) {
+      console.error("an error occurred", e);
+
+      isSuccessfulBuild = false;
+    }
 
     // If all builds successful, persist git hash and version data in db
     if (isSuccessfulBuild && sourceType == "atlas") {
