@@ -4,14 +4,15 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
-import { readdir, readFileSync } from "fs";
+import { readdir, readFile } from "fs";
 
 const readdirAsync = promisify(readdir);
+const readFileAsync = promisify(readFile);
 
 const integration = new NetlifyIntegration();
 const ZIP_PATH = ``;
 
-export const generateManifest = async () => {
+export const generateManifest = async (path?: any) => {
   // create Manifest object
   const manifest = new Manifest(true);
 
@@ -29,7 +30,7 @@ export const generateManifest = async () => {
   for (const entry of mappedEntries) {
     console.log(entry);
     //each file is read and decoded
-    const decoded = BSON.deserialize(readFileSync(`documents/${entry}`));
+    const decoded = BSON.deserialize(await readFileAsync(`documents/${entry}`));
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifest();
@@ -46,7 +47,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   await run.command("unzip -o bundle.zip");
   // console.log("Bundle unzipped");
 
-  await generateManifest();
+  (await generateManifest()).export();
 
   console.log("=========== finished generating manifests ================");
 });
