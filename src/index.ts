@@ -34,6 +34,9 @@ export const generateManifest = async (path?: any) => {
   //need a check here
   for (const entry of mappedEntries) {
     //each file is read and decoded
+    const entries = await readdirAsync(process.cwd());
+    console.log(process.cwd(), entries);
+
     console.log(`${entry}`);
     const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
