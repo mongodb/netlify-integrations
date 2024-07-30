@@ -17,7 +17,7 @@ export const generateManifest = async () => {
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
-  const asy = readdirAsync("documents");
+  const asy = await readdirAsync("documents");
   console.log("documents non-recursive", asy);
   const entries = await readdirAsync("documents", {
     recursive: true,
