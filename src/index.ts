@@ -12,6 +12,9 @@ const integration = new NetlifyIntegration();
 const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+  /**
+   * Minor note that persistence module also handles merging of ToCs for embedded products
+   */
   console.log("=========== Chatbot Data Upload Integration ================");
 
   const bundleDirExists = existsSync(`${process.cwd()}/bundle`);
