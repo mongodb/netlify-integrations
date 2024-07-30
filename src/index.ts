@@ -25,11 +25,12 @@ export const generateManifest = async (path?: any) => {
   console.log("entries:" + JSON.stringify(entries));
 
   const mappedEntries = entries.filter((fileName) => {
-    fileName.includes("bson");
-    // &&
-    // !fileName.includes("images") &&
-    // !fileName.includes("includes") &&
-    // !fileName.includes("sharedinclude");
+    // fileName.includes("bson");
+    // // &&
+    console.log(fileName);
+    !fileName.includes("images") &&
+      !fileName.includes("includes") &&
+      !fileName.includes("sharedinclude");
   });
 
   console.log("entries:" + JSON.stringify(mappedEntries));
