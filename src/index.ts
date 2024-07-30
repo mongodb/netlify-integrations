@@ -4,7 +4,7 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
-import { readdir, readFile, readFileSync, existsSync } from "fs";
+import { readdir, readFile, readFileSync, readdirSync, existsSync } from "fs";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
@@ -17,7 +17,7 @@ export const generateManifest = async () => {
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
-  console.log(process.cwd());
+  console.log(readdirSync(process.cwd()));
   const entries = await readdirAsync("documents", {
     recursive: true,
   });
