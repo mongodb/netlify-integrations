@@ -4,7 +4,7 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
-import { readdir, readFile, existsSync } from "fs";
+import { readdir, readFile, readFileSync, existsSync } from "fs";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
@@ -35,7 +35,7 @@ export const generateManifest = async (path?: any) => {
   for (const entry of mappedEntries) {
     //each file is read and decoded
     console.log(`${entry}`);
-    const decoded = BSON.deserialize(await readFileAsync(`${entry}`));
+    const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifest();
