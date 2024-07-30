@@ -42,7 +42,7 @@ export const generateManifest = async (path?: any) => {
     const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
     //export Document object
-    const processedDoc = new Document(decoded).exportAsManifest();
+    const processedDoc = new Document(decoded).exportAsManifestDocument();
     //add document to manifest object
     // manifest.addDocument(processedDoc);
   }

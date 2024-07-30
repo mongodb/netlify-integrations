@@ -225,7 +225,7 @@ export class Document {
     return [noIndex, reasons];
   }
 
-  exportAsManifest = () => {
+  exportAsManifestDocument = () => {
     // Generate the manifest dictionary entry from the AST source
 
     if (this.noIndex) {
