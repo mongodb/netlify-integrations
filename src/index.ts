@@ -17,7 +17,7 @@ export const generateManifest = async (path?: any) => {
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
-  const entries = await readdirAsync(`/documents`, {
+  const entries = await readdirAsync(`documents`, {
     recursive: true,
   });
 
