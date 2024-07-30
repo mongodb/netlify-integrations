@@ -4,7 +4,7 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
-import { readdir, readFile } from "fs";
+import { readdir, readFile, existsSync } from "fs";
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);
@@ -15,9 +15,11 @@ const ZIP_PATH = ``;
 export const generateManifest = async (path?: any) => {
   // create Manifest object
   const manifest = new Manifest(true);
-
+  console.log("in generate manifest");
   //go into documents directory and get list of file entries
   const entries = await readdirAsync("documents", { recursive: true });
+  console.log("exists?: " + existsSync(`${process.cwd()}/bundle`));
+
   const mappedEntries = entries.filter((fileName) => {
     fileName.includes(".bson") &&
       !fileName.includes("images") &&
@@ -25,7 +27,7 @@ export const generateManifest = async (path?: any) => {
       !fileName.includes("sharedinclude");
   });
 
-  console.log(JSON.stringify(mappedEntries));
+  console.log("entries:" + JSON.stringify(mappedEntries));
 
   //need a check here
   for (const entry of mappedEntries) {
