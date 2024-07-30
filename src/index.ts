@@ -17,7 +17,8 @@ export const generateManifest = async () => {
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
-  console.log(readdirSync(process.cwd()));
+  const asy = readdirAsync("documents");
+  console.log("documents non-recursive", asy);
   const entries = await readdirAsync("documents", {
     recursive: true,
   });
@@ -31,7 +32,7 @@ export const generateManifest = async () => {
     );
   });
 
-  console.log("entries:" + JSON.stringify(mappedEntries));
+  console.log("entries:" + JSON.stringify(mappedEntries), mappedEntries.length);
   //need a check here
   process.chdir("documents");
   for (const entry of mappedEntries) {
