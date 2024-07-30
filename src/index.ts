@@ -31,11 +31,10 @@ export const generateManifest = async (path?: any) => {
   });
 
   console.log("entries:" + JSON.stringify(mappedEntries));
-  return manifest;
   //need a check here
   for (const entry of mappedEntries) {
     //each file is read and decoded
-    const decoded = BSON.deserialize(await readFileAsync(`documents/${entry}`));
+    const decoded = BSON.deserialize(await readFileAsync(`${entry}`));
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifest();
