@@ -32,6 +32,7 @@ export const generateManifest = async (path?: any) => {
 
   console.log("entries:" + JSON.stringify(mappedEntries));
   //need a check here
+  process.chdir("documents");
   for (const entry of mappedEntries) {
     //each file is read and decoded
     const entries = await readdirAsync(process.cwd());
