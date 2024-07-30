@@ -39,7 +39,7 @@ export const generateManifest = async (path?: any) => {
     console.log(process.cwd(), entries);
 
     console.log(`${entry}`);
-    const decoded = BSON.deserialize(readFileSync(`documents/${entry}`));
+    const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifest();
