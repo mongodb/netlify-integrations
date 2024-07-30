@@ -12,11 +12,12 @@ const readFileAsync = promisify(readFile);
 const integration = new NetlifyIntegration();
 const ZIP_PATH = ``;
 
-export const generateManifest = async (path?: any) => {
+export const generateManifest = async () => {
   // create Manifest object
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
+  console.log(process.cwd());
   const entries = await readdirAsync("documents", {
     recursive: true,
   });
@@ -36,9 +37,7 @@ export const generateManifest = async (path?: any) => {
   for (const entry of mappedEntries) {
     //each file is read and decoded
     const entries = await readdirAsync(process.cwd());
-    console.log(process.cwd(), entries);
 
-    console.log(`${entry}`);
     const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
     //export Document object
@@ -52,9 +51,7 @@ export const generateManifest = async (path?: any) => {
 //Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
-  // console.log("unzipping zipfile");
   await run.command("unzip -o bundle.zip");
-  // console.log("Bundle unzipped");
 
   (await generateManifest()).export();
 

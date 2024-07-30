@@ -2,6 +2,8 @@
 node_modules
 .cache
 dev-model.gql
+.documents
 
 # Local Netlify folder
 .netlify
+

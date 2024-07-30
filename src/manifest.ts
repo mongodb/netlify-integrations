@@ -15,14 +15,6 @@ export class Manifest {
   addDocument(document: ManifestEntry | null) {
     //Add a document to the manifest
     if (document) {
-      // writeFile(
-      //   `TESTING Output of ${document.slug}`,
-      //   JSON.stringify(document),
-      //   (err) => {
-      //     // In case of a error throw err.
-      //     if (err) throw err;
-      //   }
-      // );
       this.documents.push(document);
     }
   }
