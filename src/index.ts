@@ -44,7 +44,7 @@ export const generateManifest = async (path?: any) => {
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifest();
     //add document to manifest object
-    manifest.addDocument(processedDoc);
+    // manifest.addDocument(processedDoc);
   }
   return manifest;
 };
@@ -53,7 +53,7 @@ export const generateManifest = async (path?: any) => {
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
   // console.log("unzipping zipfile");
-  await run.command("unzip bundle.zip");
+  await run.command("unzip -o bundle.zip");
   // console.log("Bundle unzipped");
 
   (await generateManifest()).export();
