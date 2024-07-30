@@ -28,6 +28,7 @@ export const generateManifest = async (path?: any) => {
     // fileName.includes("bson");
     // // &&
     console.log(fileName);
+    return true;
     // !fileName.includes("images") &&
     //   !fileName.includes("includes") &&
     //   !fileName.includes("sharedinclude");
