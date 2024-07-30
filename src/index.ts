@@ -23,7 +23,7 @@ export const generateManifest = async (path?: any) => {
 
   const mappedEntries = entries.filter((fileName) => {
     return (
-      fileName.includes("bson") &&
+      fileName.includes(".bson") &&
       !fileName.includes("images") &&
       !fileName.includes("includes") &&
       !fileName.includes("sharedinclude")
