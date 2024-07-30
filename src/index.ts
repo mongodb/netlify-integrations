@@ -18,6 +18,7 @@ export const generateManifest = async (path?: any) => {
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
   const entries = await readdirAsync("documents", { recursive: true });
+  console.log(readdirAsync(process.cwd()));
   console.log("exists?: " + existsSync(`${process.cwd()}/bundle`));
 
   const mappedEntries = entries.filter((fileName) => {
