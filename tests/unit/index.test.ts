@@ -51,29 +51,25 @@ describe("has the correct document properties", () => {
     expect(manifestTitle).toBeTypeOf("string");
   });
 
-  it("matches documents", () => {
+  it("matches the slug", () => {
     //slug
     expect(manifest.documents[0].slug).toEqual(equivDoc.slug);
+  });
 
+  it("matches the heading", () => {
     //headings
     expect(manifest.documents[0].headings).toEqual(equivDoc.headings);
+  });
 
+  it("matches the paragraphs", () => {
     //paragraphs (FAILS ON WHITESPACE)
     expect(manifest.documents[0].paragraphs).toEqual(equivDoc.paragraphs);
+  });
 
+  it("matches the code", () => {
     //code
     expect(manifest.documents[0].code).toEqual(equivDoc.code);
-    // const title = nodeManifestDocs[manifestTitle];
-    // expect(manifest.documents[0].title).toEqual(
-    //   nodeManifestDocs[manifestTitle]
-    // );
   });
-
-  //code
-  it("matches code", () => {
-    expect(manifest.documents[0].code).toEqual(equivDoc.code);
-  });
-
   //preview FAILS
   it("matches preview", () => {
     expect(manifest.documents[0].preview).toEqual(equivDoc.preview);

@@ -86,11 +86,10 @@ export class Document {
       json: this.tree,
     });
 
-    // console.log("\n\r paragraph results:", results);
     for (let r of results) {
-      paragraphs += r;
+      paragraphs += " " + r;
     }
-    return paragraphs;
+    return paragraphs.trim();
   }
 
   findCode() {
@@ -194,9 +193,9 @@ export class Document {
 
       //TO DO: check value on this
       for (let f of first) {
-        strList.push(f.value);
+        strList.push(f);
       }
-      return strList.join();
+      return strList.join("");
     }
 
     //else, give up and don't provide a preview

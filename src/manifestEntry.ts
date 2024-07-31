@@ -16,7 +16,7 @@ export class ManifestEntry {
     this.paragraphs = entry.paragraphs;
     this.code = entry.code;
     this.preview = entry.preview;
-    this.tags = entry.tags;
+    this.tags = entry.keywords;
     this.facets = entry.facets;
   }
 }
