@@ -4,6 +4,7 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
+import * as path from "path";
 import { readdir, readFile, readFileSync, readdirSync, existsSync } from "fs";
 
 const readdirAsync = promisify(readdir);
@@ -17,11 +18,8 @@ export const generateManifest = async () => {
   const manifest = new Manifest(true);
   console.log("in generate manifest");
   //go into documents directory and get list of file entries
-  const asy = await readdirAsync("documents");
-  console.log("documents non-recursive", asy);
-  const entries = await readdirAsync("documents", {
-    recursive: true,
-  });
+
+  const entries = await readdirAsync("documents", { recursive: true });
 
   const mappedEntries = entries.filter((fileName) => {
     return (
@@ -32,7 +30,7 @@ export const generateManifest = async () => {
     );
   });
 
-  console.log("entries:" + JSON.stringify(mappedEntries), mappedEntries.length);
+  // console.log("entries:" + JSON.stringify(mappedEntries), mappedEntries.length);
   //need a check here
   process.chdir("documents");
   for (const entry of mappedEntries) {
@@ -44,7 +42,7 @@ export const generateManifest = async () => {
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifestDocument();
     //add document to manifest object
-    // manifest.addDocument(processedDoc);
+    manifest.addDocument(processedDoc);
   }
   return manifest;
 };

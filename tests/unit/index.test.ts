@@ -21,19 +21,12 @@ describe("Generate manifests from ast", () => {
     //open zip into other folder
     // fs.writeFileSync(path, "../resources/docs_node_ast");
     // console.log(process.cwd());
-    // process.chdir("./documents");
-    const entries = await readdirAsync(process.cwd(), {
-      recursive: true,
-    });
-    console.log(entries);
-    // manifest = await generateManifest();
+    process.chdir("./documents");
+    manifest = await generateManifest();
   });
   it("can read file", () => {
-    // process.chdir("../../tests/resources/s3Manifests");
-    // console.log(process.cwd());
-    // console.log(nodeManifest.documents.length);
-    // console.log(manifest.documents.length);
-    // expect(manifest.documents.length);
+    process.chdir("../../tests/resources/s3Manifests");
+    expect(manifest.documents).toHaveLength(nodeManifest.documents.length);
   });
 
   //test exportAsManifest
