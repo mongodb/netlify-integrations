@@ -1,35 +1,93 @@
-import { describe, expect, test, it, vi } from "vitest";
+import { describe, expect, test, it, vi, beforeAll } from "vitest";
 import { generateManifest } from "../../src";
 import { BSON } from "bson";
 import { promisify } from "util";
-
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-
-// import { fs } from "memfs";
 import * as fs from "fs";
 import { Manifest } from "../../src/manifest";
-const readdirAsync = promisify(fs.readdir);
-// module.exports = fs;
+import { ManifestEntry } from "../../src/manifestEntry";
 
+let nodeManifestDocs: any = {};
+let manifest: Manifest;
+let manifestTitle: string;
+let equivDoc: ManifestEntry;
+
+// module.exports = fs;
 // vi.mock("node:fs");
 // vi.mock("node:fs/promises");
 
+beforeAll(async () => {
+  //generate a mapping of the existing manifest's documents
+  for (let document of nodeManifest.documents) {
+    nodeManifestDocs[document.title] = document;
+  }
+
+  //generate new manifest
+  process.chdir("./documents");
+  manifest = await generateManifest();
+
+  manifestTitle = manifest?.documents[0]?.title ?? "";
+  equivDoc = nodeManifestDocs["Aggregation Tutorials"];
+});
+
 //start process and run command to open zip file in documents folder
 describe("Generate manifests from ast", () => {
-  let manifest: Manifest;
-  it("can generate the manifest", async () => {
-    //open zip into other folder
-    // fs.writeFileSync(path, "../resources/docs_node_ast");
-    // console.log(process.cwd());
-    process.chdir("./documents");
-    manifest = await generateManifest();
+  it("has generated the manifest", async () => {
+    expect(manifest).toBeTruthy();
   });
-  it("can read file", () => {
-    process.chdir("../../tests/resources/s3Manifests");
+
+  it("has the correct document length", () => {
     expect(manifest.documents).toHaveLength(nodeManifest.documents.length);
   });
 
-  //test exportAsManifest
+  it("has the correct includeInGlobalSearch value"),
+    () => {
+      expect(manifest.global).toEqual(nodeManifest.includeInGlobalSearch);
+    };
+});
+
+describe("has the correct document properties", () => {
+  it("is of type string", () => {
+    expect(manifestTitle).toBeTypeOf("string");
+  });
+
+  it("matches documents", () => {
+    //slug
+    expect(manifest.documents[0].slug).toEqual(equivDoc.slug);
+
+    //headings
+    expect(manifest.documents[0].headings).toEqual(equivDoc.headings);
+
+    //paragraphs (FAILS ON WHITESPACE)
+    expect(manifest.documents[0].paragraphs).toEqual(equivDoc.paragraphs);
+
+    //code
+    expect(manifest.documents[0].code).toEqual(equivDoc.code);
+    // const title = nodeManifestDocs[manifestTitle];
+    // expect(manifest.documents[0].title).toEqual(
+    //   nodeManifestDocs[manifestTitle]
+    // );
+  });
+
+  //code
+  it("matches code", () => {
+    expect(manifest.documents[0].code).toEqual(equivDoc.code);
+  });
+
+  //preview FAILS
+  it("matches preview", () => {
+    expect(manifest.documents[0].preview).toEqual(equivDoc.preview);
+  });
+
+  //tags FAILS
+  it("matches tags", () => {
+    expect(manifest.documents[0].tags).toEqual(equivDoc.tags);
+  });
+
+  //facets
+  it("matches facets", () => {
+    expect(manifest.documents[0].facets).toEqual(equivDoc.facets);
+  });
 });
 
 //test Document creation

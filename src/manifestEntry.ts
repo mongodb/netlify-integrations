@@ -1,7 +1,7 @@
 //change this to an interface
 export class ManifestEntry {
   slug: string;
-  title?: string[];
+  title?: string;
   headings?: string[][];
   paragraphs: string;
   code: { lang: string; value: any }[];
