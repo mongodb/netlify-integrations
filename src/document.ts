@@ -168,7 +168,6 @@ export class Document {
         json: results[0],
       });
 
-      //TO DO: check value on this
       for (let f of first) {
         strList.push(f);
       }
@@ -180,7 +179,7 @@ export class Document {
   }
 
   getNoIndex() {
-    //TO DO determine what the index/no index rules should be
+    //determining indexability
 
     let noIndex = false;
     let reasons: string[] = [];
@@ -191,6 +190,7 @@ export class Document {
       reasons.push("robots=None or robots=noindex in meta directive");
     }
 
+    //if page has no title, do not index
     if (!this.title) {
       noIndex = true;
       reasons.push("This page has no headings");
@@ -227,7 +227,6 @@ const deriveFacets = (tree: any) => {
 
   const insertKeyVals = (facet: any, prefix = "") => {
     const key = prefix + facet.category;
-    //TODO: check this logic
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
 
