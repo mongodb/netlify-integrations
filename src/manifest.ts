@@ -1,5 +1,4 @@
 import { ManifestEntry } from "./manifestEntry";
-import { writeFile } from "fs";
 
 export class Manifest {
   url?: string;

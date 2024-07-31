@@ -22,7 +22,6 @@ export class Document {
   constructor(doc: any) {
     this.tree = doc;
 
-    // console.log("called doc constructor");
     //find metadata
     [this.robots, this.keywords, this.description] = this.findMetadata();
     //find paragraphs
@@ -47,7 +46,6 @@ export class Document {
   }
 
   findMetadata() {
-    // console.log("Finding metadata");
     let robots: Boolean = true; //can be set in the rst if the page is supposed to be crawled
     let keywords: string[] | null = null; //keywords is an optional list of strings
     let description: string | null = null; //this can be optional??
@@ -56,7 +54,6 @@ export class Document {
       path: "$..children[?(@.name=='meta')]..options",
       json: this.tree,
     });
-    // console.log("\n\r metadata results:", results);
     if (results.length) {
       if (results.length > 1)
         console.log(
@@ -69,16 +66,12 @@ export class Document {
 
       keywords = val?.keywords ?? null;
       description = val?.description ?? null;
-      // console.log(
-      //   `robots: ${robots}, keywords: ${keywords}, description: ${description}`
-      // );
     }
 
     return [robots, keywords, description];
   }
 
   findParagraphs() {
-    // console.log("Finding paragraphs");
     let paragraphs = "";
 
     let results = JSONPath({
@@ -93,27 +86,20 @@ export class Document {
   }
 
   findCode() {
-    // console.log("finding code");
-
     let results = JSONPath({
       path: "$..children[?(@.type=='code')]",
       json: this.tree,
     });
 
-    // console.log("\n\r code results:", results);
-
     let codeContents = [];
     for (let r of results) {
       const lang = r.lang ?? null;
-      //check value on this
       codeContents.push({ lang: lang, value: r.value });
     }
-    // console.log(`codeContents: ${codeContents}`);
     return codeContents;
   }
 
   findHeadings() {
-    // console.log("Finding headings and title");
     let headings: string[] = [];
     let title: string | null = null;
     // Get the children of headings nodes
@@ -122,8 +108,6 @@ export class Document {
       path: "$..children[?(@.type=='heading')].children",
       json: this.tree,
     });
-
-    // console.log(`\n\r headings results: ${results.length}, ${results}`);
 
     //no heading nodes found?? page doesn't have title, or headings
     if (!results.length) return [title, headings];
@@ -134,12 +118,8 @@ export class Document {
         path: "$..value",
         json: r,
       });
-      // console.log(
-      //   `\n\r parts results for heading: ${JSON.stringify(r)}, value: ${parts}`
-      // );
 
       //add a check in case there is no parts found
-
       for (let part of parts) {
         // add a check in case there is no value field found
         heading.push(part);
@@ -152,15 +132,12 @@ export class Document {
   }
 
   deriveSlug() {
-    // console.log("Deriving slug");
-
     let pageId = this.tree["filename"]?.split(".")[0];
     if (pageId == "index") pageId = "";
     return pageId;
   }
 
   derivePreview() {
-    // console.log("Deriving document search preview");
     //set preview to the meta description if one is specified
 
     if (this.description) return this.description;
@@ -204,7 +181,6 @@ export class Document {
 
   getNoIndex() {
     //TO DO determine what the index/no index rules should be
-    // console.log("Determining indexability");
 
     let noIndex = false;
     let reasons: string[] = [];
@@ -220,7 +196,6 @@ export class Document {
       reasons.push("This page has no headings");
     }
 
-    // console.log(`NoIndex: ${noIndex} because of ${JSON.stringify(reasons)}`);
     return [noIndex, reasons];
   }
 
@@ -278,6 +253,5 @@ const deriveFacets = (tree: any) => {
       createFacet(facetEntry);
     }
   }
-  // console.log("Document facets:" + JSON.stringify(documentFacets));
   return documentFacets;
 };

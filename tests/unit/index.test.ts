@@ -1,7 +1,5 @@
 import { describe, expect, test, it, vi, beforeAll } from "vitest";
 import { generateManifest } from "../../src";
-import { BSON } from "bson";
-import { promisify } from "util";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import * as fs from "fs";
 import { Manifest } from "../../src/manifest";
