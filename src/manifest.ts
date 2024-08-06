@@ -1,7 +1,7 @@
 import { ManifestEntry } from "./manifestEntry";
 
 export class Manifest {
-  url?: string;
+  url: string;
   global: boolean;
   documents: ManifestEntry[];
 
@@ -26,6 +26,6 @@ export class Manifest {
       documents: this.documents,
     };
 
-    return JSON.stringify(manifest);
+    return manifest;
   }
 }

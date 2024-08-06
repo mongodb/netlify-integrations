@@ -4,11 +4,11 @@ import { Manifest } from "./manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
 import { Document } from "./document";
-import * as path from "path";
-import { readdir, readFile, readFileSync, readdirSync, existsSync } from "fs";
+import { uploadManifest } from "./uploadManifest";
+
+import { readdir, readFileSync } from "fs";
 
 const readdirAsync = promisify(readdir);
-const readFileAsync = promisify(readFile);
 
 const integration = new NetlifyIntegration();
 const ZIP_PATH = ``;
@@ -16,7 +16,7 @@ const ZIP_PATH = ``;
 export const generateManifest = async () => {
   // create Manifest object
   const manifest = new Manifest(true);
-  console.log("in generate manifest");
+  console.log("=========== generating manifests ================");
   //go into documents directory and get list of file entries
 
   const entries = await readdirAsync("documents", { recursive: true });
@@ -52,9 +52,12 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   // Get content repo zipfile in AST representation.
   await run.command("unzip -o bundle.zip");
 
-  (await generateManifest()).export();
+  //this export function is likely not needed
+  const manifest = await generateManifest();
 
   console.log("=========== finished generating manifests ================");
+  uploadManifest(manifest);
+  console.log("=========== Uploading Manifests to Atlas ================");
 });
 
 export { integration };

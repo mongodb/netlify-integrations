@@ -12,11 +12,13 @@
   "dependencies": {
     "@netlify/sdk": "^1.59.0",
     "bson": "^6.8.0",
+    "crypto": "^1.0.1",
     "deps": "^1.0.0",
     "fs": "^0.0.1-security",
     "jsonpath-plus": "^9.0.0",
     "legacy": "^0.0.3",
     "lts": "^1.2.0",
+    "mongodb": "^6.8.0",
     "path": "^0.12.7",
     "peer": "^1.0.2",
     "typescript": "^5.5.2"
