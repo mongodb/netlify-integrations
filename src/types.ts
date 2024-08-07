@@ -14,6 +14,7 @@ export interface RefreshInfo {
 //should extend manifestentry instead
 export interface DatabaseDocument extends ManifestEntry {
   url: string;
+  lastModified: Date;
   manifestRevisionId: string;
   searchProperty: string[];
   includeInGlobalSearch: boolean;

@@ -56,6 +56,7 @@ const composeUpserts = async (
 
     const newDocument: DatabaseDocument = {
       ...document,
+      lastModified: lastModified,
       url: joinUrl(manifest.url, document.slug),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
