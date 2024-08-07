@@ -23,7 +23,7 @@ export const db = async () => {
   console.log("initiating db", process.env.MONGO_ATLAS_PASSWORD);
   if (!dbInstance) {
     try {
-      const result = await client.connect();
+      const result = client.connect();
       console.log("connected to db", result);
       dbInstance = client.db(SNOOTY_DB_NAME);
       console.log("CONNECTED TO DB", dbInstance);
