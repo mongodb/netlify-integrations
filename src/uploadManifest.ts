@@ -127,6 +127,7 @@ export const uploadManifest = async (manifest: Manifest) => {
   const dbSession = await db();
   const documents = dbSession.collection<DatabaseDocument>("documents");
   const startTime = process.hrtime.bigint();
+  console.log("db session created, documents: ", documents);
   const status: RefreshInfo = {
     deleted: 0,
     updated: 0,
@@ -158,6 +159,7 @@ export const uploadManifest = async (manifest: Manifest) => {
     lastModified,
     hash
   );
+  console.log("composed upserts: ", upserts);
 
   //delete stale documents
   //TODO: how do we want to delete stale properties?
