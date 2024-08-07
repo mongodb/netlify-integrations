@@ -118,6 +118,7 @@ const executeUpload = async (
 };
 
 export const uploadManifest = async (manifest: Manifest) => {
+  console.log("in upload manifest");
   //check that manifest documents exist
   if (manifest.documents.length == 0) {
     return;
