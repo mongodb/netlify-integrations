@@ -20,7 +20,7 @@ let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
   console.log("initiating db");
-  console.log(dbInstance);
+  console.log(!dbInstance);
   if (!dbInstance) {
     try {
       // const client = await MongoClient.connect(atlasUri);
