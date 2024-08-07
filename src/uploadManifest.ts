@@ -1,10 +1,4 @@
-import {
-  TransactionOptions,
-  ClientSession,
-  AnyBulkWriteOperation,
-  Collection,
-  MongoClient,
-} from "mongodb";
+import { TransactionOptions, AnyBulkWriteOperation } from "mongodb";
 import crypto from "crypto";
 import { Manifest } from "./manifest";
 import { db } from "./connector";
@@ -131,13 +125,6 @@ export const uploadManifest = async (manifest: Manifest) => {
   try {
     const dbSession = await db();
     documents = dbSession.collection<DatabaseDocument>("documents");
-    // const atlasUri = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
-    // const client = await MongoClient.connect(atlasUri);
-    console.log("client connected");
-    // documents = client
-    //   .db("search-test-ab")
-    //   .collection<DatabaseDocument>("documents");
-    // console.log(client);
   } catch (e) {
     console.log("issue starting session");
   }
@@ -160,12 +147,6 @@ export const uploadManifest = async (manifest: Manifest) => {
 
   const hash = await generateHash(manifest.toString());
   const lastModified = new Date();
-  let manifestMeta = {
-    searchProperty: "",
-    lastModified: lastModified,
-    manifestRevisionId: hash,
-    manifest: manifest,
-  };
 
   const upserts = await composeUpserts(
     manifest,
@@ -177,8 +158,8 @@ export const uploadManifest = async (manifest: Manifest) => {
 
   //delete stale documents
   //TODO: how do we want to delete stale properties?
-  //   const deletions = await deleteStaleDocuments("searchProperty", hash);
-  //   console.log("composed deletions", deletions);
+  const deletions = await deleteStaleDocuments("searchProperty", hash);
+  console.log("composed deletions", deletions);
   const operations = [...upserts];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
