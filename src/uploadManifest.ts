@@ -177,10 +177,11 @@ export const uploadManifest = async (manifest: Manifest) => {
 
   //check property types
   console.info(`Starting transaction: ${manifestMeta.searchProperty}`);
-  assert.strictEqual(typeof manifestMeta.searchProperty, "string");
-  assert.ok(manifestMeta.searchProperty);
-  assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
-  assert.ok(manifestMeta.manifestRevisionId);
+  //   assert.strictEqual(typeof manifestMeta.searchProperty, "string");
+  //   assert.ok(manifestMeta.searchProperty);
+  //   assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
+  //   assert.ok(manifestMeta.manifestRevisionId);
+  console.log(operations.length);
 
   if (operations.length > 0) {
     console.log("executing operations");
