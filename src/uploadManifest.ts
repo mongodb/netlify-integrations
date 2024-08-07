@@ -128,14 +128,14 @@ export const uploadManifest = async (manifest: Manifest) => {
   //start a session
   let documents;
   try {
-    const dbSession = await db();
-    documents = dbSession.collection<DatabaseDocument>("documents");
-    // const atlasUri = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
-    // const client = await MongoClient.connect(atlasUri);
-    // const collection = client
-    //   .db("search-test-ab")
-    //   .collection<DatabaseDocument>("documents");
-    // console.log(client);
+    // const dbSession = await db();
+    // documents = dbSession.collection<DatabaseDocument>("documents");
+    const atlasUri = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
+    const client = await MongoClient.connect(atlasUri);
+    const collection = client
+      .db("search-test-ab")
+      .collection<DatabaseDocument>("documents");
+    console.log(client);
   } catch (e) {
     console.log("issue starting session");
   }
