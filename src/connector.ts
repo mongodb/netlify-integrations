@@ -25,6 +25,7 @@ export const db = async () => {
     try {
       // const client = await MongoClient.connect(atlasUri);
       // const result = await client.connect();
+      console.log("connecting client");
       client = await client.connect();
       console.log("connected to db", client);
       dbInstance = client.db(SNOOTY_DB_NAME);
