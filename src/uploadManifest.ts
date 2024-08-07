@@ -125,9 +125,13 @@ export const uploadManifest = async (manifest: Manifest) => {
   }
 
   //start a session
-  const dbSession = await db();
-  const documents = dbSession.collection<DatabaseDocument>("documents");
-  const startTime = process.hrtime.bigint();
+  let documents;
+  try {
+    const dbSession = await db();
+    documents = dbSession.collection<DatabaseDocument>("documents");
+  } catch (e) {
+    console.log("issue starting session");
+  }
   console.log("db session created, documents: ", documents);
   const status: RefreshInfo = {
     deleted: 0,
@@ -179,11 +183,11 @@ export const uploadManifest = async (manifest: Manifest) => {
   assert.ok(manifestMeta.manifestRevisionId);
 
   if (operations.length > 0) {
-    const bulkWriteStatus = await documents.bulkWrite(operations, {
+    const bulkWriteStatus = await documents?.bulkWrite(operations, {
       ordered: false,
     });
-    status.deleted += bulkWriteStatus.deletedCount;
-    status.inserted += bulkWriteStatus.upsertedCount;
-    status.inserted += bulkWriteStatus.matchedCount;
+    status.deleted += bulkWriteStatus?.deletedCount ?? 0;
+    status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
+    status.inserted += bulkWriteStatus?.matchedCount ?? 0;
   }
 };

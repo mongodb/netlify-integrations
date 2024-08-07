@@ -20,6 +20,7 @@ const SNOOTY_DB_NAME = "search-test-ab";
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
+  console.log("initiating db");
   if (!dbInstance) {
     try {
       await client.connect();
