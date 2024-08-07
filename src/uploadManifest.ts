@@ -183,6 +183,7 @@ export const uploadManifest = async (manifest: Manifest) => {
   assert.ok(manifestMeta.manifestRevisionId);
 
   if (operations.length > 0) {
+    console.log("executing operations");
     const bulkWriteStatus = await documents?.bulkWrite(operations, {
       ordered: false,
     });
