@@ -54,7 +54,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const manifest = await generateManifest();
 
   console.log("=========== finished generating manifests ================");
-  uploadManifest(manifest);
+  await uploadManifest(manifest);
   console.log("=========== Uploading Manifests to Atlas ================");
 });
 
