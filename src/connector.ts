@@ -19,7 +19,8 @@ const SNOOTY_DB_NAME = "search-test-ab";
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
-  const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
+  // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
+  const atlasURL = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
   let client = new mongodb.MongoClient(atlasURL);
   console.log("initiating db");
   console.log(!dbInstance);
