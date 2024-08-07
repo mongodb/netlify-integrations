@@ -184,13 +184,13 @@ export const uploadManifest = async (manifest: Manifest) => {
   //   assert.ok(manifestMeta.manifestRevisionId);
   console.log(operations);
 
-  if (operations.length > 0) {
-    console.log("executing operations");
-    const bulkWriteStatus = await documents?.bulkWrite(operations, {
-      ordered: false,
-    });
-    status.deleted += bulkWriteStatus?.deletedCount ?? 0;
-    status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
-    status.inserted += bulkWriteStatus?.matchedCount ?? 0;
-  }
+  //   if (operations.length > 0) {
+  //     console.log("executing operations");
+  //     const bulkWriteStatus = await documents?.bulkWrite(operations, {
+  //       ordered: false,
+  //     });
+  //     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
+  //     status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
+  //     status.inserted += bulkWriteStatus?.matchedCount ?? 0;
+  //   }
 };
