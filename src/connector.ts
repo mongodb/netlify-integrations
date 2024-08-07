@@ -23,8 +23,8 @@ export const db = async () => {
   console.log("initiating db");
   if (!dbInstance) {
     try {
-      await client.connect();
-      console.log("connected to db");
+      const result = await client.connect();
+      console.log("connected to db", result);
       dbInstance = client.db(SNOOTY_DB_NAME);
       console.log("CONNECTED TO DB", dbInstance);
     } catch (error) {
