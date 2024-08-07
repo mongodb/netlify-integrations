@@ -169,6 +169,7 @@ export const uploadManifest = async (manifest: Manifest) => {
   //delete stale documents
   //TODO: how do we want to delete stale properties?
   const deletions = await deleteStaleDocuments("searchProperty", hash);
+  console.log("composed deletions", deletions);
   const operations = [...upserts, deletions];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
@@ -176,12 +177,12 @@ export const uploadManifest = async (manifest: Manifest) => {
   //make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-  console.info(`Starting transaction: ${manifestMeta.searchProperty}`);
+  console.info(`Starting transaction`);
   //   assert.strictEqual(typeof manifestMeta.searchProperty, "string");
   //   assert.ok(manifestMeta.searchProperty);
   //   assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
   //   assert.ok(manifestMeta.manifestRevisionId);
-  console.log(operations.length);
+  console.log(operations);
 
   if (operations.length > 0) {
     console.log("executing operations");
