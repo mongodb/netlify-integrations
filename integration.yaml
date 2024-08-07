@@ -4,6 +4,7 @@ config:
   name: netlify-search-integration
   description:  Generate and upload search manifests to Atlas from an AST
   integrationLevel: team-and-site
+  use_cjs_shims: true
   scopes:
     site: ["read", "write"]
     env: 

@@ -8,25 +8,7 @@ import crypto from "crypto";
 import { Manifest } from "./manifest";
 import { db } from "./connector";
 import assert from "assert";
-import { ManifestEntry } from "./manifestEntry";
-
-export interface RefreshInfo {
-  deleted: number;
-  updated: string[];
-  skipped: string[];
-  errors: Error[];
-  dateStarted: Date;
-  dateFinished: Date | null;
-  elapsedMS: number | null;
-}
-
-//should extend manifestentry instead
-interface DatabaseDocument extends ManifestEntry {
-  url: string;
-  manifestRevisionId: string;
-  searchProperty: string[];
-  includeInGlobalSearch: boolean;
-}
+import { RefreshInfo, DatabaseDocument } from "./types";
 
 function generateHash(data: string): Promise<string> {
   const hash = crypto.createHash("sha256");
@@ -93,34 +75,34 @@ const composeUpserts = async (
 };
 
 const deleteStaleDocuments = async (
-  collection: Collection<DatabaseDocument>,
-  session: ClientSession,
-  status: RefreshInfo,
   searchProperty: string,
   manifestRevisionId: string
 ) => {
   console.debug(`Removing old documents`);
-  const deleteResult = await collection.deleteMany(
-    {
-      searchProperty: searchProperty,
-      manifestRevisionId: { $ne: manifestRevisionId },
+  return {
+    deleteMany: {
+      filter: {
+        searchProperty: searchProperty,
+        manifestRevisionId: { $ne: manifestRevisionId },
+      },
     },
-    { session }
-  );
-  status.deleted +=
-    deleteResult.deletedCount === undefined ? 0 : deleteResult.deletedCount;
-  console.debug(
-    `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
-  );
+  };
+  //   const deleteResult = await collection.deleteMany(
+  //     {
+  //       searchProperty: searchProperty,
+  //       manifestRevisionId: { $ne: manifestRevisionId },
+  //     },
+  //     { session }
+  //   );
+  //   status.deleted +=
+  //     deleteResult.deletedCount === undefined ? 0 : deleteResult.deletedCount;
+  //   console.debug(
+  //     `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
+  //   );
 };
 const executeUpload = async (
   upserts: AnyBulkWriteOperation<DatabaseDocument>[]
 ) => {
-  //start a session
-  const dbSession = await db();
-  const documents = dbSession.collection<DatabaseDocument>("documents");
-  const startTime = process.hrtime.bigint();
-
   //define transaction options
   //TO DO: why these options??
   const transactionOptions: TransactionOptions = {
@@ -129,27 +111,33 @@ const executeUpload = async (
     writeConcern: { w: "majority" },
   };
 
-  documents.bulkWrite(upserts);
   //withTransaction
   //compose upserts
-
-  //delete stale documents
-  //TODO: how do we want to delete stale properties?
 
   //end session
 };
 
 export const uploadManifest = async (manifest: Manifest) => {
+  //check that manifest documents exist
+  if (manifest.documents.length == 0) {
+    return;
+  }
+
+  //start a session
+  const dbSession = await db();
+  const documents = dbSession.collection<DatabaseDocument>("documents");
   const startTime = process.hrtime.bigint();
   const status: RefreshInfo = {
     deleted: 0,
-    updated: [],
+    updated: 0,
+    inserted: 0,
     skipped: [],
     errors: [],
     dateStarted: new Date(),
     dateFinished: null,
     elapsedMS: null,
   };
+
   //get URL, pathname from url
 
   // get manifests, analogous to getManifestFromDirectory
@@ -170,7 +158,11 @@ export const uploadManifest = async (manifest: Manifest) => {
     lastModified,
     hash
   );
-  executeUpload(upserts);
+
+  //delete stale documents
+  //TODO: how do we want to delete stale properties?
+  const deletions = await deleteStaleDocuments("searchProperty", hash);
+  const operations = [...upserts, deletions];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
 
@@ -182,4 +174,13 @@ export const uploadManifest = async (manifest: Manifest) => {
   assert.ok(manifestMeta.searchProperty);
   assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
   assert.ok(manifestMeta.manifestRevisionId);
+
+  if (operations.length > 0) {
+    const bulkWriteStatus = await documents.bulkWrite(operations, {
+      ordered: false,
+    });
+    status.deleted += bulkWriteStatus.deletedCount;
+    status.inserted += bulkWriteStatus.upsertedCount;
+    status.inserted += bulkWriteStatus.matchedCount;
+  }
 };
