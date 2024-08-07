@@ -7,11 +7,11 @@ import { Db, MongoClient } from "mongodb";
 import * as mongodb from "mongodb";
 
 // We should only ever have one client active at a time.
-const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
-let client = new mongodb.MongoClient(atlasURL);
-export const teardown = async () => {
-  await client.close();
-};
+// const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
+// let client = new mongodb.MongoClient(atlasURL);
+// export const teardown = async () => {
+//   await client.close();
+// };
 
 const SNOOTY_DB_NAME = "search-test-ab";
 
@@ -19,6 +19,8 @@ const SNOOTY_DB_NAME = "search-test-ab";
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
+  const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
+  let client = new mongodb.MongoClient(atlasURL);
   console.log("initiating db");
   console.log(!dbInstance);
   if (!dbInstance) {
