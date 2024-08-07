@@ -132,7 +132,8 @@ export const uploadManifest = async (manifest: Manifest) => {
     // documents = dbSession.collection<DatabaseDocument>("documents");
     const atlasUri = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
     const client = await MongoClient.connect(atlasUri);
-    const collection = client
+    console.log("client connected");
+    documents = client
       .db("search-test-ab")
       .collection<DatabaseDocument>("documents");
     console.log(client);
@@ -191,13 +192,13 @@ export const uploadManifest = async (manifest: Manifest) => {
   //   assert.ok(manifestMeta.manifestRevisionId);
   console.log(operations);
 
-  //   if (operations.length > 0) {
-  //     console.log("executing operations");
-  //     const bulkWriteStatus = await documents?.bulkWrite(operations, {
-  //       ordered: false,
-  //     });
-  //     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
-  //     status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
-  //     status.inserted += bulkWriteStatus?.matchedCount ?? 0;
-  //   }
+  if (operations.length > 0) {
+    console.log("executing operations");
+    const bulkWriteStatus = await documents?.bulkWrite(operations, {
+      ordered: false,
+    });
+    status.deleted += bulkWriteStatus?.deletedCount ?? 0;
+    status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
+    status.inserted += bulkWriteStatus?.matchedCount ?? 0;
+  }
 };
