@@ -7,8 +7,7 @@ import { Db, MongoClient } from "mongodb";
 
 // We should only ever have one client active at a time.
 const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
-const client = await MongoClient.connect(atlasURL);
-
+let client: any;
 export const teardown = async () => {
   await client.close();
 };
@@ -24,6 +23,7 @@ export const db = async () => {
     try {
       // const client = await MongoClient.connect(atlasUri);
       // const result = await client.connect();
+      client = await MongoClient.connect(atlasURL);
       console.log("connected to db", client);
       dbInstance = client.db(SNOOTY_DB_NAME);
       console.log("CONNECTED TO DB", dbInstance);
