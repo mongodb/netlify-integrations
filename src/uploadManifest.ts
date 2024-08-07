@@ -168,9 +168,9 @@ export const uploadManifest = async (manifest: Manifest) => {
 
   //delete stale documents
   //TODO: how do we want to delete stale properties?
-  const deletions = await deleteStaleDocuments("searchProperty", hash);
-  console.log("composed deletions", deletions);
-  const operations = [...upserts, deletions];
+  //   const deletions = await deleteStaleDocuments("searchProperty", hash);
+  //   console.log("composed deletions", deletions);
+  const operations = [...upserts];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
 
