@@ -4,10 +4,11 @@
 // If no, the helper should be implemented in that service, not here
 
 import { Db, MongoClient } from "mongodb";
+import * as mongodb from "mongodb";
 
 // We should only ever have one client active at a time.
 const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
-let client: any;
+let client = new mongodb.MongoClient(atlasURL);
 export const teardown = async () => {
   await client.close();
 };
@@ -19,11 +20,12 @@ let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
   console.log("initiating db");
+  console.log(dbInstance);
   if (!dbInstance) {
     try {
       // const client = await MongoClient.connect(atlasUri);
       // const result = await client.connect();
-      client = await MongoClient.connect(atlasURL);
+      client = await client.connect();
       console.log("connected to db", client);
       dbInstance = client.db(SNOOTY_DB_NAME);
       console.log("CONNECTED TO DB", dbInstance);
