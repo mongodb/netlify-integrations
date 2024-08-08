@@ -47,20 +47,17 @@ export const generateManifest = async () => {
 };
 
 //Return indexing data from a page's AST for search purposes.
-integration.addBuildEventHandler(
-  "onSuccess",
-  async ({ netlifyConfig, utils: { run } }) => {
-    // Get content repo zipfile in AST representation.
-    await run.command("unzip -o bundle.zip");
-    await console.log("CONTEXT:", netlifyConfig);
+integration.addBuildEventHandler("onSuccess", async ({ netlifyConfig }) => {
+  // Get content repo zipfile in AST representation.
+  // await run.command("unzip -o bundle.zip");
+  await console.log("CONTEXT:", netlifyConfig);
 
-    //this export function is likely not needed
-    const manifest = await generateManifest();
+  //this export function is likely not needed
+  // const manifest = await generateManifest();
 
-    console.log("=========== finished generating manifests ================");
-    await uploadManifest(manifest);
-    console.log("=========== Uploading Manifests to Atlas ================");
-  }
-);
+  console.log("=========== finished generating manifests ================");
+  // await uploadManifest(manifest);
+  console.log("=========== Uploading Manifests to Atlas ================");
+});
 
 export { integration };
