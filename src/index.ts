@@ -51,16 +51,21 @@ integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run }, netlifyConfig }) => {
     // Get content repo zipfile in AST representation.
-    const repoName = (await run.command("git remote get-url origin")).stdout;
-    console.log("repoName:", repoName.split("/").pop());
+    const repoName = (
+      await run.command("git remote get-url origin")
+    ).stdout.repoName
+      .split("/")
+      .pop();
+    console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
-    console.log("CONTEXT:", netlifyConfig.build?.environment);
+    console.log("CONTEXT:", netlifyConfig.build?.environment.BRANCH);
+    const branch = netlifyConfig.build?.environment.BRANCH;
 
     //this export function is likely not needed
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    await uploadManifest(manifest);
+    await uploadManifest(manifest, repoName, branch);
     console.log("=========== Uploading Manifests to Atlas ================");
   }
 );
