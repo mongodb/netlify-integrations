@@ -1,9 +1,22 @@
 import { TransactionOptions, AnyBulkWriteOperation } from "mongodb";
 import crypto from "crypto";
 import { Manifest } from "./manifest";
-import { db } from "./connector";
+import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
+
+// const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
+const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
+const SNOOTY_DB_NAME = "search-test-ab";
+
+export interface Branch {
+  branchName: string;
+  active: boolean;
+  urlSlug?: string | undefined;
+  search: string;
+  project: string;
+  prodDeployable: boolean;
+}
 
 function generateHash(data: string): Promise<string> {
   const hash = crypto.createHash("sha256");
@@ -113,6 +126,41 @@ const executeUpload = async (
   //end session
 };
 
+const getProperties = async () => {
+  let repos_branches;
+  try {
+    const dbSession = await db(ATLAS_SEARCH_URI, SNOOTY_DB_NAME);
+    repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
+  } catch (e) {
+    console.log("issue starting session");
+  }
+
+  //amend query to get document matching some name (maybe repoName?) and find branch from there
+  //need searchProperty, url
+  const query = {
+    search: { $exists: true },
+  };
+
+  let repos;
+  try {
+    repos = await repos_branches?.find(query).project<Branch>({
+      _id: 0,
+      project: 1,
+      search: 1,
+      branches: 1,
+      prodDeployable: 1,
+    });
+  } catch (e) {
+    console.error(`Error while create search property mapping: ${e}`);
+    throw e;
+  }
+
+  //check that repos exists, only one repo
+  //make sure repo is proddeployable, search field exists, and branch is active
+  //if any of this is not true add operations with deletestaledocuments and deletestaleproperties
+  return repos?.project;
+};
+
 export const uploadManifest = async (manifest: Manifest) => {
   console.log("in upload manifest");
   //check that manifest documents exist
@@ -120,10 +168,12 @@ export const uploadManifest = async (manifest: Manifest) => {
     return;
   }
 
+  // const [searchProperty, url] = getProperties();
+
   //start a session
   let documents;
   try {
-    const dbSession = await db();
+    const dbSession = await db(ATLAS_SEARCH_URI, SNOOTY_DB_NAME);
     documents = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
     console.log("issue starting session");

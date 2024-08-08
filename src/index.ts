@@ -7,6 +7,7 @@ import { Document } from "./document";
 import { uploadManifest } from "./uploadManifest";
 
 import { readdir, readFileSync } from "fs";
+import { DeployContext } from "@netlify/sdk/client";
 
 const readdirAsync = promisify(readdir);
 
@@ -46,16 +47,20 @@ export const generateManifest = async () => {
 };
 
 //Return indexing data from a page's AST for search purposes.
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-  // Get content repo zipfile in AST representation.
-  await run.command("unzip -o bundle.zip");
+integration.addBuildEventHandler(
+  "onSuccess",
+  async ({ context, utils: { run } }) => {
+    // Get content repo zipfile in AST representation.
+    await run.command("unzip -o bundle.zip");
+    console.log(context);
 
-  //this export function is likely not needed
-  const manifest = await generateManifest();
+    //this export function is likely not needed
+    const manifest = await generateManifest();
 
-  console.log("=========== finished generating manifests ================");
-  await uploadManifest(manifest);
-  console.log("=========== Uploading Manifests to Atlas ================");
-});
+    console.log("=========== finished generating manifests ================");
+    await uploadManifest(manifest);
+    console.log("=========== Uploading Manifests to Atlas ================");
+  }
+);
 
 export { integration };
