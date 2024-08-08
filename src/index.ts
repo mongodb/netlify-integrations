@@ -57,7 +57,7 @@ integration.addBuildEventHandler(
     await run.command("unzip -o bundle.zip");
     console.log(
       "CONTEXT:",
-      JSON.stringify(netlifyConfig.build?.environment["branch"])
+      JSON.stringify(netlifyConfig.build?.environment.branch)
     );
     const branch = netlifyConfig.build?.environment;
 
