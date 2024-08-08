@@ -49,7 +49,7 @@ export const generateManifest = async () => {
 //Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler(
   "onSuccess",
-  async ({ netlifyConfig, utils: run }) => {
+  async ({ utils: run, netlifyConfig }) => {
     // Get content repo zipfile in AST representation.
     await run.command("unzip -o bundle.zip");
     console.log("CONTEXT:", netlifyConfig);
