@@ -58,14 +58,14 @@ integration.addBuildEventHandler(
       .pop();
     console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
-    console.log("CONTEXT:", netlifyConfig.build?.environment.branch);
+    console.log("CONTEXT:", netlifyConfig.build?.environment.branch.branch);
     const branch = netlifyConfig.build?.environment.branch;
 
     //this export function is likely not needed
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    await uploadManifest(manifest, repoName, branch);
+    await uploadManifest(manifest);
     console.log("=========== Uploading Manifests to Atlas ================");
   }
 );
