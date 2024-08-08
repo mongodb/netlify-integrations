@@ -3,35 +3,29 @@
 // When adding helpers here, ask yourself if the helper will be used by more than one service
 // If no, the helper should be implemented in that service, not here
 
-import { Db, MongoClient } from "mongodb";
+import { Db } from "mongodb";
 import * as mongodb from "mongodb";
 
 // We should only ever have one client active at a time.
-// const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;
-// let client = new mongodb.MongoClient(atlasURL);
+
+console.log("initiating db");
+
 // export const teardown = async () => {
 //   await client.close();
 // };
 
-const SNOOTY_DB_NAME = "search-test-ab";
-
 // cached db object, so we can handle initial connection process once if unitialized
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
-export const db = async () => {
-  // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
-  const atlasURL = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
-  let client = new mongodb.MongoClient(atlasURL);
-  console.log("initiating db");
+export const db = async (uri: string, db_name: string) => {
   console.log(!dbInstance);
+  let client = new mongodb.MongoClient(uri);
   if (!dbInstance) {
     try {
-      // const client = await MongoClient.connect(atlasUri);
-      // const result = await client.connect();
       console.log("connecting client");
       const result = await client.connect();
       console.log("connected to db", result);
-      dbInstance = client.db(SNOOTY_DB_NAME);
+      dbInstance = client.db(db_name);
       console.log("CONNECTED TO DB", dbInstance);
     } catch (error) {
       console.error(`Error at db client connection: ${error}`);
