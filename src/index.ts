@@ -55,7 +55,7 @@ integration.addBuildEventHandler(
     // repoName = repoName.split("/").pop();
     // console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
-    console.log("ENV type:", typeof netlifyConfig.build?.environment);
+    console.log("ENV keys:", netlifyConfig.build?.environment.keys());
     console.log("BRANCH:", netlifyConfig.build?.environment.branch);
     const branch = netlifyConfig.build?.environment;
 
