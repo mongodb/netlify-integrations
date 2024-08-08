@@ -52,7 +52,7 @@ integration.addBuildEventHandler(
   async ({ context, utils: { run } }) => {
     // Get content repo zipfile in AST representation.
     await run.command("unzip -o bundle.zip");
-    console.log(context);
+    await console.log("CONTEXT:", context);
 
     //this export function is likely not needed
     const manifest = await generateManifest();

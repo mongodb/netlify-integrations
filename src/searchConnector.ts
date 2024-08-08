@@ -18,15 +18,11 @@ console.log("initiating db");
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async (uri: string, db_name: string) => {
-  console.log(!dbInstance);
   let client = new mongodb.MongoClient(uri);
   if (!dbInstance) {
     try {
-      console.log("connecting client");
       const result = await client.connect();
-      console.log("connected to db", result);
       dbInstance = client.db(db_name);
-      console.log("CONNECTED TO DB", dbInstance);
     } catch (error) {
       console.error(`Error at db client connection: ${error}`);
       throw error;

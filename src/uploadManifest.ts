@@ -178,7 +178,6 @@ export const uploadManifest = async (manifest: Manifest) => {
   } catch (e) {
     console.log("issue starting session");
   }
-  console.log("db session created, documents: ", documents);
   const status: RefreshInfo = {
     deleted: 0,
     updated: 0,
@@ -204,12 +203,10 @@ export const uploadManifest = async (manifest: Manifest) => {
     lastModified,
     hash
   );
-  console.log("composed upserts: ", upserts);
 
   //delete stale documents
   //TODO: how do we want to delete stale properties?
   const deletions = await deleteStaleDocuments("searchProperty", hash);
-  console.log("composed deletions", deletions);
   const operations = [...upserts];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
