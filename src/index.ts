@@ -52,9 +52,7 @@ integration.addBuildEventHandler(
   async ({ utils: { run }, netlifyConfig }) => {
     // Get content repo zipfile in AST representation.
 
-    let repoName = await run.command(
-      `git remote get-url origin | cut -d: -f2-`
-    );
+    let repoName = await run.command(`git remote get-url origin`);
     // repoName = repoName.split("/").pop();
     console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
