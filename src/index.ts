@@ -51,13 +51,14 @@ integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run }, netlifyConfig }) => {
     // Get content repo zipfile in AST representation.
-    // let repoName = (await run.command("git remote get-url origin")).stdout;
+
+    let repoName = await run.command(
+      "basename $(git remote show -n origin | grep Push | cut -d: -f2-)"
+    );
     // repoName = repoName.split("/").pop();
-    // console.log("repoName:", repoName);
+    console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
-    console.log("ENV keys:", Object.keys(netlifyConfig.build?.environment));
-    console.log("BRANCH:", netlifyConfig.build?.environment["BRANCH"]);
-    const branch = netlifyConfig.build?.environment;
+    const branch = netlifyConfig.build?.environment["BRANCH"];
 
     //this export function is likely not needed
     const manifest = await generateManifest();
