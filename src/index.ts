@@ -56,7 +56,7 @@ integration.addBuildEventHandler(
     // console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
     console.log("ENV keys:", Object.keys(netlifyConfig.build?.environment));
-    console.log("BRANCH:", netlifyConfig.build?.environment.BRANCH);
+    console.log("BRANCH:", netlifyConfig.build?.environment["BRANCH"]);
     const branch = netlifyConfig.build?.environment;
 
     //this export function is likely not needed
