@@ -53,7 +53,7 @@ integration.addBuildEventHandler(
     // Get content repo zipfile in AST representation.
 
     let repoName = await run.command(
-      `basename $(git remote get-url origin | grep Push | cut -d: -f2-)`
+      `$(git remote get-url origin | cut -d: -f2-)`
     );
     // repoName = repoName.split("/").pop();
     console.log("repoName:", repoName);
