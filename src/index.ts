@@ -52,9 +52,9 @@ integration.addBuildEventHandler(
   async ({ utils: { run }, netlifyConfig }) => {
     // Get content repo zipfile in AST representation.
 
-    let repoName = await run.command(`basename $(git remote origin) .git`);
+    // let repoName = await run.command(`basename $(git remote origin) .git`);
     // repoName = repoName.split("/").pop();
-    console.log("repoName:", repoName);
+    // console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
     const branch = netlifyConfig.build?.environment["BRANCH"];
 
