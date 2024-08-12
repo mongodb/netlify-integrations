@@ -219,6 +219,7 @@ export const uploadManifest = async (
   //TODO: how do we want to delete stale properties?
   const deletions = await deleteStaleDocuments(searchProperty, hash);
   const operations = [...upserts];
+  console.log(upserts);
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
 
@@ -236,7 +237,7 @@ export const uploadManifest = async (
     const bulkWriteStatus = await documents?.bulkWrite(operations, {
       ordered: false,
     });
-    console.log(bulkWriteStatus);
+    console.log("STATUS:", bulkWriteStatus);
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
     status.inserted += bulkWriteStatus?.matchedCount ?? 0;
