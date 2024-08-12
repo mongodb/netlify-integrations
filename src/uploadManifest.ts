@@ -8,6 +8,7 @@ import { spec } from "node:test/reporters";
 
 // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
+const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "search-test-ab";
 
 export interface Branch {
@@ -152,7 +153,7 @@ const getProperties = async (repoName: string, branch: string) => {
 
   //do we want to check if branch is inactive/delete manifest for an inactive branch if so?
   try {
-    repo = await repos_branches?.find(query, { projection }).toArray();
+    repo = await repos_branches?.find(query).toArray();
   } catch (e) {
     console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
