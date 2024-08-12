@@ -165,7 +165,7 @@ const getProperties = async (name: string, branch: string) => {
     return ["", ""];
   } else {
     const project = repo[0].project;
-    searchProperty = repo[0].search[0];
+    searchProperty = repo[0].search.categoryTitle;
     try {
       const docsetsQuery = { project: { $eq: project } };
       docsetRepo = await docsets?.find(docsetsQuery).toArray();
