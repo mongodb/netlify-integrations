@@ -147,7 +147,7 @@ const getProperties = async (repoName: string, branch: string) => {
     repoName: { $eq: repoName },
   };
   const projection = {
-    projection: { _id: 0, project: 1, search: 1, prodDeployable: 1 },
+    projection: { project: 1, search: 1, prodDeployable: 1 },
   };
 
   //do we want to check if branch is inactive/delete manifest for an inactive branch if so?
