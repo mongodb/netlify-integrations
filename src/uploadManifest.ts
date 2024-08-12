@@ -9,7 +9,7 @@ import { spec } from "node:test/reporters";
 // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
-const SNOOTY_DB_NAME = "pool-test";
+const SNOOTY_DB_NAME = "pool_test";
 const SEARCH_DB_NAME = "search-test-ab";
 
 export interface Branch {
@@ -122,7 +122,7 @@ const getProperties = async (name: string, branch: string) => {
   let docsetRepo: any;
 
   try {
-    const dbSession = await db(ATLAS_CLUSTER0_URI, "pool_test");
+    const dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
@@ -187,6 +187,7 @@ export const uploadManifest = async (
   try {
     const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     documents = dbSession.collection<DatabaseDocument>("documents");
+    console.log(documents);
   } catch (e) {
     console.log("issue starting session");
   }
@@ -210,7 +211,7 @@ export const uploadManifest = async (
 
   const upserts = await composeUpserts(
     manifest,
-    searchProperty,
+    "searchProperty",
     lastModified,
     hash
   );
