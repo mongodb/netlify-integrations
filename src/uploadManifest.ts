@@ -164,7 +164,8 @@ const getProperties = async (repoName: string, branch: string) => {
     const project = repo[0].project;
     searchProperty = repo[0].search[0];
     try {
-      docsetRepo = await docsets?.find({ project: { $eq: project } }).toArray();
+      const docsetsQuery = { project: { $eq: project } };
+      docsetRepo = await docsets?.find(docsetsQuery).toArray();
       if (docsetRepo.length) {
         url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
       } else {
@@ -193,7 +194,7 @@ export const uploadManifest = async (
   }
 
   const [searchProperty, url] = await getProperties(repoName, branch);
-  console.log(searchProperty, url);
+  console.log("SEARCH PROPERTY", searchProperty, url);
 
   //start a session
   let documents;
