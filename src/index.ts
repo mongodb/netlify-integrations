@@ -55,6 +55,7 @@ integration.addBuildEventHandler(
       "./snooty-parser/snooty/snooty create-cache ."
     );
 
+    console.log("status update stdout: ", stdout);
     status.show({
       title: "snooty parser logs",
       summary: "Output of the snooty parser",
