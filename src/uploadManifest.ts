@@ -140,7 +140,6 @@ const getProperties = async (name: string, branch: string) => {
     const dbSession = await db(ATLAS_CLUSTER0_URI, "pool_test");
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
-    console.log(repos_branches, name);
   } catch (e) {
     console.log("issue starting session");
   }
@@ -159,14 +158,12 @@ const getProperties = async (name: string, branch: string) => {
     console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
   }
-  console.log(JSON.stringify(repo));
 
   if (!repo.length || !repo[0].prodDeployable) {
     return ["", ""];
   } else {
     const project = repo[0].project;
     searchProperty = repo[0].search.categoryTitle;
-    console.log("SEARCH", repo[0].search);
     try {
       const docsetsQuery = { project: { $eq: project } };
       docsetRepo = await docsets?.find(docsetsQuery).toArray();
@@ -198,7 +195,7 @@ export const uploadManifest = async (
   }
 
   const [searchProperty, url] = await getProperties(repoName, branch);
-  console.log("SEARCH PROPERTY", searchProperty, url);
+  manifest.url = url;
 
   //start a session
   let documents;
@@ -222,21 +219,20 @@ export const uploadManifest = async (
   //get URL, pathname from url
 
   // get manifests, analogous to getManifestFromDirectory
-  //need searchProperty, data, a hash, lastModified
 
   const hash = await generateHash(manifest.toString());
   const lastModified = new Date();
 
   const upserts = await composeUpserts(
     manifest,
-    "searchProperty",
+    searchProperty,
     lastModified,
     hash
   );
 
   //delete stale documents
   //TODO: how do we want to delete stale properties?
-  const deletions = await deleteStaleDocuments("searchProperty", hash);
+  const deletions = await deleteStaleDocuments(searchProperty, hash);
   const operations = [...upserts];
   //   await deleteStaleDocuments(manifest.documents, dbSession, status);
   //   await deleteStaleDocuments(unindexable, dbSession, status);
@@ -249,7 +245,6 @@ export const uploadManifest = async (
   //   assert.ok(manifestMeta.searchProperty);
   //   assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
   //   assert.ok(manifestMeta.manifestRevisionId);
-  console.log(operations);
 
   if (operations.length > 0) {
     console.log("executing operations");
@@ -260,4 +255,5 @@ export const uploadManifest = async (
     status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
     status.inserted += bulkWriteStatus?.matchedCount ?? 0;
   }
+  console.log(status);
 };
