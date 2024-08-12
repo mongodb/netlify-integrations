@@ -51,15 +51,14 @@ integration.addBuildEventHandler(
   "onEnd",
   async ({ utils: { run, status } }) => {
     console.log("Creating cache files...");
-    const { stdout } = await run.command(
+    const { all } = await run.command(
       "./snooty-parser/snooty/snooty create-cache ."
     );
 
-    console.log("status update stdout: ", stdout);
+    console.log("status update stdout: ", all);
     status.show({
       title: "snooty parser logs",
-      summary: "Output of the snooty parser",
-      text: stdout,
+      summary: all ?? "",
     });
   }
 );
