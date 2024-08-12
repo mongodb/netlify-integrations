@@ -23,10 +23,9 @@ integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
   }
   // Don't want to restore duplicates, only restore snooty cache files
   console.log("restoring snooty cache files");
-  await Promise.all([
-    await cache.restore("./snooty-parser"),
-    ...cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile)),
-  ]);
+  await Promise.all(
+    cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
+  );
 });
 
 integration.addBuildEventHandler(
@@ -39,13 +38,28 @@ integration.addBuildEventHandler(
 
     const cacheFiles = getCacheFilePaths(filesPaths);
 
-    await Promise.all([
-      await cache.save("./snooty-parser/"),
-      ...cacheFiles.map(async (filePath) => {
+    await Promise.all(
+      cacheFiles.map(async (filePath) => {
         console.log(`Adding cache file: ${filePath}`);
         await cache.save(filePath);
-      }),
-    ]);
+      })
+    );
+  }
+);
+
+integration.addBuildEventHandler(
+  "onEnd",
+  async ({ utils: { run, status } }) => {
+    console.log("Creating cache files...");
+    const { stdout } = await run.command(
+      "./snooty-parser/snooty/snooty create-cache ."
+    );
+
+    status.show({
+      title: "snooty parser logs",
+      summary: "Output of the snooty parser",
+      text: stdout,
+    });
   }
 );
 
