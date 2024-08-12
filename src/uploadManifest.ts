@@ -137,7 +137,7 @@ const getProperties = async (repoName: string, branch: string) => {
   let docsetRepo: any;
 
   try {
-    const dbSession = await db(ATLAS_SEARCH_URI, SNOOTY_DB_NAME);
+    const dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
