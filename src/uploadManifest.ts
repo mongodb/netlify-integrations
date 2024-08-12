@@ -144,12 +144,13 @@ const getProperties = async (repoName: string, branch: string) => {
   }
 
   const query = {
-    search: { $equals: { path: "repoName", value: repoName } },
+    repoName: { $eq: repoName },
   };
   const projection = {
     projection: { _id: 0, project: 1, search: 1, prodDeployable: 1 },
   };
 
+  //do we want to check if branch is inactive/delete manifest for an inactive branch if so?
   try {
     repo = await repos_branches?.find(query, { projection }).toArray();
   } catch (e) {
@@ -163,9 +164,7 @@ const getProperties = async (repoName: string, branch: string) => {
     const project = repo[0].project;
     searchProperty = repo[0].search[0];
     try {
-      docsetRepo = await docsets
-        ?.find({ search: { $equals: { path: "project", value: project } } })
-        .toArray();
+      docsetRepo = await docsets?.find({ project: { $eq: project } }).toArray();
       if (docsetRepo.length) {
         url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
       } else {
