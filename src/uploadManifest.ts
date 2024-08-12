@@ -128,7 +128,7 @@ const executeUpload = async (
   //end session
 };
 
-const getProperties = async (repoName: string, branch: string) => {
+const getProperties = async (name: string, branch: string) => {
   let repos_branches;
   let docsets;
   let url: string;
@@ -140,13 +140,13 @@ const getProperties = async (repoName: string, branch: string) => {
     const dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
-    console.log(repos_branches, docsets);
+    console.log(repos_branches, name);
   } catch (e) {
     console.log("issue starting session");
   }
 
   const query = {
-    repoName: { $eq: repoName },
+    repoName: name,
   };
   const projection = {
     projection: { project: 1, search: 1, prodDeployable: 1 },
