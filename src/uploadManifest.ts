@@ -140,6 +140,7 @@ const getProperties = async (repoName: string, branch: string) => {
     const dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
+    console.log(repos_branches, docsets);
   } catch (e) {
     console.log("issue starting session");
   }
