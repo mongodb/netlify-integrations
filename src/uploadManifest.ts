@@ -157,6 +157,7 @@ const getProperties = async (repoName: string, branch: string) => {
     console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
   }
+  console.log(JSON.stringify(repo));
 
   if (!repo.length || !repo[0].prodDeployable) {
     return ["", ""];
