@@ -4,6 +4,7 @@ import { Manifest } from "./manifest";
 import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
+import { spec } from "node:test/reporters";
 
 // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
@@ -126,49 +127,74 @@ const executeUpload = async (
   //end session
 };
 
-const getProperties = async () => {
+const getProperties = async (repoName: string, branch: string) => {
   let repos_branches;
+  let docsets;
+  let url: string;
+  let searchProperty: string;
+  let repo: any;
+  let docsetRepo: any;
+
   try {
     const dbSession = await db(ATLAS_SEARCH_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
+    docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
     console.log("issue starting session");
   }
 
-  //amend query to get document matching some name (maybe repoName?) and find branch from there
-  //need searchProperty, url
   const query = {
-    search: { $exists: true },
+    search: { $equals: { path: "repoName", value: repoName } },
+  };
+  const projection = {
+    projection: { _id: 0, project: 1, search: 1, prodDeployable: 1 },
   };
 
-  let repos;
   try {
-    repos = await repos_branches?.find(query).project<Branch>({
-      _id: 0,
-      project: 1,
-      search: 1,
-      branches: 1,
-      prodDeployable: 1,
-    });
+    repo = await repos_branches?.find(query, { projection }).toArray();
   } catch (e) {
-    console.error(`Error while create search property mapping: ${e}`);
+    console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
   }
 
+  if (!repo.length || !repo[0].prodDeployable) {
+    return ["", ""];
+  } else {
+    const project = repo[0].project;
+    searchProperty = repo[0].search[0];
+    try {
+      docsetRepo = await docsets
+        ?.find({ search: { $equals: { path: "project", value: project } } })
+        .toArray();
+      if (docsetRepo.length) {
+        url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
+      } else {
+        return ["", ""];
+      }
+    } catch (e) {
+      console.error(`Error while getting docsets entry in Atlas ${e}`);
+      throw e;
+    }
+  }
   //check that repos exists, only one repo
   //make sure repo is proddeployable, search field exists, and branch is active
   //if any of this is not true add operations with deletestaledocuments and deletestaleproperties
-  return repos?.project;
+  return [searchProperty, url];
 };
 
-export const uploadManifest = async (manifest: Manifest) => {
+export const uploadManifest = async (
+  manifest: Manifest,
+  repoName: string,
+  branch: string
+) => {
   console.log("in upload manifest");
   //check that manifest documents exist
   if (manifest.documents.length == 0) {
     return;
   }
 
-  // const [searchProperty, url] = getProperties();
+  const [searchProperty, url] = await getProperties(repoName, branch);
+  console.log(searchProperty, url);
 
   //start a session
   let documents;
