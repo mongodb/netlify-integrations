@@ -9,7 +9,8 @@ import { spec } from "node:test/reporters";
 // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
-const SNOOTY_DB_NAME = "search-test-ab";
+const SNOOTY_DB_NAME = "pool-test";
+const SEARCH_DB_NAME = "search-test-ab";
 
 export interface Branch {
   branchName: string;
@@ -111,22 +112,6 @@ const deleteStaleDocuments = async (
   //     `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
   //   );
 };
-const executeUpload = async (
-  upserts: AnyBulkWriteOperation<DatabaseDocument>[]
-) => {
-  //define transaction options
-  //TO DO: why these options??
-  const transactionOptions: TransactionOptions = {
-    readPreference: "primary",
-    readConcern: { level: "local" },
-    writeConcern: { w: "majority" },
-  };
-
-  //withTransaction
-  //compose upserts
-
-  //end session
-};
 
 const getProperties = async (name: string, branch: string) => {
   let repos_branches;
@@ -200,7 +185,7 @@ export const uploadManifest = async (
   //start a session
   let documents;
   try {
-    const dbSession = await db(ATLAS_SEARCH_URI, SNOOTY_DB_NAME);
+    const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     documents = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
     console.log("issue starting session");
@@ -251,6 +236,7 @@ export const uploadManifest = async (
     const bulkWriteStatus = await documents?.bulkWrite(operations, {
       ordered: false,
     });
+    console.log(bulkWriteStatus);
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
     status.inserted += bulkWriteStatus?.matchedCount ?? 0;
