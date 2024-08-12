@@ -1,6 +1,6 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
-import { readdir } from "fs";
+import { readdir, truncate } from "fs";
 
 import { promisify } from "util";
 
@@ -51,14 +51,15 @@ integration.addBuildEventHandler(
   "onEnd",
   async ({ utils: { run, status } }) => {
     console.log("Creating cache files...");
-    const { all } = await run.command(
-      "./snooty-parser/snooty/snooty create-cache ."
+    const { all, stderr, stdout } = await run.command(
+      "./snooty-parser/snooty/snooty create-cache .",
+      { all: true }
     );
 
     console.log("status update stdout: ", all);
     status.show({
       title: "snooty parser logs",
-      summary: all ?? "",
+      summary: all ?? stdout + stderr,
     });
   }
 );
