@@ -22,7 +22,6 @@ export const teardown = async () => {
 };
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async (uri: string, db_name: string) => {
-  teardown();
   console.log("DB CLIENT", dbInstance);
   console.log("URI", uri);
   let client = new mongodb.MongoClient(uri);

@@ -181,7 +181,6 @@ export const uploadManifest = async (
 
   // const [searchProperty, url] = await getProperties(repoName, branch);
   // manifest.url = url;
-  teardown();
 
   //start a session
   let documents;
