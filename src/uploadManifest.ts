@@ -1,7 +1,7 @@
 import { TransactionOptions, AnyBulkWriteOperation } from "mongodb";
 import crypto from "crypto";
 import { Manifest } from "./manifest";
-import { db } from "./searchConnector";
+import { db, teardown } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { spec } from "node:test/reporters";
@@ -10,7 +10,7 @@ import { spec } from "node:test/reporters";
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "pool_test";
-const SEARCH_DB_NAME = "search-test-ab";
+const SEARCH_DB_NAME = "search-ab";
 
 export interface Branch {
   branchName: string;
@@ -181,6 +181,7 @@ export const uploadManifest = async (
 
   const [searchProperty, url] = await getProperties(repoName, branch);
   manifest.url = url;
+  teardown();
 
   //start a session
   let documents;
