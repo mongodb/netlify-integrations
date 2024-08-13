@@ -10,6 +10,7 @@ const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.yl
 const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "pool_test";
 const SEARCH_DB_NAME = "search-test-ab";
+const REPO_NAME = process.env.REPO_NAME;
 
 export interface Branch {
   branchName: string;
@@ -168,17 +169,17 @@ const getProperties = async (name: string, branch: string) => {
   return [searchProperty, url];
 };
 
-export const uploadManifest = async (
-  manifest: Manifest,
-  repoName: string,
-  branch: string
-) => {
+export const uploadManifest = async (manifest: Manifest, branch: string) => {
   //check that manifest documents exist
   if (manifest.documents.length == 0) {
     return;
   }
-
-  const [searchProperty, url] = await getProperties(repoName, branch);
+  if (!REPO_NAME) {
+    throw new Error(
+      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
+    );
+  }
+  const [searchProperty, url] = await getProperties(REPO_NAME, branch);
   manifest.url = url;
 
   //start a session
