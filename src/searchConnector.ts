@@ -25,16 +25,12 @@ export const db = async (uri: string, db_name: string) => {
   console.log("DB CLIENT", dbInstance);
   console.log("URI", uri);
   let client = new mongodb.MongoClient(uri);
-  if (!dbInstance) {
-    try {
-      await client.connect();
-      dbInstance = client.db(db_name);
-    } catch (error) {
-      console.error(`Error at db client connection: ${error}`);
-      throw error;
-    }
-  } else {
-    console.log("db instance exists already");
+  try {
+    await client.connect();
+    dbInstance = client.db(db_name);
+  } catch (error) {
+    console.error(`Error at db client connection: ${error}`);
+    throw error;
   }
   return dbInstance;
 };
