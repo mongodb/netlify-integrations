@@ -211,7 +211,7 @@ export const uploadManifest = async (
 
   const upserts = await composeUpserts(
     manifest,
-    "searchProperty",
+    searchProperty,
     lastModified,
     hash
   );
