@@ -5,9 +5,8 @@ import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 
-// const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
-const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
-const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
+const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
+const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "pool_test";
 const SEARCH_DB_NAME = "search-test-ab";
 const REPO_NAME = process.env.REPO_NAME;
