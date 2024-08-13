@@ -1,44 +1,17 @@
 import { Db } from "mongodb";
-import crypto from "crypto";
-import { Manifest } from "./manifest";
+import { Manifest } from "../generateManifest/manifest";
 import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
+import { generateHash, joinUrl } from "./utils";
 
-const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
-const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
+const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority&appName=Search`;
+const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "pool_test";
 const SEARCH_DB_NAME = "search-test-ab";
 const REPO_NAME = process.env.REPO_NAME;
 
-export interface Branch {
-  branchName: string;
-  active: boolean;
-  urlSlug?: string | undefined;
-  search: string;
-  project: string;
-  prodDeployable: boolean;
-}
-
-function generateHash(data: string): Promise<string> {
-  const hash = crypto.createHash("sha256");
-
-  return new Promise((resolve, reject) => {
-    hash.on("readable", () => {
-      const data = hash.read();
-      if (data) {
-        resolve(data.toString("hex"));
-      }
-    });
-
-    hash.write(data);
-    hash.end();
-  });
-}
-
-export function joinUrl(base: string, path: string): string {
-  return base.replace(/\/*$/, "/") + path.replace(/^\/*/, "");
-}
+//TODO: make an interface/class for the uploads?
 
 const composeUpserts = async (
   manifest: Manifest,
@@ -85,39 +58,12 @@ const composeUpserts = async (
   });
 };
 
-const deleteStaleDocuments = async (
-  searchProperty: string,
-  manifestRevisionId: string
-) => {
-  console.debug(`Removing old documents`);
-  return {
-    deleteMany: {
-      filter: {
-        searchProperty: searchProperty,
-        manifestRevisionId: { $ne: manifestRevisionId },
-      },
-    },
-  };
-  //   const deleteResult = await collection.deleteMany(
-  //     {
-  //       searchProperty: searchProperty,
-  //       manifestRevisionId: { $ne: manifestRevisionId },
-  //     },
-  //     { session }
-  //   );
-  //   status.deleted +=
-  //     deleteResult.deletedCount === undefined ? 0 : deleteResult.deletedCount;
-  //   console.debug(
-  //     `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
-  //   );
-};
-
 const getProperties = async (name: string, branch: string) => {
   let dbSession: Db;
   let repos_branches;
   let docsets;
-  let url: string;
-  let searchProperty: string;
+  let url: string = "";
+  let searchProperty: string = "";
   let repo: any;
   let docsetRepo: any;
 
@@ -132,11 +78,7 @@ const getProperties = async (name: string, branch: string) => {
   const query = {
     repoName: name,
   };
-  const projection = {
-    projection: { project: 1, search: 1, prodDeployable: 1 },
-  };
 
-  //do we want to check if branch is inactive/delete manifest for an inactive branch if so?
   try {
     repo = await repos_branches?.find(query).toArray();
   } catch (e) {
@@ -144,9 +86,7 @@ const getProperties = async (name: string, branch: string) => {
     throw e;
   }
 
-  if (!repo.length || !repo[0].prodDeployable) {
-    return ["", ""];
-  } else {
+  if (repo.length && repo[0].prodDeployable && repo[0].search) {
     const project = repo[0].project;
     searchProperty = repo[0].search.categoryTitle;
     try {
@@ -154,8 +94,6 @@ const getProperties = async (name: string, branch: string) => {
       docsetRepo = await docsets?.find(docsetsQuery).toArray();
       if (docsetRepo.length) {
         url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-      } else {
-        return ["", ""];
       }
     } catch (e) {
       console.error(`Error while getting docsets entry in Atlas ${e}`);
@@ -163,7 +101,7 @@ const getProperties = async (name: string, branch: string) => {
     }
   }
   //check that repos exists, only one repo
-  //make sure repo is proddeployable, search field exists, and branch is active
+  //TODO: make sure branch is active
   //if any of this is not true add operations with deletestaledocuments and deletestaleproperties
   return [searchProperty, url];
 };
@@ -173,11 +111,14 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
   if (manifest.documents.length == 0) {
     return;
   }
+  //check that an environment variable for repo name was set
   if (!REPO_NAME) {
     throw new Error(
       "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
     );
   }
+
+  //get searchProperty, url
   const [searchProperty, url] = await getProperties(REPO_NAME, branch);
   manifest.url = url;
 
@@ -198,10 +139,6 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
     elapsedMS: null,
   };
 
-  //get URL, pathname from url
-
-  // get manifests, analogous to getManifestFromDirectory
-
   const hash = await generateHash(manifest.toString());
   const lastModified = new Date();
 
@@ -211,22 +148,17 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
     lastModified,
     hash
   );
-
-  //delete stale documents
-  //TODO: how do we want to delete stale properties?
-  // const deletions = await deleteStaleDocuments(searchProperty, hash);
   const operations = [...upserts];
-  //   await deleteStaleDocuments(manifest.documents, dbSession, status);
-  //   await deleteStaleDocuments(unindexable, dbSession, status);
 
-  //make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
+  //TODO: how do we want to delete stale properties?
+  //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
   console.info(`Starting transaction`);
-  //   assert.strictEqual(typeof manifestMeta.searchProperty, "string");
-  //   assert.ok(manifestMeta.searchProperty);
-  //   assert.strictEqual(typeof manifestMeta.manifestRevisionId, "string");
-  //   assert.ok(manifestMeta.manifestRevisionId);
+  assert.strictEqual(typeof manifest.global, "string");
+  assert.ok(manifest.global);
+  assert.strictEqual(typeof hash, "string");
+  assert.ok(hash);
 
   if (operations.length > 0) {
     const bulkWriteStatus = await documents?.bulkWrite(operations, {

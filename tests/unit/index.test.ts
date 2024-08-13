@@ -2,8 +2,8 @@ import { describe, expect, test, it, vi, beforeAll } from "vitest";
 import { generateManifest } from "../../src";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import * as fs from "fs";
-import { Manifest } from "../../src/manifest";
-import { ManifestEntry } from "../../src/manifestEntry";
+import { Manifest } from "../../src/generateManifest/manifest";
+import { ManifestEntry } from "../../src/generateManifest/manifestEntry";
 
 let nodeManifestDocs: any = {};
 let manifest: Manifest;

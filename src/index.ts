@@ -1,10 +1,10 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
-import { Manifest } from "./manifest";
+import { Manifest } from "./generateManifest/manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
-import { Document } from "./document";
-import { uploadManifest } from "./uploadManifest";
+import { Document } from "./generateManifest/document";
+import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import { DeployContext } from "@netlify/sdk/client";

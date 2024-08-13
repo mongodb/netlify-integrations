@@ -1,4 +1,4 @@
-import { ManifestEntry } from "./manifestEntry";
+import { ManifestEntry } from "../generateManifest/manifestEntry";
 
 export interface RefreshInfo {
   deleted: number;
@@ -16,4 +16,13 @@ export interface DatabaseDocument extends ManifestEntry {
   manifestRevisionId: string;
   searchProperty: string[];
   includeInGlobalSearch: boolean;
+}
+
+export interface Branch {
+  branchName: string;
+  active: boolean;
+  urlSlug?: string | undefined;
+  search: string;
+  project: string;
+  prodDeployable: boolean;
 }
