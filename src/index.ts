@@ -31,8 +31,7 @@ export const generateManifest = async () => {
     );
   });
 
-  // console.log("entries:" + JSON.stringify(mappedEntries), mappedEntries.length);
-  //need a check here
+  //need a check here?
   process.chdir("documents");
   for (const entry of mappedEntries) {
     //each file is read and decoded
@@ -57,11 +56,10 @@ integration.addBuildEventHandler(
     // );
     // repoName = repoName.split("/").pop();
     const repoName = "docs-node";
-    console.log("repoName:", repoName);
     await run.command("unzip -o bundle.zip");
     const branch = netlifyConfig.build?.environment["BRANCH"];
 
-    //this export function is likely not needed
+    //use export function for uploading to S3
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");

@@ -17,13 +17,9 @@ console.log("initiating db");
 // cached db object, so we can handle initial connection process once if unitialized
 let dbInstance: Db;
 let client: mongodb.MongoClient;
-export const teardown = async () => {
-  await client.close();
-};
+
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async (uri: string, db_name: string) => {
-  console.log("DB CLIENT", dbInstance);
-  console.log("URI", uri);
   let client = new mongodb.MongoClient(uri);
   try {
     await client.connect();

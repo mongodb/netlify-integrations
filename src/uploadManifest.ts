@@ -1,7 +1,7 @@
-import { Db, TransactionOptions, AnyBulkWriteOperation } from "mongodb";
+import { Db } from "mongodb";
 import crypto from "crypto";
 import { Manifest } from "./manifest";
-import { db, teardown } from "./searchConnector";
+import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 
@@ -126,7 +126,7 @@ const getProperties = async (name: string, branch: string) => {
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
-    console.log("issue starting session");
+    console.log("issue starting session for Snooty Pool Database", e);
   }
 
   const query = {
@@ -173,7 +173,6 @@ export const uploadManifest = async (
   repoName: string,
   branch: string
 ) => {
-  console.log("in upload manifest");
   //check that manifest documents exist
   if (manifest.documents.length == 0) {
     return;
@@ -187,16 +186,13 @@ export const uploadManifest = async (
   try {
     const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     documents = dbSession.collection<DatabaseDocument>("documents");
-    console.log(documents);
   } catch (e) {
-    console.log("issue starting session");
+    console.log("issue starting session for Search Database", e);
   }
   const status: RefreshInfo = {
     deleted: 0,
-    updated: 0,
-    inserted: 0,
-    skipped: [],
-    errors: [],
+    upserted: 0,
+    errors: false,
     dateStarted: new Date(),
     dateFinished: null,
     elapsedMS: null,
@@ -233,14 +229,10 @@ export const uploadManifest = async (
   //   assert.ok(manifestMeta.manifestRevisionId);
 
   if (operations.length > 0) {
-    console.log("executing operations");
     const bulkWriteStatus = await documents?.bulkWrite(operations, {
       ordered: false,
     });
-    console.log("STATUS:", bulkWriteStatus);
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
-    status.inserted += bulkWriteStatus?.upsertedCount ?? 0;
-    status.inserted += bulkWriteStatus?.matchedCount ?? 0;
+    status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
-  console.log(status);
 };

@@ -2,10 +2,8 @@ import { ManifestEntry } from "./manifestEntry";
 
 export interface RefreshInfo {
   deleted: number;
-  updated: number;
-  inserted: number;
-  skipped: string[];
-  errors: Error[];
+  upserted: number;
+  errors: boolean;
   dateStarted: Date;
   dateFinished: Date | null;
   elapsedMS: number | null;
