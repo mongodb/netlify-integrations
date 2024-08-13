@@ -20,7 +20,7 @@ let client: mongodb.MongoClient;
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async (uri: string, db_name: string) => {
-  let client = new mongodb.MongoClient(uri);
+  client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
     dbInstance = client.db(db_name);

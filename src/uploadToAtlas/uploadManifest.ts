@@ -7,8 +7,9 @@ import { generateHash, joinUrl } from "./utils";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-const SNOOTY_DB_NAME = "pool_test";
-const SEARCH_DB_NAME = "search-test-ab";
+//TODO: change these teamwide env vars in Netlify UI when ready to move to prod
+const SNOOTY_DB_NAME = `${process.env.ATLAS_POOL_DB_NAME}`;
+const SEARCH_DB_NAME = `${process.env.ATLAS_SEARCH_DB_NAME}`;
 const REPO_NAME = process.env.REPO_NAME;
 
 //TODO: make an interface/class for the uploads?
@@ -123,10 +124,10 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
   manifest.url = url;
 
   //start a session
-  let documents;
+  let documentsColl;
   try {
     const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
-    documents = dbSession.collection<DatabaseDocument>("documents");
+    documentsColl = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
     console.log("issue starting session for Search Database", e);
   }
@@ -154,14 +155,15 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
+
   console.info(`Starting transaction`);
-  assert.strictEqual(typeof manifest.global, "string");
+  assert.strictEqual(typeof manifest.global, "boolean");
   assert.ok(manifest.global);
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);
 
   if (operations.length > 0) {
-    const bulkWriteStatus = await documents?.bulkWrite(operations, {
+    const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
       ordered: false,
     });
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;

@@ -9,7 +9,6 @@ export interface RefreshInfo {
   elapsedMS: number | null;
 }
 
-//should extend manifestentry instead
 export interface DatabaseDocument extends ManifestEntry {
   url: string;
   lastModified: Date;
