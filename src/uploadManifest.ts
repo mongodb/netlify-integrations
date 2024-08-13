@@ -1,16 +1,15 @@
-import { TransactionOptions, AnyBulkWriteOperation } from "mongodb";
+import { Db, TransactionOptions, AnyBulkWriteOperation } from "mongodb";
 import crypto from "crypto";
 import { Manifest } from "./manifest";
 import { db, teardown } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
-import { spec } from "node:test/reporters";
 
 // const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net/?retryWrites=true&w=majority&appName=Search`;
 const ATLAS_CLUSTER0_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0.ylwlz.mongodb.net/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = "pool_test";
-const SEARCH_DB_NAME = "search-ab";
+const SEARCH_DB_NAME = "search-test-ab";
 
 export interface Branch {
   branchName: string;
@@ -114,6 +113,7 @@ const deleteStaleDocuments = async (
 };
 
 const getProperties = async (name: string, branch: string) => {
+  let dbSession: Db;
   let repos_branches;
   let docsets;
   let url: string;
@@ -122,7 +122,7 @@ const getProperties = async (name: string, branch: string) => {
   let docsetRepo: any;
 
   try {
-    const dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
+    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
@@ -179,8 +179,8 @@ export const uploadManifest = async (
     return;
   }
 
-  // const [searchProperty, url] = await getProperties(repoName, branch);
-  // manifest.url = url;
+  const [searchProperty, url] = await getProperties(repoName, branch);
+  manifest.url = url;
 
   //start a session
   let documents;
