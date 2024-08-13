@@ -1,12 +1,13 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
-import { Manifest } from "./manifest";
+import { Manifest } from "./generateManifest/manifest";
 import { promisify } from "util";
 import { BSON } from "bson";
-import { Document } from "./document";
-import { uploadManifest } from "./uploadManifest";
+import { Document } from "./generateManifest/document";
+import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
+import { DeployContext } from "@netlify/sdk/client";
 
 const readdirAsync = promisify(readdir);
 
@@ -30,13 +31,10 @@ export const generateManifest = async () => {
     );
   });
 
-  // console.log("entries:" + JSON.stringify(mappedEntries), mappedEntries.length);
-  //need a check here
+  //need a check here?
   process.chdir("documents");
   for (const entry of mappedEntries) {
     //each file is read and decoded
-    const entries = await readdirAsync(process.cwd());
-
     const decoded = BSON.deserialize(readFileSync(`${entry}`));
     //put file into Document object
     //export Document object
@@ -48,16 +46,21 @@ export const generateManifest = async () => {
 };
 
 //Return indexing data from a page's AST for search purposes.
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-  // Get content repo zipfile in AST representation.
-  await run.command("unzip -o bundle.zip");
+integration.addBuildEventHandler(
+  "onSuccess",
+  async ({ utils: { run }, netlifyConfig }) => {
+    // Get content repo zipfile in AST representation.
 
-  //this export function is likely not needed
-  const manifest = await generateManifest();
+    await run.command("unzip -o bundle.zip");
+    const branch = netlifyConfig.build?.environment["BRANCH"];
 
-  console.log("=========== finished generating manifests ================");
-  uploadManifest(manifest);
-  console.log("=========== Uploading Manifests to Atlas ================");
-});
+    //use export function for uploading to S3
+    const manifest = await generateManifest();
+
+    console.log("=========== finished generating manifests ================");
+    await uploadManifest(manifest, branch);
+    console.log("=========== Uploading Manifests to Atlas ================");
+  }
+);
 
 export { integration };

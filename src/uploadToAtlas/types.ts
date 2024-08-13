@@ -1,20 +1,27 @@
-import { ManifestEntry } from "./manifestEntry";
+import { ManifestEntry } from "../generateManifest/manifestEntry";
 
 export interface RefreshInfo {
   deleted: number;
-  updated: number;
-  inserted: number;
-  skipped: string[];
-  errors: Error[];
+  upserted: number;
+  errors: boolean;
   dateStarted: Date;
   dateFinished: Date | null;
   elapsedMS: number | null;
 }
 
-//should extend manifestentry instead
 export interface DatabaseDocument extends ManifestEntry {
   url: string;
+  lastModified: Date;
   manifestRevisionId: string;
   searchProperty: string[];
   includeInGlobalSearch: boolean;
+}
+
+export interface Branch {
+  branchName: string;
+  active: boolean;
+  urlSlug?: string | undefined;
+  search: string;
+  project: string;
+  prodDeployable: boolean;
 }
