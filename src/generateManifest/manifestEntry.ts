@@ -3,11 +3,11 @@ export class ManifestEntry {
   slug: string;
   strippedSlug?: string;
   title?: string;
-  headings?: string[][];
+  headings?: string[];
   paragraphs: string;
-  code: { lang: string; value: any }[];
-  preview?: string;
-  tags: string[];
+  code: { lang: string | null; value: string }[];
+  preview?: string | null;
+  tags: string | null;
   facets: any;
 
   constructor(entry: any) {
