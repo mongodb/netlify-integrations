@@ -3,8 +3,6 @@ import * as mongodb from "mongodb";
 
 // We should only ever have one client active at a time.
 
-console.log("initiating db");
-
 //TODO: teardown after no longer need client
 // export const teardown = async () => {
 //   await client.close();

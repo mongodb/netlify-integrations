@@ -10,7 +10,6 @@ const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 const SNOOTY_DB_NAME = `${process.env.ATLAS_POOL_DB_NAME}`;
 const SEARCH_DB_NAME = `${process.env.ATLAS_SEARCH_DB_NAME}`;
-const REPO_NAME = process.env.REPO_NAME;
 
 //TODO: make an interface/class for the uploads?
 
@@ -59,7 +58,7 @@ const composeUpserts = async (
   });
 };
 
-const getProperties = async (name: string, branch: string) => {
+export const getProperties = async (name: string, branch: string) => {
   let dbSession: Db;
   let repos_branches;
   let docsets;
@@ -87,7 +86,7 @@ const getProperties = async (name: string, branch: string) => {
     throw e;
   }
 
-  if (repo.length && repo[0].prodDeployable && repo[0].search) {
+  if (repo?.length && repo[0].prodDeployable && repo[0].search) {
     const project = repo[0].project;
     searchProperty = repo[0].search.categoryTitle;
     try {
@@ -107,15 +106,17 @@ const getProperties = async (name: string, branch: string) => {
   return [searchProperty, url];
 };
 
+//handle overall upload of manifest to Atlas
 export const uploadManifest = async (manifest: Manifest, branch: string) => {
   //check that manifest documents exist
-  if (manifest.documents.length == 0) {
-    return;
+  if (!manifest?.documents?.length) {
+    return Promise.reject(new Error("Invalid manifest "));
   }
   //check that an environment variable for repo name was set
+  const REPO_NAME = process.env.REPO_NAME;
   if (!REPO_NAME) {
     throw new Error(
-      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
+      "No repo name found, manifest cannot be uploaded to Atlas Search.Documents collection "
     );
   }
 
@@ -169,4 +170,5 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
+  return status;
 };
