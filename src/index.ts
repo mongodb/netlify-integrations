@@ -56,9 +56,9 @@ integration.addBuildEventHandler(
       { all: true }
     );
 
-    console.log("status update stdout: ", all);
+    const logs = all ?? stdout + stderr;
 
-    const logsSplit = all?.split("\n") || [];
+    const logsSplit = logs.split("\n") || [];
 
     let errorCount = 0;
     let warningCount = 0;
@@ -70,7 +70,7 @@ integration.addBuildEventHandler(
 
     status.show({
       title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
-      summary: all ?? stdout + stderr,
+      summary: logs,
     });
   }
 );
