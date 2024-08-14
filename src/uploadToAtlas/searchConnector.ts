@@ -1,8 +1,3 @@
-// Service that holds responsibility for initializing and exposing mdb interfaces.
-// Also exports helper functions for common operations (insert, upsert one by _id, etc.)
-// When adding helpers here, ask yourself if the helper will be used by more than one service
-// If no, the helper should be implemented in that service, not here
-
 import { Db } from "mongodb";
 import * as mongodb from "mongodb";
 
@@ -10,6 +5,7 @@ import * as mongodb from "mongodb";
 
 console.log("initiating db");
 
+//TODO: teardown after no longer need client
 // export const teardown = async () => {
 //   await client.close();
 // };

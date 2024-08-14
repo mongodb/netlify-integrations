@@ -13,7 +13,7 @@ export class Document {
   title: any;
   headings: any;
   slug: string;
-  preview: string;
+  preview?: string;
   facets: any;
   noIndex: any;
   reasons: any;
@@ -46,7 +46,7 @@ export class Document {
 
   findMetadata() {
     let robots: Boolean = true; //can be set in the rst if the page is supposed to be crawled
-    let keywords: string[] | null = null; //keywords is an optional list of strings
+    let keywords: string | null = null; //keywords is an optional list of strings
     let description: string | null = null; //this can be optional??
 
     let results = JSONPath({

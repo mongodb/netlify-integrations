@@ -7,7 +7,6 @@ import { Document } from "./generateManifest/document";
 import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
-import { DeployContext } from "@netlify/sdk/client";
 
 const readdirAsync = promisify(readdir);
 
@@ -58,8 +57,12 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    await uploadManifest(manifest, branch);
-    console.log("=========== Uploading Manifests to Atlas ================");
+    console.log("=========== Uploading Manifests to Atlas =================");
+    try {
+      await uploadManifest(manifest, branch);
+    } catch (e) {
+      console.log("Manifest could not be uploaded", e);
+    }
   }
 );
 
