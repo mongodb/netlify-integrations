@@ -61,7 +61,11 @@ integration.addBuildEventHandler(
     const logsSplit =
       logs
         .split("\n")
-        .filter((row) => !row.includes("INFO:snooty.gizaparser.domain")) || [];
+        .filter(
+          (row) =>
+            !row.includes("INFO:snooty.gizaparser.domain") &&
+            !row.includes("INFO:snooty.parser:cache")
+        ) || [];
 
     let errorCount = 0;
     let warningCount = 0;
