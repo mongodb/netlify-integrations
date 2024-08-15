@@ -113,4 +113,5 @@ export const uploadManifest = async (
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
+  return status;
 };
