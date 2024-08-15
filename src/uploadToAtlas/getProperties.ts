@@ -2,7 +2,7 @@ import { Db } from "mongodb";
 import { db } from "./searchConnector";
 import { DatabaseDocument } from "./types";
 
-//possibly get "global" property as well?
+// get whether branch is stable as well - set global from this?
 const getProperties = async () => {
   const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
   //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
