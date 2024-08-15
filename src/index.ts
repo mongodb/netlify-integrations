@@ -73,7 +73,7 @@ integration.addBuildEventHandler(
 
     status.show({
       title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
-      summary: logs,
+      summary: logsSplit.join("\n"),
     });
   }
 );
