@@ -7,6 +7,7 @@ import { Document } from "./generateManifest/document";
 import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
+import getProperties from "./uploadToAtlas/getProperties";
 
 const readdirAsync = promisify(readdir);
 
@@ -57,9 +58,16 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
+    //TODO: get manifest properties, change how url is set atm
+    const [searchProperty, url] = await getProperties();
+    manifest.url = url;
+
+    //TODO: upload manifests to S3
+
+    //upload manifests to atlas
     console.log("=========== Uploading Manifests to Atlas =================");
     try {
-      await uploadManifest(manifest, branch);
+      await uploadManifest(manifest, searchProperty);
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     }

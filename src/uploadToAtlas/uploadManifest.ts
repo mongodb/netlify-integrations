@@ -1,16 +1,13 @@
-import { Db } from "mongodb";
 import { Manifest } from "../generateManifest/manifest";
 import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
+import getProperties from "./getProperties";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority&appName=Search`;
-const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-const SNOOTY_DB_NAME = `${process.env.ATLAS_POOL_DB_NAME}`;
 const SEARCH_DB_NAME = `${process.env.ATLAS_SEARCH_DB_NAME}`;
-const REPO_NAME = process.env.REPO_NAME;
 
 //TODO: make an interface/class for the uploads?
 
@@ -59,69 +56,16 @@ const composeUpserts = async (
   });
 };
 
-const getProperties = async (name: string, branch: string) => {
-  let dbSession: Db;
-  let repos_branches;
-  let docsets;
-  let url: string = "";
-  let searchProperty: string = "";
-  let repo: any;
-  let docsetRepo: any;
-
-  try {
-    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
-    repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
-    docsets = dbSession.collection<DatabaseDocument>("docsets");
-  } catch (e) {
-    console.log("issue starting session for Snooty Pool Database", e);
-  }
-
-  const query = {
-    repoName: name,
-  };
-
-  try {
-    repo = await repos_branches?.find(query).toArray();
-  } catch (e) {
-    console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
-    throw e;
-  }
-
-  if (repo.length && repo[0].prodDeployable && repo[0].search) {
-    const project = repo[0].project;
-    searchProperty = repo[0].search.categoryTitle;
-    try {
-      const docsetsQuery = { project: { $eq: project } };
-      docsetRepo = await docsets?.find(docsetsQuery).toArray();
-      if (docsetRepo.length) {
-        url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-      }
-    } catch (e) {
-      console.error(`Error while getting docsets entry in Atlas ${e}`);
-      throw e;
-    }
-  }
-  //check that repos exists, only one repo
-  //TODO: make sure branch is active
-  //if any of this is not true add operations with deletestaledocuments and deletestaleproperties
-  return [searchProperty, url];
-};
-
-export const uploadManifest = async (manifest: Manifest, branch: string) => {
+export const uploadManifest = async (
+  manifest: Manifest,
+  searchProperty: string
+) => {
   //check that manifest documents exist
   if (manifest.documents.length == 0) {
     return;
   }
-  //check that an environment variable for repo name was set
-  if (!REPO_NAME) {
-    throw new Error(
-      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
-    );
-  }
-
   //get searchProperty, url
-  const [searchProperty, url] = await getProperties(REPO_NAME, branch);
-  manifest.url = url;
+  //TODO: pass in a db session
 
   //start a session
   let documentsColl;
@@ -151,7 +95,7 @@ export const uploadManifest = async (manifest: Manifest, branch: string) => {
   );
   const operations = [...upserts];
 
-  //TODO: how do we want to delete stale properties?
+  //TODO: how do we want to delete stale properties? delete manifests with that property if can't be found in repos_branches? but if can't be found in repos_branches.. then won't know what searchproperty is
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
