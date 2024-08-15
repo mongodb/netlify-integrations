@@ -70,6 +70,7 @@ export const uploadManifest = async (
   //start a session
   let documentsColl;
   try {
+    console.log("URI:", ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     documentsColl = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
