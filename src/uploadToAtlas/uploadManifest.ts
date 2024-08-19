@@ -3,7 +3,6 @@ import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
-import getProperties from "./getProperties";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
@@ -61,8 +60,8 @@ export const uploadManifest = async (
   searchProperty: string
 ) => {
   //check that manifest documents exist
-  if (manifest.documents.length == 0) {
-    return;
+  if (!manifest?.documents?.length) {
+    return Promise.reject(new Error("Invalid manifest "));
   }
   //get searchProperty, url
   //TODO: pass in a db session
@@ -85,6 +84,7 @@ export const uploadManifest = async (
   };
 
   const hash = await generateHash(manifest.toString());
+  //TODO: should we add a property for createdAt?
   const lastModified = new Date();
 
   const upserts = await composeUpserts(

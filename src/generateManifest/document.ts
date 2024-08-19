@@ -100,7 +100,7 @@ export class Document {
 
   findHeadings() {
     let headings: string[] = [];
-    let title: string | null = null;
+    let title: string = "";
     // Get the children of headings nodes
 
     let results = JSONPath({
@@ -126,7 +126,7 @@ export class Document {
       headings.push(heading.join());
     }
 
-    title = headings.shift() ?? null;
+    title = headings.shift() ?? "";
     return [title, headings];
   }
 
@@ -174,7 +174,7 @@ export class Document {
     }
 
     //else, give up and don't provide a preview
-    return "";
+    return null;
   }
 
   getNoIndex() {

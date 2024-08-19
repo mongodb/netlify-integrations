@@ -31,7 +31,6 @@ export const generateManifest = async () => {
     );
   });
 
-  //need a check here?
   process.chdir("documents");
   for (const entry of mappedEntries) {
     //each file is read and decoded
