@@ -1,19 +1,24 @@
-import { describe, expect, test, vi } from "vitest";
+import {
+  afterAll,
+  beforeEach,
+  afterEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from "vitest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { beforeEach, afterEach } from "node:test";
-import { db } from "../../src/uploadToAtlas/searchConnector";
 import { mockDb } from "../utils/mockDB";
+import { DatabaseDocument } from "../../src/uploadToAtlas/types";
+import { getManifest } from "../utils/getManifest";
 
-const BRANCH_NAME = "dummyBranch";
-//define env vars
-const REPO_NAME = "dummyName";
-// process.env.REPO_NAME = "dummyName";
+const PROPERTY_NAME = "dummyName";
 
 //teardown connections
 beforeEach(async () => {
-  vi.mock("../src/uploadToAtlas/searchConnector", async () => {
+  vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
     const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
 
     return {
@@ -26,88 +31,129 @@ beforeEach(async () => {
   });
 });
 
-afterEach(async () => {
-  //delete all documents in repo
+const checkCollection = async () => {
+  const db = await mockDb();
+  const documentCount = await db
+    .collection<DatabaseDocument>("documents")
+    .estimatedDocumentCount();
+  expect(documentCount).toEqual(0);
+};
 
+const removeDocuments = async () => {
+  //delete all documents in repo
+  const db = await mockDb();
+  await db.collection<DatabaseDocument>("documents").deleteMany({});
+  const documentCount = await db
+    .collection<DatabaseDocument>("documents")
+    .estimatedDocumentCount();
+};
+
+afterAll(async () => {
   //teardown db instance
   const { teardownMockDbClient } = await import("../utils/mockDB");
-
   await teardownMockDbClient();
 });
 
-//given empty manifest, test that it doesn't run
-// describe("Upload manifest doesn't work for invalid manifests", () => {
-//   let manifest: any;
-//   test("throws an error for an empty manifest", async () => {
-//     expect(
-//       async () => await uploadManifest(manifest, BRANCH_NAME)
-//     ).rejects.toThrowError();
-//   });
+// given empty manifest, test that it doesn't run
+describe("Upload manifest doesn't work for invalid manifests", () => {
+  let manifest: Manifest;
 
-//   test("throws an error for a manifest with 0 documents", async () => {
-//     manifest = new Manifest(true);
-//     expect(
-//       async () => await uploadManifest(manifest, BRANCH_NAME)
-//     ).rejects.toThrowError();
-//   });
-// });
+  test("throws an error for an empty manifest", async () => {
+    expect(
+      async () => await uploadManifest(manifest, PROPERTY_NAME)
+    ).rejects.toThrowError();
+  });
+
+  test("throws an error for a manifest with 0 documents", async () => {
+    manifest = new Manifest(true);
+    expect(
+      async () => await uploadManifest(manifest, PROPERTY_NAME)
+    ).rejects.toThrowError();
+  });
+});
 
 // given manifests, test that it uploads said manifests
 describe("Upload manifest uploads to Atlas db", () => {
-  let manifest: Manifest = new Manifest(
+  beforeEach(async () => {
+    await checkCollection();
+  });
+  afterEach(async () => {
+    await removeDocuments();
+  });
+  let manifest: Manifest;
+
+  test("constant nodeManifest uploads correct number of documents", async () => {
+    manifest = new Manifest(
+      nodeManifest.includeInGlobalSearch,
+      nodeManifest.url
+    );
+    manifest.documents = nodeManifest.documents;
+
+    const status = await uploadManifest(manifest, PROPERTY_NAME);
+
+    //check that manifests have been uploaded
+    const db = await mockDb();
+    const documents = db.collection<DatabaseDocument>("documents");
+    //count number of documents in collection
+    expect(await documents.countDocuments()).toEqual(manifest.documents.length);
+  });
+
+  test("Generated node manifest uploads correct number of documents", async () => {
+    //get new manifest
+    manifest = await getManifest("node");
+
+    //  upload manifest
+    const status = await uploadManifest(manifest, PROPERTY_NAME);
+    expect(status.upserted).toEqual(manifest.documents.length);
+
+    //check that manifests have been uploaded
+    const db = await mockDb();
+    const documents = db.collection<DatabaseDocument>("documents");
+    expect(await documents.countDocuments()).toEqual(manifest.documents.length);
+  });
+});
+
+describe("Upload manifest uploads to Atlas db and updates existing manifests correctly ", async () => {
+  let manifest1: Manifest = new Manifest(
     nodeManifest.includeInGlobalSearch,
     nodeManifest.url
   );
-  manifest.documents = nodeManifest.documents;
+  manifest1.documents = nodeManifest.documents;
 
-  test("nodeManifest properly uploads", async () => {
+  const db = await mockDb();
+  const documents = db.collection("documents");
+  const kotlinManifest = await getManifest("kotlin");
+
+  test("nodeManifest uploads all documents", async () => {
     //find a way to check that there are no documents in the collection yet
-    const status = await uploadManifest(manifest, BRANCH_NAME);
-    console.log(status);
+    const status1 = await uploadManifest(manifest1, PROPERTY_NAME);
+    expect(status1.upserted).toEqual(manifest1.documents.length);
 
-    const db = await mockDb();
-    const documents = db.collection("documents");
-    //count number of documents in collection
+    expect(await documents.countDocuments()).toEqual(
+      manifest1.documents.length
+    );
+
+    //re upload the same manifest
+    const status2 = await uploadManifest(manifest1, PROPERTY_NAME);
+    expect(status2.upserted).toEqual(0);
   });
 
-  //test another db
+  test("two separate manifests uplodaded uploads correct number of entries", async () => {
+    //find a way to check that there are no documents in the collection yet
+    expect(await documents.countDocuments()).toEqual(
+      manifest1.documents.length
+    );
+    const status = await uploadManifest(kotlinManifest, "docs-kotlin");
+    expect(status.upserted).toEqual(kotlinManifest.documents.length);
 
-  //test nodeManifest+ another db at once, additive
+    expect(await documents.countDocuments()).toEqual(
+      kotlinManifest.documents.length + manifest1.documents.length
+    );
+
+    //re upload the same manifest
+    const status2 = await uploadManifest(manifest1, PROPERTY_NAME);
+    expect(status2.upserted).toEqual(0);
+  });
 });
 
-//test that it updates documents with same search properties
-//upload manifest1
-//upload manifest 2 - check number of fields updated
-
-// describe("Upload manifest uploads to Atlas db and updates existing manifests correctly ", () => {
-//   let manifest1: Manifest = new Manifest(
-//     nodeManifest.includeInGlobalSearch,
-//     nodeManifest.url
-//   );
-//   manifest1.documents = nodeManifest.documents;
-
-//   let manifest2: Manifest = new Manifest(
-//     nodeManifest.includeInGlobalSearch,
-//     nodeManifest.url
-//   );
-//   manifest2.documents = nodeManifest.documents;
-
-//   test("nodeManifest properly uploads", async () => {
-//     //find a way to check that there are no documents in the collection yet
-//     let status = await uploadManifest(manifest1, BRANCH_NAME);
-//     console.log(status);
-//     expect(uploadManifest(manifest1, BRANCH_NAME)).resolves;
-
-//     const db = await mockDb();
-//     const documents = db.collection("documents");
-//     //count number of documents in collection
-
-//     status = await uploadManifest(manifest2, BRANCH_NAME);
-//   });
-
-//   //test another db
-
-//   //test nodeManifest+ another db at once, additive
-// });
-
-// //test composeUpserts
+// TODO: test composeUpserts

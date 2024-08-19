@@ -2,7 +2,7 @@
 export class ManifestEntry {
   slug: string;
   strippedSlug?: string;
-  title?: string;
+  title: string;
   headings?: string[];
   paragraphs: string;
   code: { lang: string | null; value: string }[];

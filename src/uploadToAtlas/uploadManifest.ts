@@ -3,7 +3,6 @@ import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
-import getProperties from "./getProperties";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_SEARCH_ATLAS_HOST}/?retryWrites=true&w=majority&appName=Search`;
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
@@ -85,6 +84,7 @@ export const uploadManifest = async (
   };
 
   const hash = await generateHash(manifest.toString());
+  //TODO: should we add a property for createdAt?
   const lastModified = new Date();
 
   const upserts = await composeUpserts(

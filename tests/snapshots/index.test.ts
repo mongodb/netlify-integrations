@@ -7,3 +7,5 @@ function sum(a: number, b: number) {
 test("adds 1 + 2 to equal 3", () => {
   expect(sum(1, 2)).toBe(3);
 });
+
+//write output of generatemanifest and then compose upserts to files, check if they're the same
