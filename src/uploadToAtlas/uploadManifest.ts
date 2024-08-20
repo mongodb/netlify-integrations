@@ -8,7 +8,7 @@ import { generateHash, joinUrl } from "./utils";
 const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net`;
 
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-const SEARCH_DB_NAME = "search-test";
+const SEARCH_DB_NAME = "search-test-ab";
 
 //TODO: make an interface/class for the uploads?
 
