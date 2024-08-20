@@ -6,7 +6,7 @@ import { DatabaseDocument } from "./types";
 const getProperties = async () => {
   const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
   //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-  const SNOOTY_DB_NAME = `${process.env.ATLAS_POOL_DB_NAME}`;
+  const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
   const REPO_NAME = process.env.REPO_NAME;
 
   //check that an environment variable for repo name was set
