@@ -5,10 +5,10 @@ import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
 
 // const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
-const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search-ylwlz.mongodb.net/?retryWrites=true&w=majority`;
+const ATLAS_SEARCH_URI = `mongodb+srv://anabella:${process.env.AB_PWD}@search.ylwlz.mongodb.net`;
 
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-const SEARCH_DB_NAME = `search-test-ab`;
+const SEARCH_DB_NAME = "search-test";
 
 //TODO: make an interface/class for the uploads?
 
