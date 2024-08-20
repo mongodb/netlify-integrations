@@ -64,12 +64,13 @@ integration.addBuildEventHandler(
     //TODO: upload manifests to S3
 
     //upload manifests to atlas
-    console.log("=========== Uploading Manifests to Atlas =================");
+    console.log("=========== Uploading Manifests =================");
     try {
       await uploadManifest(manifest, searchProperty);
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     }
+    console.log("=========== Manifests uploaded to Atlas =================");
   }
 );
 

@@ -26,7 +26,6 @@ const getProperties = async () => {
 
   try {
     dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
-    console.log("got pool test db");
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
