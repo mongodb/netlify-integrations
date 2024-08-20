@@ -56,8 +56,6 @@ integration.addBuildEventHandler(
     //use export function for uploading to S3
     const manifest = await generateManifest();
 
-    console.log(process.env.ATLAS_POOL_DB_NAME, process.env.REPO_NAME);
-
     console.log("=========== finished generating manifests ================");
     //TODO: get manifest properties, change how url is set atm
     const [searchProperty, url] = await getProperties();
