@@ -19,7 +19,9 @@ export const db = async (uri: string, db_name: string) => {
     await client.connect();
     dbInstance = client.db(db_name);
   } catch (error) {
-    console.error(`Error at db client connection: ${error}`);
+    console.error(
+      `Error at db client connection: ${error} for uri ${uri} and db name ${db_name}`
+    );
     throw error;
   }
   return dbInstance;
