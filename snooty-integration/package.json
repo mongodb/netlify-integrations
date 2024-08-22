@@ -1,0 +1,20 @@
+{
+  "name": "snooty-cache-plugin",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "netlify-integration build -a",
+    "dev": "netlify-integration dev -a",
+    "preview": "netlify-integration preview"
+  },
+  "dependencies": {
+    "@netlify/sdk": "^1.55.1",
+    "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@netlify/build": "^29.50.2",
+    "@types/node": "^20.14.9",
+    "execa": "^6.1.0"
+  }
+}
