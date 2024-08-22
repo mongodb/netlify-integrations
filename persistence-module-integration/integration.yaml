@@ -1,0 +1,10 @@
+config:
+  use_cjs_shims: true
+  name: chatbot-netlify-integration
+  description: uploads site ast for chatbot rag ingestion
+  slug: 6s0rri6w-chatbot-netlify-integration
+  scopes:
+    site:
+      - read
+      - write
+  integrationLevel: site
