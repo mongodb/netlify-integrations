@@ -1,0 +1,9 @@
+config:
+  name: redoc-integration
+  description: creates redoc pages  from OpenAPI spec
+  slug: '-spg1kfd-redoc-integration'
+  scopes:
+    site:
+      - read
+      - write
+  integrationLevel: site

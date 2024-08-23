@@ -1,0 +1,44 @@
+functionsDirectory = "/Users/brandonly/Documents/gitrepos/redoc-integration/.ntli/site/netlify/functions"
+functionsDirectoryOrigin = "config"
+headersOrigin = "config"
+plugins = []
+redirects = []
+
+[dev]
+autoLaunch = false
+functions = ".ntli/site/netlify/functions"
+publish = ".ntli/site/static"
+
+[functions]
+
+[functions."*"]
+node_bundler = "esbuild"
+
+[build]
+publish = "/Users/brandonly/Documents/gitrepos/redoc-integration/.ntli/site/static"
+publishOrigin = "config"
+command = "netlify-integration build -a"
+commandOrigin = "config"
+functions = "/Users/brandonly/Documents/gitrepos/redoc-integration/.ntli/site/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/ui/*"
+
+[headers.values]
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Headers = "*"
+Access-Control-Allow-Methods = "*"

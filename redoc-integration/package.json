@@ -1,0 +1,23 @@
+{
+  "name": "redoc-integration",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "netlify-integration build -a",
+    "dev": "netlify-integration dev -a",
+    "preview": "netlify-integration preview"
+  },
+  "dependencies": {
+    "@netlify/sdk": "^1.60.2-pr-1468.3",
+    "bson": "^6.8.0",
+    "mongodb": "^6.8.0",
+    "node-fetch": "^3.3.2",
+    "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "@netlify/build": "^29.50.5",
+    "@types/node": "^20.14.10",
+    "execa": "^6.1.0"
+  }
+}
