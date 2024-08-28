@@ -20,7 +20,7 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 integration.addBuildEventHandler(
   "onPreBuild",
   async ({ utils: { run, cache } }) => {
-    console.log("Running redoc prebuild -- MONOREPO TEST!");
+    console.log("Running redoc prebuild");
     const hasRedoc = await cache.has("redoc");
 
     if (hasRedoc) {
