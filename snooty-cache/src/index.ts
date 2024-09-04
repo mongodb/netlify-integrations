@@ -1,6 +1,7 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
-import { readdir, truncate } from "fs";
+import axios from "axios";
+import { existsSync, readdir } from "fs";
 
 import { promisify } from "util";
 
@@ -11,22 +12,65 @@ const getCacheFilePaths = (filesPaths: string[]): string[] =>
 
 const integration = new NetlifyIntegration();
 
-integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
-  const files: string[] = await cache.list();
+interface GitHubCommitResponse {
+  commit: {
+    sha: string;
+  };
+}
 
-  const cacheFiles = getCacheFilePaths(files);
+async function getLatestSnootyCommit(): Promise<string | undefined> {
+  try {
+    const response = await axios.get<GitHubCommitResponse>(
+      "https://api.github.com/repos/mongodb/snooty/branches/netlify-poc",
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }
+    );
 
-  if (!cacheFiles.length) {
-    console.log("No snooty cache files found");
+    const latestSha = response.data.commit.sha;
 
-    return;
+    return latestSha;
+  } catch (e) {
+    console.error("Could not retrieve latest SHA", e);
   }
-  // Don't want to restore duplicates, only restore snooty cache files
-  console.log("restoring snooty cache files");
-  await Promise.all(
-    cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
-  );
-});
+}
+
+integration.addBuildEventHandler(
+  "onPreBuild",
+  async ({ utils: { cache, run } }) => {
+    const files: string[] = await cache.list();
+
+    const cacheFiles = getCacheFilePaths(files);
+
+    if (!cacheFiles.length) {
+      console.log("No snooty cache files found");
+
+      return;
+    }
+    // Don't want to restore duplicates, only restore snooty cache files
+    console.log("restoring snooty cache files");
+
+    await Promise.all(
+      cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
+    );
+
+    console.log("Checking Snooty frontend version");
+    const snootyDirExists = existsSync(`${process.cwd()}/snooty`);
+
+    if (snootyDirExists) {
+      const latestSha = await getLatestSnootyCommit();
+
+      const { stdout: currentSha } = await run.command("git rev-parse HEAD");
+
+      if (currentSha !== latestSha) {
+        await run.command("rm -rf snooty");
+      }
+    }
+  }
+);
 
 integration.addBuildEventHandler(
   "onSuccess",
