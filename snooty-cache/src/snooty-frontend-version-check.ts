@@ -14,6 +14,12 @@ interface GitHubCommitResponse {
   };
 }
 
+/**
+ * This function returns the latest commit for the netlify-poc branch which is used
+ * to compare the commit of the frontend currently stored in the worker.
+ * TODO: Refactor this to get the latest release once we've merged the netlify-poc branch to main
+ * @returns latest commit hash of the netlify-poc branch
+ */
 async function getLatestSnootyCommit(): Promise<string | undefined> {
   try {
     const response = await axios.get<GitHubCommitResponse>(
@@ -45,6 +51,11 @@ async function getPackageLockHash(): Promise<string> {
   return hashSum.digest("hex");
 }
 
+/**
+ * First checks if the snooty directory exists, and if it does,
+ * it checks to see if the latest commit sha matches
+ * @param run the exec util provided by Netlify
+ */
 export async function checkForNewSnootyVersion(run: NetlifyPluginUtils["run"]) {
   console.log("Checking Snooty frontend version");
   const snootyDirExists = existsSync(`${process.cwd()}/snooty`);
@@ -52,20 +63,22 @@ export async function checkForNewSnootyVersion(run: NetlifyPluginUtils["run"]) {
   if (snootyDirExists) {
     const latestSha = await getLatestSnootyCommit();
 
-    const { stdout: currentSha } = await run.command("git rev-parse HEAD");
+    const { stdout: currentSha } = await run.command("git rev-parse HEAD", {
+      cwd: `${process.cwd()}/snooty`,
+    });
 
     if (currentSha !== latestSha) {
       console.log(
         "Current commit does not match the latest commit. Updating the snooty frontend repo"
       );
       const prevPackageLockHash = await getPackageLockHash();
-      await run.command("cd snooty && git pull");
+      await run.command("git pull", { cwd: `${process.cwd()}/snooty` });
 
       const updatedPackageLockHash = await getPackageLockHash();
 
       if (prevPackageLockHash !== updatedPackageLockHash) {
         console.log("Dependencies updating. Installing updates.");
-        await run.command("cd snooty && npm ci");
+        await run.command("npm ci", { cwd: `${process.cwd()}/snooty` });
         console.log("Updates for the frontend completed!");
       }
     }
