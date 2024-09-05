@@ -9,7 +9,7 @@
     "preview": "netlify-integration preview"
   },
   "dependencies": {
-    "@netlify/sdk": "^1.55.1",
+    "@netlify/sdk": "^1.60.2-pr-1468.3",
     "axios": "^1.7.7",
     "typescript": "^5.4.5"
   },
