@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config.js';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   test: {

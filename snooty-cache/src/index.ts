@@ -29,9 +29,7 @@ integration.addBuildEventHandler(
     // Don't want to restore duplicates, only restore snooty cache files
     console.log("restoring snooty cache files");
 
-    await Promise.all(
-      cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
-    );
+    await Promise.all(cacheFiles.map((cacheFile) => cache.restore(cacheFile)));
 
     await checkForNewSnootyVersion(run);
   }
