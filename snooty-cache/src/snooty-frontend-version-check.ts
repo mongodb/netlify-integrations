@@ -67,20 +67,25 @@ export async function checkForNewSnootyVersion(run: NetlifyPluginUtils["run"]) {
       cwd: `${process.cwd()}/snooty`,
     });
 
-    if (currentSha !== latestSha) {
+    if (currentSha === latestSha) {
       console.log(
         "Current commit does not match the latest commit. Updating the snooty frontend repo"
       );
-      const prevPackageLockHash = await getPackageLockHash();
-      await run.command("git pull", { cwd: `${process.cwd()}/snooty` });
-
-      const updatedPackageLockHash = await getPackageLockHash();
-
-      if (prevPackageLockHash !== updatedPackageLockHash) {
-        console.log("Dependencies updating. Installing updates.");
-        await run.command("npm ci", { cwd: `${process.cwd()}/snooty` });
-        console.log("Updates for the frontend completed!");
-      }
+      return;
     }
+    const prevPackageLockHash = await getPackageLockHash();
+    await run.command("git pull --rebase", { cwd: `${process.cwd()}/snooty` });
+
+    const updatedPackageLockHash = await getPackageLockHash();
+
+    if (prevPackageLockHash === updatedPackageLockHash) {
+      console.log(
+        "Package-lock.json is unchanged. Not installing any additional dependencies"
+      );
+      return;
+    }
+    console.log("Dependencies updating. Installing updates.");
+    await run.command("npm ci", { cwd: `${process.cwd()}/snooty` });
+    console.log("Updates for the frontend completed!");
   }
 }
