@@ -1,8 +1,11 @@
 // Documentation: https://sdk.netlify.com
+
 import { NetlifyIntegration } from "@netlify/sdk";
-import { readdir, truncate } from "fs";
+
+import { readdir } from "fs";
 
 import { promisify } from "util";
+import { checkForNewSnootyVersion } from "./snooty-frontend-version-check";
 
 const readdirAsync = promisify(readdir);
 
@@ -11,22 +14,26 @@ const getCacheFilePaths = (filesPaths: string[]): string[] =>
 
 const integration = new NetlifyIntegration();
 
-integration.addBuildEventHandler("onPreBuild", async ({ utils: { cache } }) => {
-  const files: string[] = await cache.list();
+integration.addBuildEventHandler(
+  "onPreBuild",
+  async ({ utils: { cache, run } }) => {
+    const files: string[] = await cache.list();
 
-  const cacheFiles = getCacheFilePaths(files);
+    const cacheFiles = getCacheFilePaths(files);
 
-  if (!cacheFiles.length) {
-    console.log("No snooty cache files found");
+    if (!cacheFiles.length) {
+      console.log("No snooty cache files found");
 
-    return;
+      return;
+    }
+    // Don't want to restore duplicates, only restore snooty cache files
+    console.log("restoring snooty cache files");
+
+    await Promise.all(cacheFiles.map((cacheFile) => cache.restore(cacheFile)));
+
+    await checkForNewSnootyVersion(run);
   }
-  // Don't want to restore duplicates, only restore snooty cache files
-  console.log("restoring snooty cache files");
-  await Promise.all(
-    cacheFiles.map(async (cacheFile) => await cache.restore(cacheFile))
-  );
-});
+);
 
 integration.addBuildEventHandler(
   "onSuccess",

@@ -6,15 +6,18 @@
   "scripts": {
     "build": "netlify-integration build -a",
     "dev": "netlify-integration dev -a",
-    "preview": "netlify-integration preview"
+    "preview": "netlify-integration preview",
+    "test": "vitest"
   },
   "dependencies": {
-    "@netlify/sdk": "^1.55.1",
+    "@netlify/sdk": "^1.60.2-pr-1468.3",
+    "axios": "^1.7.7",
     "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@netlify/build": "^29.50.2",
     "@types/node": "^20.14.9",
-    "execa": "^6.1.0"
+    "execa": "^6.1.0",
+    "vitest": "^2.0.5"
   }
 }
