@@ -13,3 +13,5 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     summary: "testing - CHANGE THIS",
   });
 });
+
+export { integration };
