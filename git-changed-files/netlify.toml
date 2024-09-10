@@ -1,16 +1,17 @@
 [build]
-publish=".ntli/site/static"
+command = "netlify-integration build -a"
+publish = ".ntli/site/static"
 
 [functions]
-directory=".ntli/site/netlify/functions"
+directory = ".ntli/site/netlify/functions"
 node_bundler = "esbuild"
 
 [[headers]]
-for="/ui/*"
+for = "/ui/*"
 [headers.values]
-Access-Control-Allow-Origin="*"
-Access-Control-Allow-Headers="*"
-Access-Control-Allow-Methods="*"
+Access-Control-Allow-Origin = "*"
+Access-Control-Allow-Headers = "*"
+Access-Control-Allow-Methods = "*"
 
 [dev]
 autoLaunch = false
