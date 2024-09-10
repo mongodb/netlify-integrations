@@ -16,6 +16,7 @@ const ZIP_PATH = ``;
 
 export const generateManifest = async () => {
   // create Manifest object
+  //TODO: pass in global variable dependent
   const manifest = new Manifest(true);
   console.log("=========== generating manifests ================");
   //go into documents directory and get list of file entries
