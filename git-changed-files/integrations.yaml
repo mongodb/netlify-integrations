@@ -1,0 +1,13 @@
+config:
+  name: My Private Integration
+  description: This is a cool integration!
+  slug: my-private-integration
+  scopes:
+    site:
+      - read
+      - write
+    env:
+      - read
+    user:
+      - read
+  integrationLevel: "team-and-site"
