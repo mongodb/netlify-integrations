@@ -10,6 +10,6 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
 
   status.show({
     title: `Changed Files`,
-    summary: git.modifiedFiles,
+    summary: "testing - CHANGE THIS",
   });
 });
