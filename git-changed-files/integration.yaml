@@ -1,7 +1,7 @@
 config:
-  name: My Private Integration
-  description: This is a cool integration!
-  slug: my-private-integration
+  name: git-changed-files-plugin-bianca
+  description: integration that prints the changed files from git when a pr is created
+  slug: 76v99lm8-git-changed-files-integration
   scopes:
     site:
       - read
@@ -10,4 +10,4 @@ config:
       - read
     user:
       - read
-  integrationLevel: "team-and-site"
+  integrationLevel: site
