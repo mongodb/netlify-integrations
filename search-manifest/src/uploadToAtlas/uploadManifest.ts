@@ -104,7 +104,6 @@ export const uploadManifest = async (
   console.info(`Starting transaction`);
   console.log(manifest.global);
   assert.strictEqual(typeof manifest.global, "boolean");
-  assert.ok(manifest.global);
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);
 
