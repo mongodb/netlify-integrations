@@ -5,6 +5,7 @@ import { DatabaseDocument } from "./types";
 // helper function to find the
 const getBranch = (branches: any, branchName: string) => {
   for (let branchObj of branches) {
+    //normalize for casing
     if (branchObj.gitBranchName == branchName) {
       return branchObj;
     }
@@ -79,11 +80,16 @@ const getProperties = async (branchName: string) => {
       searchProperty = `${project}-${version}`;
 
       if (!repo[0].prodDeployable || !repo[0].search?.categoryTitle) {
+        console.log(repo[0].prodDeployable);
+        console.log(repo[0].search?.categoryTitle);
+
         //TODO: deletestaleproperties here potentially
-        throw new Error("search manifest should not be generated for ");
+        throw new Error(
+          `search manifest should not be generated for repo ${REPO_NAME}`
+        );
       }
     } catch (e) {
-      console.error(`Error while getting branch entry`);
+      console.error(`Error`);
       console.log(e);
     }
 
