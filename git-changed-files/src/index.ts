@@ -11,12 +11,13 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     console.log('Modified files:', git.modifiedFiles, process.env.REPOSITORY_URL);
     console.log(newArr);
     console.log(process.env.BRANCH, process.env.HEAD);
-  }
+  
 
-  status.show({
-    title: `Changed Files`,
-    summary: git.modifiedFiles.join("\n"),
-  });
+    status.show({
+      title: `Changed Files`,
+      summary: newArr.join("\n"),
+    });
+  }
 });
 
 export { integration };
