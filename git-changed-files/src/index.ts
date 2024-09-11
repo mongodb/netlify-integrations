@@ -7,16 +7,18 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
   if (git.modifiedFiles.length !== 0) {
     const arr =  git.modifiedFiles;
     // const pre = process.env.REPOSITORY_URL + '/blob/' + process.env.HEAD + '/';
-    const pre = process.env.URL + '/';
-    console.log(process.env.URL);
-    const newArr = (pre + arr.join(';' + pre)).split(';');
+    // const pre = process.env.URL + '/';
+    // console.log(process.env.URL);
+    // const newArr = (pre + arr.join(';' + pre)).split(';');
     console.log('Modified files:', git.modifiedFiles);
   
     const markdownList = []
     for (let i = 0; i < git.modifiedFiles.length; i++) {
       if (git.modifiedFiles[i].includes('source')) {
         if (!git.modifiedFiles[i].includes('/images') || !git.modifiedFiles[i].includes('/includes') || !git.modifiedFiles[i].includes('/examples')) {
-          markdownList.push(`[${git.modifiedFiles[i]}](${newArr[i]})`);
+          let shortform = git.modifiedFiles[i].replace('source', '');
+          shortform = shortform.replace('.txt', '');
+          markdownList.push(`[${git.modifiedFiles[i]}](${process.env.URL + shortform})`);
         }
       }
     }
