@@ -53,58 +53,67 @@ const getProperties = async (branchName: string) => {
   try {
     repo = await repos_branches
       ?.find(query)
-      .project({ _id: 0, project: 1, search: 1, branches: 1 })
+      .project({
+        _id: 0,
+        project: 1,
+        search: 1,
+        branches: 1,
+        prodDeployable: 1,
+        internalOnly: 1,
+      })
       .toArray();
+    if (repo.length) repo = repo[0];
+    else throw new Error("Could not get repos_branches entry for repo");
   } catch (e) {
     console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
   }
 
-  if (repo.length) {
-    const project = repo[0].project;
+  const project = repo.project;
 
-    try {
-      const {
-        urlSlug,
-        gitBranchName,
-        isStableBranch,
-        active,
-      }: {
-        urlSlug: string;
-        gitBranchName: string;
-        isStableBranch: boolean;
-        active: boolean;
-      } = getBranch(repo[0].branches, branchName);
-      includeInGlobalSearch = isStableBranch;
-      version = urlSlug || gitBranchName;
-      searchProperty = `${project}-${version}`;
+  try {
+    const {
+      urlSlug,
+      gitBranchName,
+      isStableBranch,
+      active,
+    }: {
+      urlSlug: string;
+      gitBranchName: string;
+      isStableBranch: boolean;
+      active: boolean;
+    } = getBranch(repo[0].branches, branchName);
+    includeInGlobalSearch = isStableBranch;
+    version = urlSlug || gitBranchName;
+    searchProperty = `${project}-${version}`;
 
-      if (!repo[0].prodDeployable || !repo[0].search?.categoryTitle) {
-        console.log(repo[0].prodDeployable);
-        console.log(repo[0].search?.categoryTitle);
+    if (
+      repo.internalOnly ||
+      !repo.prodDeployable ||
+      !repo[0].search?.categoryTitle
+    ) {
+      console.log(repo[0].prodDeployable);
+      console.log(repo[0].search?.categoryTitle);
 
-        //TODO: deletestaleproperties here potentially
-        throw new Error(
-          `search manifest should not be generated for repo ${REPO_NAME}`
-        );
-      }
-    } catch (e) {
-      console.error(`Error`);
-      console.log(e);
+      //TODO: deletestaleproperties here potentially instead of throwing
+      throw new Error(
+        `Search manifest should not be generated for repo ${REPO_NAME}`
+      );
     }
+  } catch (e) {
+    console.error(`Error`);
+    console.log(e);
+  }
 
-    try {
-      const docsetsQuery = { project: { $eq: project } };
-      docsetRepo = await docsets?.find(docsetsQuery).toArray();
-      if (docsetRepo.length) {
-        url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-      }
-    } catch (e) {
-      console.error(`Error while getting docsets entry in Atlas ${e}`);
-      throw e;
+  try {
+    const docsetsQuery = { project: { $eq: project } };
+    docsetRepo = await docsets?.find(docsetsQuery).toArray();
+    if (docsetRepo.length) {
+      url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
     }
-  } else {
-    //TODO: return nothing because manifest can't be generated from empty repo entry, or throw error here?
+  } catch (e) {
+    console.error(`Error while getting docsets entry in Atlas ${e}`);
+    throw e;
   }
   return { searchProperty, url, includeInGlobalSearch };
 };
