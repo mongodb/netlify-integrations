@@ -14,13 +14,11 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
   
     const markdownList = []
     for (let i = 0; i < git.modifiedFiles.length; i++) {
-      if (git.modifiedFiles[i].includes('src')) {
         if (!git.modifiedFiles[i].includes('/images') || !git.modifiedFiles[i].includes('/includes') || !git.modifiedFiles[i].includes('/examples')) {
           markdownList.push(`[${git.modifiedFiles[i]}](${newArr[i]})`);
         }
-      }
     }
-    console.log(markdownList)
+    console.log(markdownList);
 
     status.show({
       title: `Changed Files`,
