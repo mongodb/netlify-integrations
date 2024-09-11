@@ -19,7 +19,7 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
 
     status.show({
       title: `Changed Files`,
-      summary:  `<a href=https://github.com/biancalaube/docs-landing/blob/testing-plugin/gen_landings.py>hello</a>`,
+      summary:  `{{<a href=https://github.com/biancalaube/docs-landing/blob/testing-plugin/gen_landings.py>hello</a>}}`,
     });
   }
 });
