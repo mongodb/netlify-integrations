@@ -5,11 +5,6 @@ const integration = new NetlifyIntegration();
 integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
   console.log("Checking if any files changed on git -----");
   if (git.modifiedFiles.length !== 0) {
-    const arr =  git.modifiedFiles;
-    // const pre = process.env.REPOSITORY_URL + '/blob/' + process.env.HEAD + '/';
-    // const pre = process.env.URL + '/';
-    // console.log(process.env.URL);
-    // const newArr = (pre + arr.join(';' + pre)).split(';');
     console.log('Modified files:', git.modifiedFiles);
   
     const markdownList = []
