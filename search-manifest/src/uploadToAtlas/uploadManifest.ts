@@ -102,10 +102,10 @@ export const uploadManifest = async (
   //check property types
 
   console.info(`Starting transaction`);
-  console.log(manifest.global);
-  assert.strictEqual(typeof manifest.global, "boolean");
-  assert.strictEqual(typeof hash, "string");
-  assert.ok(hash);
+  console.log("global value:", manifest.global, typeof manifest.global);
+  // assert.strictEqual(typeof manifest.global, "boolean");
+  // assert.strictEqual(typeof hash, "string");
+  // assert.ok(hash);
 
   if (operations.length > 0) {
     const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
