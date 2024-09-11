@@ -15,11 +15,15 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     // let a = document.createElement('a');
     // a.title = "hey this is a link";
     // a.href = newArr.join("\n");
-
+    const markdownList = []
+    for (let i = 0; i < git.modifiedFiles.length; i++) {
+      markdownList.push(`[${git.modifiedFiles[i]}](${newArr[0]})`);
+    }
+    console.log(markdownList)
 
     status.show({
       title: `Changed Files`,
-      summary:   `the url is [github link](https://github.com/biancalaube/docs-landing/blob/testing-plugin/gen_landings.py)`,
+      summary: markdownList.join("\n"),
     });
   }
 });
