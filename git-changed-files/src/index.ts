@@ -12,10 +12,14 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     console.log(newArr);
     console.log(process.env.BRANCH, process.env.HEAD);
   
+    let a = document.createElement('a');
+    a.title = "hey this is a link";
+    a.href = newArr.join("\n");
+
 
     status.show({
       title: `Changed Files`,
-      summary: newArr.join("\n"),
+      summary:  document.body.appendChild(a),
     });
   }
 });
