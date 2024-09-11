@@ -12,14 +12,14 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     console.log(newArr);
     console.log(process.env.BRANCH, process.env.HEAD);
   
-    let a = document.createElement('a');
-    a.title = "hey this is a link";
-    a.href = newArr.join("\n");
+    // let a = document.createElement('a');
+    // a.title = "hey this is a link";
+    // a.href = newArr.join("\n");
 
 
     status.show({
       title: `Changed Files`,
-      summary:  document.body.appendChild(a).toString(),
+      summary:  `<a href=https://github.com/biancalaube/docs-landing/blob/testing-plugin/gen_landings.py>hello</a>`,
     });
   }
 });
