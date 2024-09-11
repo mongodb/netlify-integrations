@@ -40,7 +40,7 @@ const composeUpserts = async (
       url: joinUrl(manifest.url, document.slug),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
-      includeInGlobalSearch: manifest.global,
+      includeInGlobalSearch: manifest.global ?? false,
     };
 
     return {
