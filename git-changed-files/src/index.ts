@@ -5,7 +5,7 @@ const integration = new NetlifyIntegration();
 integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
   console.log("Checking if any files changed on git -----");
   if (git.modifiedFiles.length !== 0) {
-    console.log('Modified files:', git.modifiedFiles)
+    console.log('Modified files:', git.modifiedFiles, process.env.REPOSITORY_URL)
   }
 
   status.show({
