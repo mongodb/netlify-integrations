@@ -82,7 +82,7 @@ const getProperties = async (branchName: string) => {
       gitBranchName: string;
       isStableBranch: boolean;
       active: boolean;
-    } = getBranch(repo[0].branches, branchName);
+    } = getBranch(repo.branches, branchName);
     includeInGlobalSearch = isStableBranch;
     version = urlSlug || gitBranchName;
     searchProperty = `${project}-${version}`;
@@ -90,10 +90,10 @@ const getProperties = async (branchName: string) => {
     if (
       repo.internalOnly ||
       !repo.prodDeployable ||
-      !repo[0].search?.categoryTitle
+      !repo.search?.categoryTitle
     ) {
-      console.log(repo[0].prodDeployable);
-      console.log(repo[0].search?.categoryTitle);
+      console.log(repo.prodDeployable);
+      console.log(repo.search?.categoryTitle);
 
       //TODO: deletestaleproperties here potentially instead of throwing
       throw new Error(
@@ -109,7 +109,7 @@ const getProperties = async (branchName: string) => {
     const docsetsQuery = { project: { $eq: project } };
     docsetRepo = await docsets?.find(docsetsQuery).toArray();
     if (docsetRepo.length) {
-      url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
+      url = docsetRepo.url.dotcomprd + docsetRepo.prefix.dotcomprd;
     }
   } catch (e) {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
