@@ -19,7 +19,7 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
 
     status.show({
       title: `Changed Files`,
-      summary:  document.body.appendChild(a),
+      summary:  document.body.appendChild(a).toString(),
     });
   }
 });
