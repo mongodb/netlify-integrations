@@ -10,6 +10,7 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     const newArr = (pre + arr.join(';' + pre)).split(';');
     console.log('Modified files:', git.modifiedFiles, process.env.REPOSITORY_URL);
     console.log(newArr);
+    console.log(process.env.BRANCH, process.env.HEAD);
   }
 
   status.show({
