@@ -62,7 +62,7 @@ export const uploadManifest = async (
 ) => {
   //check that manifest documents exist
   if (!manifest?.documents?.length) {
-    return Promise.reject(new Error("Invalid manifest "));
+    return Promise.reject(new Error("Invalid manifest"));
   }
   //get searchProperty, url
   //TODO: pass in a db session
@@ -102,6 +102,7 @@ export const uploadManifest = async (
   //check property types
 
   console.info(`Starting transaction`);
+  console.log(manifest.global);
   assert.strictEqual(typeof manifest.global, "boolean");
   assert.ok(manifest.global);
   assert.strictEqual(typeof hash, "string");

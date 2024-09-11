@@ -53,6 +53,7 @@ integration.addBuildEventHandler(
 
     await run.command("unzip -o bundle.zip");
     const branch = netlifyConfig.build?.environment["BRANCH"];
+    console.log(branch);
 
     //use export function for uploading to S3
     const manifest = await generateManifest();
