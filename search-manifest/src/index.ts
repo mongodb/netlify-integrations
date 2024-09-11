@@ -52,13 +52,11 @@ integration.addBuildEventHandler(
 
     await run.command("unzip -o bundle.zip");
     const branch = netlifyConfig.build?.environment["BRANCH"];
-    console.log(branch);
 
     //use export function for uploading to S3
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    //TODO: change how url is set
     const {
       searchProperty,
       url,

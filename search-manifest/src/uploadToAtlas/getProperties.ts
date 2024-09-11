@@ -2,11 +2,11 @@ import { Db } from "mongodb";
 import { db } from "./searchConnector";
 import { DatabaseDocument } from "./types";
 
-// helper function to find the
+// helper function to find the associated branch
 const getBranch = (branches: any, branchName: string) => {
   for (let branchObj of branches) {
     //normalize for casing
-    if (branchObj.gitBranchName == branchName) {
+    if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
       return branchObj;
     }
   }
