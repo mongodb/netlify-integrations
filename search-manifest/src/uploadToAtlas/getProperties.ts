@@ -110,8 +110,9 @@ const getProperties = async (branchName: string) => {
     docsetRepo = await docsets?.find(docsetsQuery).toArray();
     if (docsetRepo.length) {
       //TODO: change based on environment
-      console.log(docsetRepo[0].url, docsetRepo[0].prefix);
-      url = docsetRepo.url?.dotcomprd + docsetRepo.prefix?.dotcomprd;
+      console.log(docsetRepo[0].url.dotcomprd, docsetRepo[0].prefix.dotcomprd);
+      url = docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd;
+      console.log(url);
     }
   } catch (e) {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
