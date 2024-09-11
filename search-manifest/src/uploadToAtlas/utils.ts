@@ -17,6 +17,5 @@ export function generateHash(data: string): Promise<string> {
 }
 
 export function joinUrl(base: string, path: string): string {
-  console.log("base", base);
   return base.replace(/\/*$/, "/") + path.replace(/^\/*/, "");
 }

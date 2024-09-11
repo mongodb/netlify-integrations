@@ -111,7 +111,7 @@ const getProperties = async (branchName: string) => {
     if (docsetRepo.length) {
       //TODO: change based on environment
       console.log(docsetRepo[0].url.dotcomprd, docsetRepo[0].prefix.dotcomprd);
-      url = docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd;
+      url = docsetRepo[0].url?.dotcomprd + docsetRepo[0].prefix.dotcomprd;
       console.log(url);
     }
   } catch (e) {
