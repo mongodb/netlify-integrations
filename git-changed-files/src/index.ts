@@ -12,12 +12,13 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     console.log(newArr);
     console.log(process.env.BRANCH, process.env.HEAD);
   
-    // let a = document.createElement('a');
-    // a.title = "hey this is a link";
-    // a.href = newArr.join("\n");
     const markdownList = []
     for (let i = 0; i < git.modifiedFiles.length; i++) {
-      markdownList.push(`[${git.modifiedFiles[i]}](${newArr[i]})`);
+      if (git.modifiedFiles[i].includes('src')) {
+        if (!git.modifiedFiles[i].includes('/images') || !git.modifiedFiles[i].includes('/includes') || !git.modifiedFiles[i].includes('/examples')) {
+          markdownList.push(`[${git.modifiedFiles[i]}](${newArr[i]})`);
+        }
+      }
     }
     console.log(markdownList)
 
