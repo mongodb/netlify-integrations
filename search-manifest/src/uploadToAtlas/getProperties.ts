@@ -110,7 +110,7 @@ const getProperties = async (branchName: string) => {
     docsetRepo = await docsets?.find(docsetsQuery).toArray();
     if (docsetRepo.length) {
       //TODO: change based on environment
-      console.log(docsetRepo.url, docsetRepo.prefix);
+      console.log(docsetRepo[0].url, docsetRepo[0].prefix);
       url = docsetRepo.url?.dotcomprd + docsetRepo.prefix?.dotcomprd;
     }
   } catch (e) {
