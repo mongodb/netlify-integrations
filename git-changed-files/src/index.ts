@@ -17,7 +17,7 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
     // a.href = newArr.join("\n");
     const markdownList = []
     for (let i = 0; i < git.modifiedFiles.length; i++) {
-      markdownList.push(`[${git.modifiedFiles[i]}](${newArr[0]})`);
+      markdownList.push(`[${git.modifiedFiles[i]}](${newArr[i]})`);
     }
     console.log(markdownList)
 
