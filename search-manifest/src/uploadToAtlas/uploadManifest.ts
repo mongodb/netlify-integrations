@@ -64,9 +64,6 @@ export const uploadManifest = async (
   if (!manifest?.documents?.length) {
     return Promise.reject(new Error("Invalid manifest"));
   }
-  //get searchProperty, url
-  //TODO: pass in a db session
-
   //start a session
   let documentsColl;
   try {

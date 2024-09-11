@@ -16,11 +16,10 @@ const ZIP_PATH = ``;
 
 export const generateManifest = async () => {
   // create Manifest object
-  //TODO: pass in global variable dependent
   const manifest = new Manifest();
   console.log("=========== generating manifests ================");
-  //go into documents directory and get list of file entries
 
+  //go into documents directory and get list of file entries
   const entries = await readdirAsync("documents", { recursive: true });
 
   const mappedEntries = entries.filter((fileName) => {
@@ -59,7 +58,7 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    //TODO: get manifest properties, change how url is set atm
+    //TODO: change how url is set
     const {
       searchProperty,
       url,

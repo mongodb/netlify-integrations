@@ -65,7 +65,7 @@ describe("Upload manifest doesn't work for invalid manifests", () => {
   });
 
   test("throws an error for a manifest with 0 documents", async () => {
-    manifest = new Manifest(true);
+    manifest = new Manifest("", true);
     expect(
       async () => await uploadManifest(manifest, PROPERTY_NAME)
     ).rejects.toThrowError();
@@ -84,8 +84,8 @@ describe("Upload manifest uploads to Atlas db", () => {
 
   test("constant nodeManifest uploads correct number of documents", async () => {
     manifest = new Manifest(
-      nodeManifest.includeInGlobalSearch,
-      nodeManifest.url
+      nodeManifest.url,
+      nodeManifest.includeInGlobalSearch
     );
     manifest.documents = nodeManifest.documents;
 
@@ -115,8 +115,8 @@ describe("Upload manifest uploads to Atlas db", () => {
 
 describe("Upload manifest uploads to Atlas db and updates existing manifests correctly ", async () => {
   let manifest1: Manifest = new Manifest(
-    nodeManifest.includeInGlobalSearch,
-    nodeManifest.url
+    nodeManifest.url,
+    nodeManifest.includeInGlobalSearch
   );
   manifest1.documents = nodeManifest.documents;
 

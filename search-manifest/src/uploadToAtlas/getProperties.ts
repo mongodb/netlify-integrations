@@ -14,10 +14,8 @@ const getBranch = (branches: any, branchName: string) => {
   );
 };
 
-// get whether branch is stable as well - set global from this?
 const getProperties = async (branchName: string) => {
   const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-  //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
   const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
   const REPO_NAME = process.env.REPO_NAME;
 
@@ -39,6 +37,7 @@ const getProperties = async (branchName: string) => {
   let version: string;
 
   try {
+    //Conenct to database and get repos_branches, docsets collections
     dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
@@ -79,14 +78,9 @@ const getProperties = async (branchName: string) => {
       version = urlSlug || gitBranchName;
       searchProperty = `${project}-${version}`;
 
-      //TODO: check if repo, branch is active
       if (!repo[0].prodDeployable || !repo[0].search?.categoryTitle) {
-        //add operations with deletestaledocuments and deletestaleproperties
-        //return nothing because manifest can't be generated
-      } else if (!active) {
-        //version isn't active
-        //add operations with deletestaledocuments and deletestaleproperties
-        //return nothing because manifest shouldn't be generated
+        //TODO: deletestaleproperties here potentially
+        throw new Error("search manifest should not be generated for ");
       }
     } catch (e) {
       console.error(`Error while getting branch entry`);
@@ -104,8 +98,7 @@ const getProperties = async (branchName: string) => {
       throw e;
     }
   } else {
-    //return nothing because manifest can't be generated from empty repo entry
-    //throw error?
+    //TODO: return nothing because manifest can't be generated from empty repo entry, or throw error here?
   }
   return { searchProperty, url, includeInGlobalSearch };
 };

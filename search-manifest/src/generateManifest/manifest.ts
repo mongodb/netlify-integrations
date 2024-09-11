@@ -8,6 +8,7 @@ export class Manifest {
   constructor(url: string = "", includeInGlobalSearch?: boolean) {
     this.url = url;
     this.documents = [];
+    if (includeInGlobalSearch) this.global = includeInGlobalSearch;
   }
 
   addDocument(document: ManifestEntry | null) {
