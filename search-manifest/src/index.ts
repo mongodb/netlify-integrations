@@ -17,7 +17,7 @@ const ZIP_PATH = ``;
 export const generateManifest = async () => {
   // create Manifest object
   //TODO: pass in global variable dependent
-  const manifest = new Manifest(true);
+  const manifest = new Manifest();
   console.log("=========== generating manifests ================");
   //go into documents directory and get list of file entries
 
@@ -59,8 +59,15 @@ integration.addBuildEventHandler(
 
     console.log("=========== finished generating manifests ================");
     //TODO: get manifest properties, change how url is set atm
-    const [searchProperty, url] = await getProperties();
+    const {
+      searchProperty,
+      url,
+      includeInGlobalSearch,
+    }: { searchProperty: string; url: string; includeInGlobalSearch: boolean } =
+      await getProperties(branch);
+
     manifest.url = url;
+    manifest.global = includeInGlobalSearch;
 
     //TODO: upload manifests to S3
 
