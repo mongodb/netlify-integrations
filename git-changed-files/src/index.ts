@@ -22,12 +22,11 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
  *
  * @param modifiedFiles
  */
-export function createMarkdown(modifiedFiles: readonly string[]) {
+export function createMarkdown(modifiedFiles: readonly string[]) : string[] {
   const markdownList = []
   for (const modifiedFile of modifiedFiles) {
     if (modifiedFile.includes('source') && (!modifiedFile.includes('/images') || !modifiedFile.includes('/includes') || !modifiedFile.includes('/examples'))) {
-      let shortform = modifiedFile.replace('source', '');
-      shortform = shortform.replace('.txt', '');
+      let shortform = modifiedFile.replace('source', '').replace('.txt', '');
       markdownList.push(`[${modifiedFile}](${process.env.DEPLOY_PRIME_URL + shortform})`);
     }
   }
