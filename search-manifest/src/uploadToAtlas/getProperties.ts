@@ -10,9 +10,7 @@ export const getBranch = (branches: any, branchName: string) => {
       return branchObj;
     }
   }
-  throw new Error(
-    `Current branch ${branchName} not found in repos branches entry`
-  );
+  throw Error(`Current branch ${branchName} not found in repos branches entry`);
 };
 
 export const getProperties = async (branchName: string) => {
@@ -51,19 +49,23 @@ export const getProperties = async (branchName: string) => {
   };
 
   try {
-    repo = await repos_branches
-      ?.find(query)
-      .project({
-        _id: 0,
-        project: 1,
-        search: 1,
-        branches: 1,
-        prodDeployable: 1,
-        internalOnly: 1,
-      })
-      .toArray();
-    if (repo.length) repo = repo[0];
-    else throw new Error("Could not get repos_branches entry for repo");
+    console.log(await repos_branches?.find().toArray());
+    repo = await repos_branches?.find(query).toArray();
+    //     .project({
+    //   _id: 0,
+    //   project: 1,
+    //   search: 1,
+    //   branches: 1,
+    //   prodDeployable: 1,
+    //   internalOnly: 1,
+    // })
+    if (repo?.length) repo = repo[0];
+    else
+      throw new Error(
+        `Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
+          query
+        )}`
+      );
   } catch (e) {
     console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
     throw e;
@@ -94,14 +96,15 @@ export const getProperties = async (branchName: string) => {
       console.log(repo.prodDeployable);
       console.log(repo.search?.categoryTitle);
 
-      //TODO: deletestaleproperties here potentially instead of throwing
+      //TODO: deletestaleproperties here potentially instead of throwing or returning
+
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}`
       );
     }
   } catch (e) {
-    console.error(`Error`);
-    console.log(e);
+    console.error(`Error`, e);
+    throw e;
   }
 
   try {

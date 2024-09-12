@@ -32,7 +32,7 @@
         "prodDeployable": true
     },
     {
-        "repo_name": "cloud-docs",
+        "repoName": "cloud-docs",
         "branches": [
             {
                 "gitBranchName": "master",
@@ -40,12 +40,13 @@
                 "isStableBranch": true
             }
         ],
+        "project": "cloud-docs",
         "search": {
             "categoryName": "atlas",
             "categoryTitle": "Atlas"
         },
         "internalOnly": false,
-        "prodDeployable": false
+        "prodDeployable": true
     }
 ]
 
