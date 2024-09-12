@@ -22,7 +22,7 @@ integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
  *
  * @param modifiedFiles
  */
-export function createMarkdown(modifiedFiles: String[]) {
+export function createMarkdown(modifiedFiles: readonly string[]) {
   const markdownList = []
   for (const modifiedFile of modifiedFiles) {
     if (modifiedFile.includes('source') && (!modifiedFile.includes('/images') || !modifiedFile.includes('/includes') || !modifiedFile.includes('/examples'))) {
