@@ -3,7 +3,7 @@ import { db } from "./searchConnector";
 import { DatabaseDocument } from "./types";
 
 // helper function to find the associated branch
-const getBranch = (branches: any, branchName: string) => {
+export const getBranch = (branches: any, branchName: string) => {
   for (let branchObj of branches) {
     //normalize for casing
     if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
@@ -15,7 +15,7 @@ const getBranch = (branches: any, branchName: string) => {
   );
 };
 
-const getProperties = async (branchName: string) => {
+export const getProperties = async (branchName: string) => {
   const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
   const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
   const REPO_NAME = process.env.REPO_NAME;
@@ -76,7 +76,6 @@ const getProperties = async (branchName: string) => {
       urlSlug,
       gitBranchName,
       isStableBranch,
-      active,
     }: {
       urlSlug: string;
       gitBranchName: string;
