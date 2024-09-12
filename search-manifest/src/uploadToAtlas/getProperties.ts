@@ -49,16 +49,17 @@ export const getProperties = async (branchName: string) => {
   };
 
   try {
-    console.log(await repos_branches?.find().toArray());
-    repo = await repos_branches?.find(query).toArray();
-    //     .project({
-    //   _id: 0,
-    //   project: 1,
-    //   search: 1,
-    //   branches: 1,
-    //   prodDeployable: 1,
-    //   internalOnly: 1,
-    // })
+    repo = await repos_branches
+      ?.find(query)
+      .project({
+        _id: 0,
+        project: 1,
+        search: 1,
+        branches: 1,
+        prodDeployable: 1,
+        internalOnly: 1,
+      })
+      .toArray();
     if (repo?.length) repo = repo[0];
     else
       throw new Error(
@@ -93,11 +94,7 @@ export const getProperties = async (branchName: string) => {
       !repo.prodDeployable ||
       !repo.search?.categoryTitle
     ) {
-      console.log(repo.prodDeployable);
-      console.log(repo.search?.categoryTitle);
-
       //TODO: deletestaleproperties here potentially instead of throwing or returning
-
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}`
       );
@@ -112,9 +109,7 @@ export const getProperties = async (branchName: string) => {
     docsetRepo = await docsets?.find(docsetsQuery).toArray();
     if (docsetRepo.length) {
       //TODO: change based on environment
-      console.log(docsetRepo[0].url.dotcomprd, docsetRepo[0].prefix.dotcomprd);
       url = docsetRepo[0].url?.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-      console.log(url);
     }
   } catch (e) {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
