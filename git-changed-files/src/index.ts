@@ -4,26 +4,22 @@ const integration = new NetlifyIntegration();
 
 integration.addBuildEventHandler("onSuccess", ({utils: {status, git}}) => {
   console.log("Checking if any files changed on git -----");
-  if (git.modifiedFiles.length !== 0) {
-    console.log('Modified files:', git.modifiedFiles);
-  
-    const markdownList = []
-    for (let i = 0; i < git.modifiedFiles.length; i++) {
-      if (git.modifiedFiles[i].includes('source')) {
-        if (!git.modifiedFiles[i].includes('/images') || !git.modifiedFiles[i].includes('/includes') || !git.modifiedFiles[i].includes('/examples')) {
-          let shortform = git.modifiedFiles[i].replace('source', '');
-          shortform = shortform.replace('.txt', '');
-          markdownList.push(`[${git.modifiedFiles[i]}](${process.env.URL + shortform})`);
-        }
-      }
-    }
+  console.log('Modified files:', git.modifiedFiles);
 
-    if (markdownList.length !== 0) {
-      status.show({
-        title: `URLs to Changed Files`,
-        summary: markdownList.join("\n"),
-      });
+  const markdownList = []
+  for (const modifiedFile of git.modifiedFiles) {
+    if (modifiedFile.includes('source') && (!modifiedFile.includes('/images') || !modifiedFile.includes('/includes') || !modifiedFile.includes('/examples'))) {
+      let shortform = modifiedFile.replace('source', '');
+      shortform = shortform.replace('.txt', '');
+      markdownList.push(`[${modifiedFile}](${process.env.DEPLOY_PRIME_URL + shortform})`);
     }
+  }
+
+  if (markdownList.length !== 0) {
+    status.show({
+      title: `URLs to Changed Files`,
+      summary: markdownList.join("\n"),
+    });
   }
 });
 
