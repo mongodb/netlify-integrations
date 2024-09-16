@@ -1,7 +1,7 @@
 import { Db } from "mongodb";
 import { db, teardown } from "./searchConnector";
 import { DatabaseDocument } from "./types";
-import { deleteStaleProperties } from "./deleteStale";
+import { deleteStaleProperties } from "./deleteStaleProperties";
 
 // helper function to find the associated branch
 export const getBranch = (branches: any, branchName: string) => {
@@ -95,7 +95,7 @@ export const getProperties = async (branchName: string) => {
       !repo.prodDeployable ||
       !repo.search?.categoryTitle
     ) {
-      //TODO: deletestaleproperties here for ALL manifests beginning with this repo?
+      // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
       deleteStaleProperties(project);
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`

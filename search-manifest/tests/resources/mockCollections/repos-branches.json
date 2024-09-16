@@ -24,7 +24,7 @@
                 "gitBranchName": "beta", 
                 "urlSlug": "upcoming",
                 "isStableBranch": false,
-                "active": true
+                "active": false
             }
         ],
         "project": "compass",
@@ -51,6 +51,40 @@
         },
         "internalOnly": false,
         "prodDeployable": true
+    },
+    {
+        "repoName": "docs-mongodb-internal",
+        "branches": [
+            {
+                "gitBranchName": "v5.0",
+                "active": true,
+                "urlSlug": "stable",
+                "isStableBranch": false
+            }
+        ],
+        "project": "docs",
+        "internalOnly": true,
+        "prodDeployable": false
+    },
+      {
+        "repoName": "mms-docs",
+        "branches": [
+            {
+                "gitBranchName": "master",
+                "active": true,
+                "urlSlug": "stable",
+                "isStableBranch": true
+            },
+            {
+                "gitBranchName": "v1.3",
+                "active": true,
+                "urlSlug": "v1.3",
+                "isStableBranch": false
+            }
+        ],
+        "project": "mms-d0cs",
+        "internalOnly": true,
+        "prodDeployable": false
     }
 ]
 

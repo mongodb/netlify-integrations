@@ -8,7 +8,6 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
-import { deleteStaleDocuments } from "./uploadToAtlas/deleteStale";
 
 const readdirAsync = promisify(readdir);
 
