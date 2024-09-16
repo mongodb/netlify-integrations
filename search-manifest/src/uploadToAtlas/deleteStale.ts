@@ -4,11 +4,9 @@ export const deleteStaleDocuments = async (
 ) => {
   console.debug(`Removing old documents`);
   return {
-    deleteMany: {
-      filter: {
-        searchProperty: searchProperty,
-        manifestRevisionId: { $ne: manifestRevisionId },
-      },
+    filter: {
+      searchProperty: searchProperty,
+      manifestRevisionId: { $ne: manifestRevisionId },
     },
   };
   //   const deleteResult = await collection.deleteMany(
@@ -25,17 +23,9 @@ export const deleteStaleDocuments = async (
   //   );
 };
 
-export const deleteStaleProperties = async (
-  searchProperty: string,
-  manifestRevisionId: string
-) => {
+export const deleteStaleProperties = async (searchProperty: string) => {
   console.debug(`Removing old documents`);
   return {
-    deleteMany: {
-      filter: {
-        searchProperty: searchProperty,
-        manifestRevisionId: { $ne: manifestRevisionId },
-      },
-    },
+    searchProperty: { $regex: searchProperty },
   };
 };

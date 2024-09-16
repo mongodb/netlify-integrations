@@ -1,6 +1,7 @@
 import { Db } from "mongodb";
 import { db, teardown } from "./searchConnector";
 import { DatabaseDocument } from "./types";
+import { deleteStaleProperties } from "./deleteStale";
 
 // helper function to find the associated branch
 export const getBranch = (branches: any, branchName: string) => {
@@ -79,6 +80,7 @@ export const getProperties = async (branchName: string) => {
       urlSlug,
       gitBranchName,
       isStableBranch,
+      active,
     }: {
       urlSlug: string;
       gitBranchName: string;
@@ -88,15 +90,20 @@ export const getProperties = async (branchName: string) => {
     includeInGlobalSearch = isStableBranch;
     version = urlSlug || gitBranchName;
     searchProperty = `${project}-${version}`;
-
     if (
       repo.internalOnly ||
       !repo.prodDeployable ||
       !repo.search?.categoryTitle
     ) {
-      //TODO: deletestaleproperties here potentially instead of throwing or returning
+      //TODO: deletestaleproperties here for ALL manifests beginning with this repo?
+      deleteStaleProperties(project);
       throw new Error(
-        `Search manifest should not be generated for repo ${REPO_NAME}`
+        `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
+      );
+    } else if (!active) {
+      deleteStaleProperties(searchProperty);
+      throw new Error(
+        `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
       );
     }
   } catch (e) {

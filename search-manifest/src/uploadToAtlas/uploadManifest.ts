@@ -3,6 +3,7 @@ import { db, teardown } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
+import { deleteStaleDocuments } from "./deleteStale";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
 
@@ -105,6 +106,11 @@ export const uploadManifest = async (
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
+  const query = deleteStaleDocuments(searchProperty, hash);
+  const result = await documentsColl?.deleteMany({
+    searchProperty: searchProperty,
+    manifestRevisionId: { $ne: hash },
+  });
   await teardown();
   return status;
 };

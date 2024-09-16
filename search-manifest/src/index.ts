@@ -8,6 +8,7 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
+import { deleteStaleDocuments } from "./uploadToAtlas/deleteStale";
 
 const readdirAsync = promisify(readdir);
 
@@ -71,7 +72,7 @@ integration.addBuildEventHandler(
     //uploads manifests to atlas
     console.log("=========== Uploading Manifests =================");
     try {
-      await uploadManifest(manifest, searchProperty);
+      const status = await uploadManifest(manifest, searchProperty);
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     }

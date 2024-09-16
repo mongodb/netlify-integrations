@@ -10,7 +10,7 @@ import {
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { mockDb } from "../utils/mockDb";
+import { mockDb } from "../utils/mockDB";
 import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 
@@ -19,7 +19,7 @@ const PROPERTY_NAME = "dummyName";
 //teardown connections
 beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
-    const { mockDb, teardownMockDbClient } = await import("../utils/mockDb");
+    const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
     return {
       teardown: teardownMockDbClient,
       db: async () => {
@@ -49,7 +49,7 @@ const removeDocuments = async () => {
 
 afterAll(async () => {
   //teardown db instance
-  const { teardownMockDbClient } = await import("../utils/mockDb");
+  const { teardownMockDbClient } = await import("../utils/mockDB");
   await teardownMockDbClient();
 });
 
@@ -86,7 +86,6 @@ describe("Upload manifest uploads to Atlas db", () => {
       nodeManifest.url,
       nodeManifest.includeInGlobalSearch
     );
-    console.log;
     manifest.documents = nodeManifest.documents;
 
     await uploadManifest(manifest, PROPERTY_NAME);
@@ -94,7 +93,6 @@ describe("Upload manifest uploads to Atlas db", () => {
     //check that manifests have been uploaded
     const db = await mockDb();
     const documents = db.collection<DatabaseDocument>("documents");
-    console.log(db);
     //count number of documents in collection
     expect(await documents.countDocuments()).toEqual(manifest.documents.length);
   });

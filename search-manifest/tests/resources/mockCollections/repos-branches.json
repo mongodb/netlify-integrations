@@ -4,7 +4,8 @@
         "branches": [{
             "gitBranchName": "master",
             "urlSlug" : "",
-            "isStableBranch": "true"
+            "isStableBranch": true,
+            "active": true
         }],
         "project": "atlas-app-services",
         "internalOnly": false, 
@@ -16,12 +17,14 @@
             {
                 "gitBranchName": "master",
                 "isStableBranch": true,
-                "urlSlug": "current"
+                "urlSlug": "current",
+                "active": true
             },
             {
                 "gitBranchName": "beta", 
                 "urlSlug": "upcoming",
-                "isStableBranch": false
+                "isStableBranch": false,
+                "active": true
             }
         ],
         "project": "compass",
@@ -37,7 +40,8 @@
             {
                 "gitBranchName": "master",
                 "urlSlug": "",
-                "isStableBranch": true
+                "isStableBranch": true,
+                "active": true
             }
         ],
         "project": "cloud-docs",
