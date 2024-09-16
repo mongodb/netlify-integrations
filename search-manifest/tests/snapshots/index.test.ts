@@ -1,5 +1,5 @@
-// snapshot tests
-import { describe, expect, test, it, vi } from "vitest";
+// TODO: snapshot tests
+import { describe, expect, test } from "vitest";
 
 function sum(a: number, b: number) {
   return a + b;

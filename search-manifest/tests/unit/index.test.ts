@@ -62,7 +62,7 @@ describe.each([
       //code
       expect(manifest.documents[0].code).toEqual(equivDoc.code);
     });
-    //preview FAILS
+    //preview
     it("matches preview", () => {
       expect(manifest.documents[0].preview).toEqual(equivDoc.preview);
     });

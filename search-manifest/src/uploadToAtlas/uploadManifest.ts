@@ -29,11 +29,6 @@ const composeUpserts = async (
     // and exact match, e.g. no "( ) { } [ ] ^ “ ~ * ? : \ /" present
     document.strippedSlug = document.slug.replaceAll("/", "");
 
-    //don't need to sort facets first??
-    // if (document.facets) {
-    //   document.facets = sortFacetsObject(document.facets, trieFacets);
-    // }
-
     const newDocument: DatabaseDocument = {
       ...document,
       lastModified: lastModified,
@@ -110,6 +105,6 @@ export const uploadManifest = async (
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
-  teardown();
+  await teardown();
   return status;
 };

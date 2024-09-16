@@ -115,7 +115,7 @@ export const getProperties = async (branchName: string) => {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
     throw e;
   }
-  teardown();
+  await teardown();
   return { searchProperty, url, includeInGlobalSearch };
 };
 

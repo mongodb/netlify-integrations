@@ -44,10 +44,9 @@ const removeDocuments = async () => {
 //mock repos_branches database
 beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
-    const { mockDb, teardownMockDbClient, insert } = await import(
-      "../utils/mockDb"
-    );
+    const { mockDb, teardownMockDbClient } = await import("../utils/mockDb");
     return {
+      teardown: teardownMockDbClient,
       db: async () => {
         //create mock db of repos_branches. populate it with the repos branches object, docsets obj defined here
         const db = await mockDb();
@@ -112,7 +111,6 @@ describe("Given a branchname, get the properties associated with it from repos_b
 
   test(`correct properties are retrieved for branch ${BRANCH_NAME_BETA} of repoName ${repoNames[0]}`, async () => {
     //define expected properties object for beta branch of Compass repo
-
     process.env.REPO_NAME = repoNames[0];
     const compassBetaProperties = {
       searchProperty: "compass-upcoming",
@@ -127,7 +125,6 @@ describe("Given a branchname, get the properties associated with it from repos_b
 
   test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${repoNames[1]}`, async () => {
     //define expected properties object for master branch of cloud-docs repo
-
     process.env.REPO_NAME = repoNames[1];
     const cloudDocsMasterProperties = {
       searchProperty: "cloud-docs-master",

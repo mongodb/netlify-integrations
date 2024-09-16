@@ -20,7 +20,6 @@ const PROPERTY_NAME = "dummyName";
 beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
     const { mockDb, teardownMockDbClient } = await import("../utils/mockDb");
-
     return {
       teardown: teardownMockDbClient,
       db: async () => {
@@ -90,11 +89,12 @@ describe("Upload manifest uploads to Atlas db", () => {
     console.log;
     manifest.documents = nodeManifest.documents;
 
-    const status = await uploadManifest(manifest, PROPERTY_NAME);
+    await uploadManifest(manifest, PROPERTY_NAME);
 
     //check that manifests have been uploaded
     const db = await mockDb();
     const documents = db.collection<DatabaseDocument>("documents");
+    console.log(db);
     //count number of documents in collection
     expect(await documents.countDocuments()).toEqual(manifest.documents.length);
   });
@@ -120,15 +120,16 @@ describe("Upload manifest uploads to Atlas db and updates existing manifests cor
     nodeManifest.includeInGlobalSearch
   );
   manifest1.documents = nodeManifest.documents;
-
   const db = await mockDb();
   const documents = db.collection("documents");
   const kotlinManifest = await getManifest("kotlin");
 
   test("nodeManifest uploads all documents", async () => {
-    //find a way to check that there are no documents in the collection yet
+    await checkCollection();
     const status1 = await uploadManifest(manifest1, PROPERTY_NAME);
     expect(status1.upserted).toEqual(manifest1.documents.length);
+    //reopen connection to count current num of documents in collection
+    await mockDb();
 
     expect(await documents.countDocuments()).toEqual(
       manifest1.documents.length
@@ -141,12 +142,15 @@ describe("Upload manifest uploads to Atlas db and updates existing manifests cor
 
   test("two separate manifests uplodaded uploads correct number of entries", async () => {
     //find a way to check that there are no documents in the collection yet
+    await mockDb();
     expect(await documents.countDocuments()).toEqual(
       manifest1.documents.length
     );
     const status = await uploadManifest(kotlinManifest, "docs-kotlin");
     expect(status.upserted).toEqual(kotlinManifest.documents.length);
 
+    //reopen connection to count current num of documents in collection
+    await mockDb();
     expect(await documents.countDocuments()).toEqual(
       kotlinManifest.documents.length + manifest1.documents.length
     );
@@ -156,5 +160,3 @@ describe("Upload manifest uploads to Atlas db and updates existing manifests cor
     expect(status2.upserted).toEqual(0);
   });
 });
-
-// TODO: test composeUpserts
