@@ -1,4 +1,4 @@
-import * as mongodb from "mongodb";
+import type * as mongodb from "mongodb";
 import { db } from "./connector";
 
 export const bulkWrite = async (

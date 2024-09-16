@@ -1,7 +1,7 @@
-import { Manifest } from "../generateManifest/manifest";
+import type { Manifest } from "../generateManifest/manifest";
 import { db } from "./searchConnector";
 import assert from "assert";
-import { RefreshInfo, DatabaseDocument } from "./types";
+import type { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;

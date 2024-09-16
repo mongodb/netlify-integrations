@@ -1,4 +1,4 @@
-import { NetlifyPluginUtils } from "@netlify/build";
+import type { NetlifyPluginUtils } from "@netlify/build";
 import axios from "axios";
 import { createHash } from "crypto";
 import { existsSync } from "fs";

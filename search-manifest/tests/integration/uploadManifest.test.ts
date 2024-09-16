@@ -11,7 +11,7 @@ import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import { mockDb } from "../utils/mockDB";
-import { DatabaseDocument } from "../../src/uploadToAtlas/types";
+import type { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 
 const PROPERTY_NAME = "dummyName";
@@ -114,7 +114,7 @@ describe("Upload manifest uploads to Atlas db", () => {
 });
 
 describe("Upload manifest uploads to Atlas db and updates existing manifests correctly ", async () => {
-  let manifest1: Manifest = new Manifest(
+  const manifest1: Manifest = new Manifest(
     nodeManifest.includeInGlobalSearch,
     nodeManifest.url
   );

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   GITHUB_USER,
-  Page,
-  UpdatedPage,
+  type Page,
+  type UpdatedPage,
   updatePages,
 } from "../src/update-pages";
 import { getMockDb } from "./utils/mockDb";

@@ -1,4 +1,4 @@
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, type Db } from "mongodb";
 
 export const COLLECTION_NAME = "oas_files";
 

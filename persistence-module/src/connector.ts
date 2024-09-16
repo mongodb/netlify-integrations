@@ -4,7 +4,7 @@
 // If no, the helper should be implemented in that service, not here
 
 import * as mongodb from "mongodb";
-import { Db } from "mongodb";
+import type { Db } from "mongodb";
 
 // We should only ever have one client active at a time.
 const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_HOST}/?retryWrites=true&w=majority&maxPoolSize=20`;

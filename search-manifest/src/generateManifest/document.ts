@@ -45,11 +45,11 @@ export class Document {
   }
 
   findMetadata() {
-    let robots: Boolean = true; //can be set in the rst if the page is supposed to be crawled
+    let robots: boolean = true; //can be set in the rst if the page is supposed to be crawled
     let keywords: string | null = null; //keywords is an optional list of strings
     let description: string | null = null; //this can be optional??
 
-    let results = JSONPath({
+    const results = JSONPath({
       path: "$..children[?(@.name=='meta')]..options",
       json: this.tree,
     });
@@ -73,25 +73,25 @@ export class Document {
   findParagraphs() {
     let paragraphs = "";
 
-    let results = JSONPath({
+    const results = JSONPath({
       path: "$..children[?(@.type=='paragraph')]..value",
       json: this.tree,
     });
 
-    for (let r of results) {
+    for (const r of results) {
       paragraphs += " " + r;
     }
     return paragraphs.trim();
   }
 
   findCode() {
-    let results = JSONPath({
+    const results = JSONPath({
       path: "$..children[?(@.type=='code')]",
       json: this.tree,
     });
 
-    let codeContents = [];
-    for (let r of results) {
+    const codeContents = [];
+    for (const r of results) {
       const lang = r.lang ?? null;
       codeContents.push({ lang: lang, value: r.value });
     }
@@ -99,11 +99,11 @@ export class Document {
   }
 
   findHeadings() {
-    let headings: string[] = [];
-    let title: string = "";
+    const headings: string[] = [];
+    let title = "";
     // Get the children of headings nodes
 
-    let results = JSONPath({
+    const results = JSONPath({
       path: "$..children[?(@.type=='heading')].children",
       json: this.tree,
     });
@@ -111,15 +111,15 @@ export class Document {
     //no heading nodes found?? page doesn't have title, or headings
     if (!results.length) return [title, headings];
 
-    for (let r of results) {
-      let heading = [];
+    for (const r of results) {
+      const heading = [];
       const parts = JSONPath({
         path: "$..value",
         json: r,
       });
 
       //add a check in case there is no parts found
-      for (let part of parts) {
+      for (const part of parts) {
         // add a check in case there is no value field found
         heading.push(part);
       }
@@ -159,7 +159,7 @@ export class Document {
     }
 
     if (results.length) {
-      let strList = [];
+      const strList = [];
 
       //get value in results
       const first = JSONPath({
@@ -167,7 +167,7 @@ export class Document {
         json: results[0],
       });
 
-      for (let f of first) {
+      for (const f of first) {
         strList.push(f);
       }
       return strList.join("");
@@ -181,7 +181,7 @@ export class Document {
     //determining indexability
 
     let noIndex = false;
-    let reasons: string[] = [];
+    const reasons: string[] = [];
 
     //if :robots: None in metadata, do not index
     if (!this.robots) {
@@ -231,7 +231,7 @@ const deriveFacets = (tree: any) => {
 
     if (!facet.subFacets) return;
 
-    for (let subFacet of facet.subFacets) {
+    for (const subFacet of facet.subFacets) {
       insertKeyVals(subFacet, key + ">" + facet.value + ">");
     }
   };
@@ -245,9 +245,9 @@ const deriveFacets = (tree: any) => {
     insertKeyVals(facet);
   };
 
-  let documentFacets: any = {};
+  const documentFacets: any = {};
   if (tree["facets"]) {
-    for (let facetEntry of tree["facets"]) {
+    for (const facetEntry of tree["facets"]) {
       createFacet(facetEntry);
     }
   }

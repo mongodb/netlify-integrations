@@ -1,6 +1,6 @@
-import { Db } from "mongodb";
+import type { Db } from "mongodb";
 import { db } from "./searchConnector";
-import { DatabaseDocument } from "./types";
+import type { DatabaseDocument } from "./types";
 
 // get whether branch is stable as well - set global from this?
 const getProperties = async () => {
@@ -19,8 +19,8 @@ const getProperties = async () => {
   let dbSession: Db;
   let repos_branches;
   let docsets;
-  let url: string = "";
-  let searchProperty: string = "";
+  let url = "";
+  let searchProperty = "";
   let repo: any;
   let docsetRepo: any;
 

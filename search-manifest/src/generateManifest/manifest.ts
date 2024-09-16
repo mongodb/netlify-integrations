@@ -1,11 +1,11 @@
-import { ManifestEntry } from "./manifestEntry";
+import type { ManifestEntry } from "./manifestEntry";
 
 export class Manifest {
   url: string;
   global: boolean;
   documents: ManifestEntry[];
 
-  constructor(includeInGlobalSearch: boolean, url: string = "") {
+  constructor(includeInGlobalSearch: boolean, url = "") {
     this.url = url;
     this.global = includeInGlobalSearch;
     this.documents = [];

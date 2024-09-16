@@ -4,7 +4,7 @@ import nodeManifest from "../resources/s3Manifests/node-current.json";
 import kotlinManifest from "../resources/s3Manifests/kotlin-upcoming.json";
 import * as fs from "fs";
 import { Manifest } from "../../src/generateManifest/manifest";
-import { ManifestEntry } from "../../src/generateManifest/manifestEntry";
+import type { ManifestEntry } from "../../src/generateManifest/manifestEntry";
 import { getManifest } from "../utils/getManifest";
 
 describe.each([
@@ -42,7 +42,7 @@ describe.each([
 
     //TODO: put in a loop to check multiple manifestEntries against each other
     let equivDoc: ManifestEntry;
-    for (let document of s3Manifest.documents) {
+    for (const document of s3Manifest.documents) {
       if (document.title == manifest.documents[0].title) equivDoc = document;
       continue;
     }

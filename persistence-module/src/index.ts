@@ -3,7 +3,7 @@ import { NetlifyIntegration } from '@netlify/sdk';
 import { deserialize } from 'bson';
 import { readdir, readFile, existsSync } from 'fs';
 import { promisify } from 'util';
-import { Page, updatePages } from './update-pages';
+import { type Page, updatePages } from './update-pages';
 
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);

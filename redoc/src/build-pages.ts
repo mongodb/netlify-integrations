@@ -1,5 +1,5 @@
-import { NetlifyPluginUtils } from "@netlify/build";
-import { OASPageMetadata } from ".";
+import type { NetlifyPluginUtils } from "@netlify/build";
+import type { OASPageMetadata } from ".";
 import { getAtlasSpecUrl } from "./atlas";
 import { writeFileAsync } from "./utils/fs-async";
 import { db } from "./utils/db";

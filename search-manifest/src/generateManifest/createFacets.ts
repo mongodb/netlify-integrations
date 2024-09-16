@@ -11,7 +11,7 @@ export class Facet {
     this.subFacets = [];
 
     if (subFacets) {
-      for (let subFacet of subFacets) {
+      for (const subFacet of subFacets) {
         this.subFacets.push(
           new Facet(
             subFacet["category"],

@@ -1,4 +1,4 @@
-import { AnyBulkWriteOperation, FindCursor } from "mongodb";
+import type { AnyBulkWriteOperation, FindCursor } from "mongodb";
 import isEqual from "fast-deep-equal";
 import { db } from "./connector";
 import { bulkWrite } from "./db-operations";

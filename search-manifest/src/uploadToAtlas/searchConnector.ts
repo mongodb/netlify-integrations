@@ -1,4 +1,4 @@
-import { Db } from "mongodb";
+import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
 
 // We should only ever have one client active at a time.

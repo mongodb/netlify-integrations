@@ -1,4 +1,4 @@
-import { ManifestEntry } from "../generateManifest/manifestEntry";
+import type { ManifestEntry } from "../generateManifest/manifestEntry";
 
 export interface RefreshInfo {
   deleted: number;
