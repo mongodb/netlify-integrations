@@ -1,41 +1,41 @@
 export const deleteStaleDocuments = async (
-  searchProperty: string,
-  manifestRevisionId: string
+	searchProperty: string,
+	manifestRevisionId: string,
 ) => {
-  console.debug(`Removing old documents`);
-  return {
-    deleteMany: {
-      filter: {
-        searchProperty: searchProperty,
-        manifestRevisionId: { $ne: manifestRevisionId },
-      },
-    },
-  };
-  //   const deleteResult = await collection.deleteMany(
-  //     {
-  //       searchProperty: searchProperty,
-  //       manifestRevisionId: { $ne: manifestRevisionId },
-  //     },
-  //     { session }
-  //   );
-  //   status.deleted +=
-  //     deleteResult.deletedCount === undefined ? 0 : deleteResult.deletedCount;
-  //   console.debug(
-  //     `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
-  //   );
+	console.debug(`Removing old documents`);
+	return {
+		deleteMany: {
+			filter: {
+				searchProperty: searchProperty,
+				manifestRevisionId: { $ne: manifestRevisionId },
+			},
+		},
+	};
+	//   const deleteResult = await collection.deleteMany(
+	//     {
+	//       searchProperty: searchProperty,
+	//       manifestRevisionId: { $ne: manifestRevisionId },
+	//     },
+	//     { session }
+	//   );
+	//   status.deleted +=
+	//     deleteResult.deletedCount === undefined ? 0 : deleteResult.deletedCount;
+	//   console.debug(
+	//     `Removed ${deleteResult.deletedCount} entries from ${collection.collectionName}`
+	//   );
 };
 
 export const deleteStaleProperties = async (
-  searchProperty: string,
-  manifestRevisionId: string
+	searchProperty: string,
+	manifestRevisionId: string,
 ) => {
-  console.debug(`Removing old documents`);
-  return {
-    deleteMany: {
-      filter: {
-        searchProperty: searchProperty,
-        manifestRevisionId: { $ne: manifestRevisionId },
-      },
-    },
-  };
+	console.debug(`Removing old documents`);
+	return {
+		deleteMany: {
+			filter: {
+				searchProperty: searchProperty,
+				manifestRevisionId: { $ne: manifestRevisionId },
+			},
+		},
+	};
 };
