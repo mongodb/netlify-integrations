@@ -1,5 +1,5 @@
 import { Manifest } from "../generateManifest/manifest";
-import { db } from "./searchConnector";
+import { db, teardown } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
@@ -110,5 +110,6 @@ export const uploadManifest = async (
     status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
+  teardown();
   return status;
 };

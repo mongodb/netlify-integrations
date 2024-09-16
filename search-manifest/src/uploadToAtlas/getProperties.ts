@@ -1,5 +1,5 @@
 import { Db } from "mongodb";
-import { db } from "./searchConnector";
+import { db, teardown } from "./searchConnector";
 import { DatabaseDocument } from "./types";
 
 // helper function to find the associated branch
@@ -115,6 +115,7 @@ export const getProperties = async (branchName: string) => {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
     throw e;
   }
+  teardown();
   return { searchProperty, url, includeInGlobalSearch };
 };
 

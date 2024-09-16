@@ -12,7 +12,6 @@ import getProperties from "./uploadToAtlas/getProperties";
 const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
-const ZIP_PATH = ``;
 
 export const generateManifest = async () => {
   // create Manifest object
