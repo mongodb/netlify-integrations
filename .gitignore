@@ -1,2 +1,12 @@
 .DS_Store
 node_modules
+
+.ntli
+.cache
+dev-model.gql
+
+documents
+
+# Local Netlify folder
+.netlify
+
