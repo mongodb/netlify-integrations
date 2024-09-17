@@ -10,7 +10,7 @@ import {
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { mockDb } from "../utils/mockDB";
+import { mockDb, removeDocuments } from "../utils/mockDB";
 import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 
@@ -36,15 +36,6 @@ const checkCollection = async () => {
     .collection<DatabaseDocument>("documents")
     .estimatedDocumentCount();
   expect(documentCount).toEqual(0);
-};
-
-const removeDocuments = async () => {
-  //delete all documents in repo
-  const db = await mockDb();
-  await db.collection<DatabaseDocument>("documents").deleteMany({});
-  const documentCount = await db
-    .collection<DatabaseDocument>("documents")
-    .estimatedDocumentCount();
 };
 
 afterAll(async () => {
@@ -74,7 +65,7 @@ describe("Upload manifest doesn't work for invalid manifests", () => {
 // given manifests, test that it uploads said manifests
 describe("Upload manifest uploads to Atlas db", () => {
   afterEach(async () => {
-    await removeDocuments();
+    await removeDocuments("documents");
   });
   let manifest: Manifest;
 

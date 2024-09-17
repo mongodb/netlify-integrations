@@ -1,5 +1,6 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import * as mongodb from "mongodb";
+import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 
 let client: mongodb.MongoClient;
 
@@ -29,4 +30,14 @@ export const insert = async (
   const coll = dbName.collection(collectionName);
   const result = await coll.insertMany(docs);
   console.log(`${result.insertedCount} documents were inserted`);
+};
+
+export const removeDocuments = async (collectionName: string) => {
+  //delete all documents in repo
+  const db = await mockDb();
+  await db.collection<DatabaseDocument>(collectionName).deleteMany({});
+  const documentCount = await db
+    .collection<DatabaseDocument>("documents")
+    .countDocuments();
+  return documentCount;
 };
