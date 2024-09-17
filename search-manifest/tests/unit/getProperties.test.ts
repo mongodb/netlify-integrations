@@ -11,7 +11,7 @@ import {
   getProperties,
   getBranch,
 } from "../../src/uploadToAtlas/getProperties";
-import { mockDb, teardownMockDbClient, insert } from "../utils/mockDb";
+import { mockDb, teardownMockDbClient, insert } from "../utils/mockDB";
 // simulate the repos_branches collection in an object
 import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
@@ -44,7 +44,7 @@ const removeDocuments = async () => {
 //mock repos_branches database
 beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
-    const { mockDb, teardownMockDbClient } = await import("../utils/mockDb");
+    const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
     return {
       teardown: teardownMockDbClient,
       db: async () => {
