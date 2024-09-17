@@ -82,7 +82,7 @@
                 "isStableBranch": false
             }
         ],
-        "project": "mms-d0cs",
+        "project": "mms-docs",
         "internalOnly": true,
         "prodDeployable": false
     }
