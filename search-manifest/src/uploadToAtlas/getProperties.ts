@@ -96,7 +96,7 @@ export const getProperties = async (branchName: string) => {
       !repo.search?.categoryTitle
     ) {
       // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
-      deleteStaleProperties(project);
+      await deleteStaleProperties(project);
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
       );

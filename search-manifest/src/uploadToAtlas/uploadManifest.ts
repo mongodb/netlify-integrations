@@ -10,7 +10,6 @@ const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${pr
 const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
 
 //TODO: make an interface/class for the uploads?
-
 const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
@@ -88,11 +87,9 @@ export const uploadManifest = async (
   );
   const operations = [...upserts];
 
-  //TODO: how do we want to delete stale properties? delete manifests with that property if can't be found in repos_branches? but if can't be found in repos_branches.. then won't know what searchproperty is
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-
   console.info(`Starting transaction`);
   assert.strictEqual(typeof manifest.global, "boolean");
   assert.strictEqual(typeof hash, "string");
@@ -102,13 +99,13 @@ export const uploadManifest = async (
     const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
       ordered: false,
     });
-    status.deleted += bulkWriteStatus?.deletedCount ?? 0;
     status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
   }
   const result = await documentsColl?.deleteMany({
     searchProperty: searchProperty,
     manifestRevisionId: { $ne: hash },
   });
+  status.deleted += result?.deletedCount ?? 0;
   await teardown();
   return status;
 };
