@@ -93,13 +93,20 @@ export const uploadManifest = async (
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);
 
-  if (operations.length > 0) {
-    const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
-      ordered: false,
-    });
-    status.deleted += bulkWriteStatus?.deletedCount ?? 0;
-    status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
+  try {
+    if (operations.length > 0) {
+      const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
+        ordered: false,
+      });
+      status.deleted += bulkWriteStatus?.deletedCount ?? 0;
+      status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
+    }
+  } catch (e) {
+    throw new Error(
+      `Error writing upserts to Search.documents collection with error ${e}`
+    );
+  } finally {
+    await teardown();
+    return status;
   }
-  await teardown();
-  return status;
 };
