@@ -20,13 +20,8 @@ const composeUpserts = async (
   const documents = manifest.documents;
   return documents.map((document) => {
     assert.strictEqual(typeof document.slug, "string");
-    // DOP-3545 and DOP-3585
-    // slug is possible to be empty string ''
     assert.ok(document.slug || document.slug === "");
 
-    // DOP-3962
-    // We need a slug field with no special chars for keyword search
-    // and exact match, e.g. no "( ) { } [ ] ^ “ ~ * ? : \ /" present
     document.strippedSlug = document.slug.replaceAll("/", "");
 
     const newDocument: DatabaseDocument = {

@@ -73,9 +73,6 @@ describe("Upload manifest doesn't work for invalid manifests", () => {
 
 // given manifests, test that it uploads said manifests
 describe("Upload manifest uploads to Atlas db", () => {
-  beforeEach(async () => {
-    await checkCollection();
-  });
   afterEach(async () => {
     await removeDocuments();
   });
@@ -86,7 +83,6 @@ describe("Upload manifest uploads to Atlas db", () => {
       nodeManifest.url,
       nodeManifest.includeInGlobalSearch
     );
-    console.log;
     manifest.documents = nodeManifest.documents;
 
     await uploadManifest(manifest, PROPERTY_NAME);
@@ -94,7 +90,6 @@ describe("Upload manifest uploads to Atlas db", () => {
     //check that manifests have been uploaded
     const db = await mockDb();
     const documents = db.collection<DatabaseDocument>("documents");
-    console.log(db);
     //count number of documents in collection
     expect(await documents.countDocuments()).toEqual(manifest.documents.length);
   });
