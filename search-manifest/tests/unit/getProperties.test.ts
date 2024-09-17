@@ -7,9 +7,8 @@ import {
   beforeAll,
   afterAll,
 } from "vitest";
-import {
-  getProperties,
-  getBranch,
+import getProperties, {
+  _getBranch,
 } from "../../src/uploadToAtlas/getProperties";
 import { mockDb, teardownMockDbClient, insert } from "../utils/mockDB";
 // simulate the repos_branches collection in an object
@@ -66,7 +65,7 @@ describe("given an array of branches and a branch name, the corrct output is ret
   //mock branches object
   const branches: any = repos_branches[1].branches;
   test("given a branch name that exists in the branches array, the correct branch object is returned", () => {
-    expect(getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
+    expect(_getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
@@ -74,22 +73,18 @@ describe("given an array of branches and a branch name, the corrct output is ret
   });
 
   test("given a branch name that exists with different capitalization than in the branches array, the correct branch object is still returned", () => {
-    expect(getBranch(branches, "MASTER")).toEqual({
+    expect(_getBranch(branches, "MASTER")).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
     });
   });
 
-  test("given a branch name that doesn't exist in the branches array, an error is thrown", () => {
-    expect(() => getBranch(branches, BRANCH_NAME_GIBBERISH)).toThrow(
-      `Current branch ${BRANCH_NAME_GIBBERISH} not found in repos branches entry`
-    );
+  test("given a branch name that doesn't exist in the branches array, undefined is returned", () => {
+    expect(_getBranch(branches, BRANCH_NAME_GIBBERISH)).toEqual(undefined);
   });
-  test("given a branch name and an empty branches array, an error is thrown", () => {
-    expect(() => getBranch([], BRANCH_NAME_MASTER)).toThrow(
-      `Current branch ${BRANCH_NAME_MASTER} not found in repos branches entry`
-    );
+  test("given a branch name and an empty branches array, undefined is returned", () => {
+    expect(_getBranch([], BRANCH_NAME_MASTER)).toEqual(undefined);
   });
 });
 
@@ -101,7 +96,7 @@ describe("Given a branchname, get the properties associated with it from repos_b
     process.env.REPO_NAME = repoNames[0];
     const compassMasterProperties = {
       searchProperty: "compass-current",
-      url: "http://mongodb.com/docs/compass",
+      url: "http://mongodb.com/docs/compass/",
       includeInGlobalSearch: true,
     };
     expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
@@ -114,7 +109,7 @@ describe("Given a branchname, get the properties associated with it from repos_b
     process.env.REPO_NAME = repoNames[0];
     const compassBetaProperties = {
       searchProperty: "compass-upcoming",
-      url: "http://mongodb.com/docs/compass",
+      url: "http://mongodb.com/docs/compass/",
       includeInGlobalSearch: false,
     };
 
@@ -127,8 +122,8 @@ describe("Given a branchname, get the properties associated with it from repos_b
     //define expected properties object for master branch of cloud-docs repo
     process.env.REPO_NAME = repoNames[1];
     const cloudDocsMasterProperties = {
-      searchProperty: "cloud-docs-master",
-      url: "http://mongodb.com/docs/atlas",
+      searchProperty: "atlas-master",
+      url: "http://mongodb.com/docs/atlas/",
       includeInGlobalSearch: true,
     };
 
