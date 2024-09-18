@@ -58,11 +58,12 @@ export const uploadManifest = async (
     const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
     documentsColl = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
-    console.log("issue starting session for Search Database", e);
+    console.error("issue starting session for Search Database", e);
   }
   const status: RefreshInfo = {
     deleted: 0,
     upserted: 0,
+    modified: 0,
     errors: false,
     dateStarted: new Date(),
     dateFinished: null,
@@ -94,6 +95,7 @@ export const uploadManifest = async (
       const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
         ordered: false,
       });
+      status.modified += bulkWriteStatus?.modifiedCount ?? 0;
       status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
     }
     const result = await documentsColl?.deleteMany({

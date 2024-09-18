@@ -27,9 +27,6 @@ export const insert = async (
   collectionName: string,
   docs: any[]
 ) => {
-  console.log(
-    await dbName.collection<DatabaseDocument>("documents").countDocuments()
-  );
   const coll = dbName.collection(collectionName);
   const result = await coll.insertMany(docs);
   console.log(`${result.insertedCount} documents were inserted`);

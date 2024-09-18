@@ -163,12 +163,8 @@ describe(
       expect(await documents.countDocuments()).toEqual(
         kotlinManifest.documents.length + manifest1.documents.length
       );
-      console.log(
-        "DOCCOUNT",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
 
-      //insert entry with a random slug
+      //insert entries with random slugs
       await mockDb();
       const dummyHash = generateHash("dummyManifest");
       const dummyDate = new Date();
@@ -190,14 +186,10 @@ describe(
       insert(db, "documents", dummyDocs);
       //upload node documents again
       await mockDb();
-      console.log(
-        "DOCCOUNT1",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
 
       const status3 = await uploadManifest(manifest1, PROPERTY_NAME);
-      console.log("DELETED:", status3.deleted);
       expect(status3.deleted).toEqual(dummyDocs.length);
+      expect(status3.modified).toEqual(manifest1.documents.length);
       //check all documents have current hash, time
       await mockDb();
       const empty = await db.collection<DatabaseDocument>("documents").findOne({
