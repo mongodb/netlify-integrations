@@ -10,9 +10,11 @@ import {
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { mockDb } from "../utils/mockDB";
+import { insert, mockDb } from "../utils/mockDB";
 import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
+import { hash } from "node:crypto";
+import { generateHash } from "../../src/uploadToAtlas/utils";
 
 const PROPERTY_NAME = "dummyName";
 
@@ -112,49 +114,110 @@ describe("Upload manifest uploads to Atlas db", () => {
   });
 });
 
-describe("Upload manifest uploads to Atlas db and updates existing manifests correctly ", async () => {
-  let manifest1: Manifest = new Manifest(
-    nodeManifest.url,
-    nodeManifest.includeInGlobalSearch
-  );
-  manifest1.documents = nodeManifest.documents;
-  const db = await mockDb();
-  const documents = db.collection("documents");
-  const kotlinManifest = await getManifest("kotlin");
+describe(
+  "Upload manifest uploads to Atlas db and updates existing manifests correctly ",
+  async () => {
+    afterEach(async () => {
+      await removeDocuments();
+    });
 
-  test("nodeManifest uploads all documents", async () => {
-    await checkCollection();
-    const status1 = await uploadManifest(manifest1, PROPERTY_NAME);
-    expect(status1.upserted).toEqual(manifest1.documents.length);
-    //reopen connection to count current num of documents in collection
-    await mockDb();
-
-    expect(await documents.countDocuments()).toEqual(
-      manifest1.documents.length
+    let manifest1: Manifest = new Manifest(
+      nodeManifest.url,
+      nodeManifest.includeInGlobalSearch
     );
+    manifest1.documents = nodeManifest.documents;
+    const db = await mockDb();
+    const documents = db.collection("documents");
+    const kotlinManifest = await getManifest("kotlin");
 
-    //re upload the same manifest
-    const status2 = await uploadManifest(manifest1, PROPERTY_NAME);
-    expect(status2.upserted).toEqual(0);
-  });
+    test("nodeManifest uploads all documents", async () => {
+      await checkCollection();
+      const status1 = await uploadManifest(manifest1, PROPERTY_NAME);
+      expect(status1.upserted).toEqual(manifest1.documents.length);
+      //reopen connection to count current num of documents in collection
+      await mockDb();
 
-  test("two separate manifests uplodaded uploads correct number of entries", async () => {
-    //find a way to check that there are no documents in the collection yet
-    await mockDb();
-    expect(await documents.countDocuments()).toEqual(
-      manifest1.documents.length
-    );
-    const status = await uploadManifest(kotlinManifest, "docs-kotlin");
-    expect(status.upserted).toEqual(kotlinManifest.documents.length);
+      expect(await documents.countDocuments()).toEqual(
+        manifest1.documents.length
+      );
 
-    //reopen connection to count current num of documents in collection
-    await mockDb();
-    expect(await documents.countDocuments()).toEqual(
-      kotlinManifest.documents.length + manifest1.documents.length
-    );
+      //re upload the same manifest
+      const status2 = await uploadManifest(manifest1, PROPERTY_NAME);
+      expect(status2.upserted).toEqual(0);
+    });
 
-    //re upload the same manifest
-    const status2 = await uploadManifest(manifest1, PROPERTY_NAME);
-    expect(status2.upserted).toEqual(0);
-  });
-});
+    test("two separate manifests uplodaded uploads correct number of entries", async () => {
+      //find a way to check that there are no documents in the collection yet
+      await mockDb();
+      const status = await uploadManifest(manifest1, PROPERTY_NAME);
+      await mockDb();
+      expect(await documents.countDocuments()).toEqual(
+        manifest1.documents.length
+      );
+      const status1 = await uploadManifest(kotlinManifest, "docs-kotlin");
+      expect(status1.upserted).toEqual(kotlinManifest.documents.length);
+
+      //reopen connection to count current num of documents in collection
+      await mockDb();
+      expect(await documents.countDocuments()).toEqual(
+        kotlinManifest.documents.length + manifest1.documents.length
+      );
+    });
+
+    test("stale documents from same search property are removed", async () => {
+      //upload documents
+      const db = await mockDb();
+      const status = await uploadManifest(manifest1, PROPERTY_NAME);
+      await mockDb();
+      const status1 = await uploadManifest(kotlinManifest, "docs-kotlin");
+      //reopen connection to count current num of documents in collection
+      await mockDb();
+      expect(await documents.countDocuments()).toEqual(
+        kotlinManifest.documents.length + manifest1.documents.length
+      );
+      console.log(
+        "DOCCOUNT",
+        await db.collection<DatabaseDocument>("documents").countDocuments()
+      );
+
+      //insert entry with a random slug
+      await mockDb();
+      const dummyHash = generateHash("dummyManifest");
+      const dummyDate = new Date();
+      const dummyDocs = [
+        {
+          manifestRevisionId: dummyHash,
+          lastModified: dummyDate,
+          searchProperty: PROPERTY_NAME,
+          slug: "dummySlug1",
+        },
+        {
+          manifestRevisionId: dummyHash,
+          lastModified: dummyDate,
+          searchProperty: PROPERTY_NAME,
+          slug: "dummySlug2",
+        },
+      ];
+
+      insert(db, "documents", dummyDocs);
+      //upload node documents again
+      await mockDb();
+      console.log(
+        "DOCCOUNT1",
+        await db.collection<DatabaseDocument>("documents").countDocuments()
+      );
+
+      const status3 = await uploadManifest(manifest1, PROPERTY_NAME);
+      console.log("DELETED:", status3.deleted);
+      expect(status3.deleted).toEqual(dummyDocs.length);
+      //check all documents have current hash, time
+      await mockDb();
+      const empty = await db.collection<DatabaseDocument>("documents").findOne({
+        searchProperty: PROPERTY_NAME,
+        manifestRevisionId: dummyHash,
+      });
+      expect(empty).toBe(null);
+    });
+  },
+  { timeout: 10000 }
+);

@@ -163,7 +163,6 @@ describe(
       //populate db with manifests
       db = await mockDb();
       const manifest1 = await getManifest("mms-master");
-      console.log("manifest 1 number of docs", manifest1.documents.length);
       const status = await uploadManifest(manifest1, "mms-docs-stable");
       //reopen connection to db
       db = await mockDb();
@@ -194,33 +193,17 @@ describe(
 
     test("repo with no search categoryTitle removes all old documents with search properties beginning with that project name", async () => {
       db = await mockDb();
-      console.log(
-        "ORIGINAL document count",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
+
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("mms-master");
-      console.log("manifest 1 number of docs", manifest1.documents.length);
 
       const status = await uploadManifest(manifest1, "mms-docs-stable");
       db = await mockDb();
 
-      console.log(
-        "document count after first upload",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
-      console.log("STATUS UPSERTED:", status.upserted);
       const manifest2 = await getManifest("mms-v1.3");
-      console.log("manifest 2 number of docs", manifest2.documents.length);
       const status2 = await uploadManifest(manifest2, "mms-docs-v1.3");
-      console.log("STATUS2 UPSERTED:", status.upserted);
 
       db = await mockDb();
-      console.log(
-        "document count after second upload",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
-      console.log("STATUS2 UPSERTED:", status2.upserted);
 
       let documentCount;
       let documentCount2;
@@ -237,7 +220,6 @@ describe(
       documentCount2 = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
-      console.log(documentCount, documentCount2);
       expect(documentCount2).toEqual(
         documentCount - manifest1.documents.length - manifest2.documents.length
       );
@@ -246,31 +228,15 @@ describe(
     test("getting properties for an inactive branch removes all old documents with that exact project-version searchProperty", async () => {
       //add documents for project from two diff branches to DB-- docs-compass master and beta
       db = await mockDb();
-      console.log(
-        "ORIGINAL document count",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("compass-master");
-      console.log("manifest 1 number of docs", manifest1.documents.length);
 
       const status = await uploadManifest(manifest1, "compass-current");
       db = await mockDb();
 
-      console.log(
-        "document count after first upload",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
-      console.log("STATUS UPSERTED:", status.upserted);
       const manifest2 = await getManifest("compass-beta");
-      console.log("manifest 2 number of docs", manifest2.documents.length);
       const status2 = await uploadManifest(manifest2, "compass-upcoming");
       db = await mockDb();
-      console.log(
-        "document count after second upload",
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      );
-      console.log("STATUS2 UPSERTED:", status2.upserted);
 
       //trying to get properties for repo removes only the older documents from that specific branch, beta
       let documentCount;
@@ -286,7 +252,6 @@ describe(
       documentCount2 = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
-      console.log(documentCount, documentCount2);
       expect(documentCount2).toEqual(
         documentCount - manifest2.documents.length
       );
