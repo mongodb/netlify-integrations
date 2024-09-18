@@ -5,10 +5,10 @@ export class Manifest {
   global?: boolean;
   documents: ManifestEntry[];
 
-  constructor(url: string = "", includeInGlobalSearch?: boolean) {
+  constructor(url: string = "", includeInGlobalSearch: boolean = false) {
     this.url = url;
     this.documents = [];
-    this.global = includeInGlobalSearch ?? false;
+    this.global = includeInGlobalSearch;
   }
 
   addDocument(document: ManifestEntry | null) {

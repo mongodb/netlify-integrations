@@ -10,7 +10,7 @@ import {
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { insert, mockDb } from "../utils/mockDB";
+import { mockDb, insert, removeDocuments } from "../utils/mockDB";
 import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 import { hash } from "node:crypto";
@@ -40,15 +40,6 @@ const checkCollection = async () => {
   expect(documentCount).toEqual(0);
 };
 
-const removeDocuments = async () => {
-  //delete all documents in repo
-  const db = await mockDb();
-  await db.collection<DatabaseDocument>("documents").deleteMany({});
-  const documentCount = await db
-    .collection<DatabaseDocument>("documents")
-    .estimatedDocumentCount();
-};
-
 afterAll(async () => {
   //teardown db instance
   const { teardownMockDbClient } = await import("../utils/mockDB");
@@ -75,11 +66,8 @@ describe("Upload manifest doesn't work for invalid manifests", () => {
 
 // given manifests, test that it uploads said manifests
 describe("Upload manifest uploads to Atlas db", () => {
-  beforeEach(async () => {
-    await checkCollection();
-  });
   afterEach(async () => {
-    await removeDocuments();
+    await removeDocuments("documents");
   });
   let manifest: Manifest;
 
@@ -118,7 +106,7 @@ describe(
   "Upload manifest uploads to Atlas db and updates existing manifests correctly ",
   async () => {
     afterEach(async () => {
-      await removeDocuments();
+      await removeDocuments("documents");
     });
 
     let manifest1: Manifest = new Manifest(

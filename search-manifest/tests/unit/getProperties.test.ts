@@ -7,11 +7,15 @@ import {
   beforeAll,
   afterAll,
 } from "vitest";
-import {
-  getProperties,
-  getBranch,
+import getProperties, {
+  _getBranch,
 } from "../../src/uploadToAtlas/getProperties";
-import { mockDb, teardownMockDbClient, insert } from "../utils/mockDB";
+import {
+  mockDb,
+  teardownMockDbClient,
+  insert,
+  removeDocuments,
+} from "../utils/mockDB";
 // simulate the repos_branches collection in an object
 import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
@@ -28,29 +32,16 @@ const BRANCH_NAME_BETA = "beta";
 const BRANCH_NAME_GIBBERISH = "gibberish";
 let db: mongodb.Db;
 
-const repoNames = [
-  "docs-compass",
-  "cloud-docs",
-  "docs-app-services",
-  "docs-mongodb-internal",
-];
+const DOCS_COMPASS_NAME = "docs-compass";
+const DOCS_CLOUD_NAME = "cloud-docs";
+const DOCS_APP_SERVICES_NAME = "docs-app-services";
+const DOCS_MONGODB_INTERNAL_NAME = "docs-mongodb-internal";
 
 beforeAll(async () => {
   db = await mockDb();
   await insert(db, "repos_branches", repos_branches);
   await insert(db, "docsets", docsets);
 });
-
-const removeDocuments = async () => {
-  //delete all documents in repo
-  await db.collection<DatabaseDocument>("repos_branches").deleteMany({});
-  await db.collection<DatabaseDocument>("documents").deleteMany({});
-  const documentCount = await db
-    .collection<DatabaseDocument>("documents")
-    .countDocuments();
-
-  return documentCount;
-};
 
 //mock repos_branches database
 beforeEach(async () => {
@@ -69,7 +60,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   //teardown db instance
-  await removeDocuments();
+  await removeDocuments("repos_branches");
   await teardownMockDbClient();
 });
 
@@ -77,7 +68,7 @@ describe("given an array of branches and a branch name, the corrct output is ret
   //mock branches object
   const branches: any = repos_branches[1].branches;
   test("given a branch name that exists in the branches array, the correct branch object is returned", () => {
-    expect(getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
+    expect(_getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
@@ -86,7 +77,7 @@ describe("given an array of branches and a branch name, the corrct output is ret
   });
 
   test("given a branch name that exists with different capitalization than in the branches array, the correct branch object is still returned", () => {
-    expect(getBranch(branches, "MASTER")).toEqual({
+    expect(_getBranch(branches, "MASTER")).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
@@ -94,27 +85,23 @@ describe("given an array of branches and a branch name, the corrct output is ret
     });
   });
 
-  test("given a branch name that doesn't exist in the branches array, an error is thrown", () => {
-    expect(() => getBranch(branches, BRANCH_NAME_GIBBERISH)).toThrow(
-      `Current branch ${BRANCH_NAME_GIBBERISH} not found in repos branches entry`
-    );
+  test("given a branch name that doesn't exist in the branches array, undefined is returned", () => {
+    expect(_getBranch(branches, BRANCH_NAME_GIBBERISH)).toEqual(undefined);
   });
-  test("given a branch name and an empty branches array, an error is thrown", () => {
-    expect(() => getBranch([], BRANCH_NAME_MASTER)).toThrow(
-      `Current branch ${BRANCH_NAME_MASTER} not found in repos branches entry`
-    );
+  test("given a branch name and an empty branches array, undefined is returned", () => {
+    expect(_getBranch([], BRANCH_NAME_MASTER)).toEqual(undefined);
   });
 });
 
 //two tests for a repo with multiple branches, one test for a repo with only one branch
 describe("Given a branchname, get the properties associated with it from repos_branches", () => {
   //mock repo name
-  test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${repoNames[0]}`, async () => {
+  test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_COMPASS_NAME}`, async () => {
     //define expected properties object for master branch of Compass repo
-    process.env.REPO_NAME = repoNames[0];
+    process.env.REPO_NAME = DOCS_COMPASS_NAME;
     const compassMasterProperties = {
       searchProperty: "compass-current",
-      url: "http://mongodb.com/docs/compass",
+      url: "http://mongodb.com/docs/compass/",
       includeInGlobalSearch: true,
     };
     expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
@@ -122,27 +109,12 @@ describe("Given a branchname, get the properties associated with it from repos_b
     );
   });
 
-  //change to two properties from different example repo
-  // test(`correct properties are retrieved for branch ${BRANCH_NAME_BETA} of repoName ${repoNames[0]}`, async () => {
-  //   //define expected properties object for beta branch of Compass repo
-  //   process.env.REPO_NAME = repoNames[0];
-  //   const compassBetaProperties = {
-  //     searchProperty: "compass-upcoming",
-  //     url: "http://mongodb.com/docs/compass",
-  //     includeInGlobalSearch: false,
-  //   };
-
-  //   expect(await getProperties(BRANCH_NAME_BETA)).toEqual(
-  //     compassBetaProperties
-  //   );
-  // });
-
-  test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${repoNames[1]}`, async () => {
+  test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_CLOUD_NAME}`, async () => {
     //define expected properties object for master branch of cloud-docs repo
-    process.env.REPO_NAME = repoNames[1];
+    process.env.REPO_NAME = DOCS_CLOUD_NAME;
     const cloudDocsMasterProperties = {
-      searchProperty: "cloud-docs-master",
-      url: "http://mongodb.com/docs/atlas",
+      searchProperty: "atlas-master",
+      url: "http://mongodb.com/docs/atlas/",
       includeInGlobalSearch: true,
     };
 
@@ -156,7 +128,7 @@ describe(
   "GetProperties behaves as expected for stale properties",
   async () => {
     afterEach(async () => {
-      console.log(await removeDocuments());
+      console.log(await removeDocuments("documents"));
     });
 
     test("getting properties for an inactive branch with no existing documents executes correctly and does not change db document count", async () => {
@@ -180,14 +152,14 @@ describe(
     });
 
     test("non prod-deployable repo throws and doesn't return properties", async () => {
-      process.env.REPO_NAME = repoNames[3];
+      process.env.REPO_NAME = DOCS_MONGODB_INTERNAL_NAME;
       await expect(getProperties("v5.0")).rejects.toThrow(
         `Search manifest should not be generated for repo ${process.env.REPO_NAME}. Removing all associated manifests`
       );
     });
 
-    test(`no properties are retrieved for branch on repo ${repoNames[2]} without a "search" field. `, async () => {
-      process.env.REPO_NAME = repoNames[2];
+    test(`no properties are retrieved for branch on repo ${DOCS_APP_SERVICES_NAME} without a "search" field. `, async () => {
+      process.env.REPO_NAME = DOCS_MONGODB_INTERNAL_NAME;
       await expect(getProperties(BRANCH_NAME_MASTER)).rejects.toThrow();
     });
 

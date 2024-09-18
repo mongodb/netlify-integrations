@@ -9,7 +9,6 @@ const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${pr
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
 
-//TODO: make an interface/class for the uploads?
 const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
@@ -19,13 +18,8 @@ const composeUpserts = async (
   const documents = manifest.documents;
   return documents.map((document) => {
     assert.strictEqual(typeof document.slug, "string");
-    // DOP-3545 and DOP-3585
-    // slug is possible to be empty string ''
     assert.ok(document.slug || document.slug === "");
 
-    // DOP-3962
-    // We need a slug field with no special chars for keyword search
-    // and exact match, e.g. no "( ) { } [ ] ^ “ ~ * ? : \ /" present
     document.strippedSlug = document.slug.replaceAll("/", "");
 
     const newDocument: DatabaseDocument = {
@@ -95,17 +89,24 @@ export const uploadManifest = async (
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);
 
-  if (operations.length > 0) {
-    const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
-      ordered: false,
+  try {
+    if (operations.length > 0) {
+      const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
+        ordered: false,
+      });
+      status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
+    }
+    const result = await documentsColl?.deleteMany({
+      searchProperty: searchProperty,
+      manifestRevisionId: { $ne: hash },
     });
-    status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
+    status.deleted += result?.deletedCount ?? 0;
+  } catch (e) {
+    throw new Error(
+      `Error writing upserts to Search.documents collection with error ${e}`
+    );
+  } finally {
+    await teardown();
+    return status;
   }
-  const result = await documentsColl?.deleteMany({
-    searchProperty: searchProperty,
-    manifestRevisionId: { $ne: hash },
-  });
-  status.deleted += result?.deletedCount ?? 0;
-  await teardown();
-  return status;
 };

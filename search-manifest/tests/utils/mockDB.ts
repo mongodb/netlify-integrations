@@ -34,3 +34,13 @@ export const insert = async (
   const result = await coll.insertMany(docs);
   console.log(`${result.insertedCount} documents were inserted`);
 };
+
+export const removeDocuments = async (collectionName: string) => {
+  //delete all documents in repo
+  const db = await mockDb();
+  await db.collection<DatabaseDocument>(collectionName).deleteMany({});
+  const documentCount = await db
+    .collection<DatabaseDocument>("documents")
+    .countDocuments();
+  return documentCount;
+};

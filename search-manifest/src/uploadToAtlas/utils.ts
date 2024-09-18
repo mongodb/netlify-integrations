@@ -19,3 +19,7 @@ export function generateHash(data: string): Promise<string> {
 export function joinUrl(base: string, path: string): string {
   return base.replace(/\/*$/, "/") + path.replace(/^\/*/, "");
 }
+
+export function assertTrailingSlash(path: string): string {
+  return path.endsWith("/") ? path : `${path}/`;
+}
