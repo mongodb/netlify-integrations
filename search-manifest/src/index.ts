@@ -8,6 +8,7 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
+import { upload_manifest_to_s3 } from "./uploadToS3/uploadManifest";
 
 const readdirAsync = promisify(readdir);
 
@@ -58,18 +59,36 @@ integration.addBuildEventHandler(
     console.log("=========== finished generating manifests ================");
     const {
       searchProperty,
+      projectName,
       url,
       includeInGlobalSearch,
-    }: { searchProperty: string; url: string; includeInGlobalSearch: boolean } =
-      await getProperties(branch);
+    }: {
+      searchProperty: string;
+      projectName: string;
+      url: string;
+      includeInGlobalSearch: boolean;
+    } = await getProperties(branch);
 
     manifest.url = url;
     manifest.global = includeInGlobalSearch;
 
     //TODO: upload manifests to S3
+    const bucket = "docs-search-indexes-test";
+    //TODO: change this values based on environments
+    const prefix = "search-indexes/ab-testing";
+    const fileName = `${projectName}-${branch}.json`;
+    const s3Status = await upload_manifest_to_s3(
+      bucket,
+      prefix,
+      fileName,
+      manifest.export()
+    );
+
+    console.log(`S3 upload status: ${s3Status}`);
+    console.log("=========== Finished Uploading to S3  ================");
 
     //uploads manifests to atlas
-    console.log("=========== Uploading Manifests =================");
+    console.log("=========== Uploading Manifests to Atlas=================");
     try {
       const status = await uploadManifest(manifest, searchProperty);
     } catch (e) {

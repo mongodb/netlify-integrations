@@ -2,7 +2,7 @@ import { ManifestEntry } from "./manifestEntry";
 
 export class Manifest {
   url: string;
-  global?: boolean;
+  global: boolean;
   documents: ManifestEntry[];
 
   constructor(url: string = "", includeInGlobalSearch: boolean = false) {
@@ -19,13 +19,14 @@ export class Manifest {
   }
 
   export() {
-    //return the manifest as json
+    //return the manifest as JSON formatted string
     const manifest = {
       url: this.url,
       includeInGlobalSearch: this.global,
       documents: this.documents,
     };
 
-    return manifest;
+    //TODO: check that .stringify has exactly the same functionality + output as python "dumps" as was used in Mut
+    return JSON.stringify(manifest);
   }
 }

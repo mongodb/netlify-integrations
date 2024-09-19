@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.654.0",
     "@netlify/sdk": "^1.60.2-pr-1468.3",
     "bson": "^6.8.0",
     "crypto": "^1.0.1",

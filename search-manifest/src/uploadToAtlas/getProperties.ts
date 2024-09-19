@@ -134,7 +134,7 @@ const getProperties = async (branchName: string) => {
     throw e;
   }
   await teardown();
-  return { searchProperty, url, includeInGlobalSearch };
+  return { searchProperty, projectName: project, url, includeInGlobalSearch };
 };
 
 export default getProperties;
