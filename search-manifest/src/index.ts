@@ -12,14 +12,13 @@ import getProperties from "./uploadToAtlas/getProperties";
 const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
-const ZIP_PATH = ``;
 
 export const generateManifest = async () => {
   // create Manifest object
-  const manifest = new Manifest(true);
+  const manifest = new Manifest();
   console.log("=========== generating manifests ================");
-  //go into documents directory and get list of file entries
 
+  //go into documents directory and get list of file entries
   const entries = await readdirAsync("documents", { recursive: true });
 
   const mappedEntries = entries.filter((fileName) => {
@@ -57,13 +56,19 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    //TODO: get manifest properties, change how url is set atm
-    const [searchProperty, url] = await getProperties();
+    const {
+      searchProperty,
+      url,
+      includeInGlobalSearch,
+    }: { searchProperty: string; url: string; includeInGlobalSearch: boolean } =
+      await getProperties(branch);
+
     manifest.url = url;
+    manifest.global = includeInGlobalSearch;
 
     //TODO: upload manifests to S3
 
-    //upload manifests to atlas
+    //uploads manifests to atlas
     console.log("=========== Uploading Manifests =================");
     try {
       await uploadManifest(manifest, searchProperty);
