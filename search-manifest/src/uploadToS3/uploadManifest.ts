@@ -3,7 +3,7 @@ import { assertTrailingSlash } from "../uploadToAtlas/utils";
 import { connectToS3 } from "./connectToS3";
 
 const upload = async (
-  client: any,
+  client: S3Client,
   bucket: string,
   key: string,
   manifest: string
