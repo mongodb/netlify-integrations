@@ -6,6 +6,7 @@ export const connectToS3 = (): S3Client => {
       accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID ?? "",
       secretAccessKey: process.env.AWS_S3_SECRET_ACCESSS_KEY ?? "",
     },
+    region: "us-east-2",
   });
   return client;
 };
