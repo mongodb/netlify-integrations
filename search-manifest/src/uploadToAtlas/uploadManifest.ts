@@ -65,9 +65,7 @@ export const uploadManifest = async (
   const status: RefreshInfo = {
     deleted: 0,
     upserted: 0,
-    errors: false,
     dateStarted: new Date(),
-    dateFinished: null,
     elapsedMS: null,
   };
 
@@ -101,12 +99,12 @@ export const uploadManifest = async (
       status.deleted += bulkWriteStatus?.deletedCount ?? 0;
       status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
     }
+    return status;
   } catch (e) {
     throw new Error(
       `Error writing upserts to Search.documents collection with error ${e}`
     );
   } finally {
     await teardown();
-    return status;
   }
 };

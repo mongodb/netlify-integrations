@@ -4,9 +4,7 @@ import { ManifestEntry } from "../generateManifest/manifestEntry";
 export interface RefreshInfo {
   deleted: number;
   upserted: number;
-  errors: boolean;
   dateStarted: Date;
-  dateFinished: Date | null;
   elapsedMS: number | null;
 }
 
