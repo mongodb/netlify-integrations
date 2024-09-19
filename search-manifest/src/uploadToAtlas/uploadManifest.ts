@@ -1,5 +1,5 @@
 import { Manifest } from "../generateManifest/manifest";
-import { db } from "./searchConnector";
+import { db, teardown } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
@@ -38,7 +38,7 @@ const composeUpserts = async (
       url: joinUrl(manifest.url, document.slug),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
-      includeInGlobalSearch: manifest.global,
+      includeInGlobalSearch: manifest.global ?? false,
     };
 
     return {
