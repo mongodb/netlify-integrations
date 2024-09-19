@@ -1,31 +1,11 @@
-import { WithId } from "mongodb";
 import { ManifestEntry } from "../generateManifest/manifestEntry";
 
 export interface RefreshInfo {
   deleted: number;
   upserted: number;
   modified: number;
-  errors: boolean;
   dateStarted: Date;
-  dateFinished: Date | null;
   elapsedMS: number | null;
-}
-
-export interface DocsetsDocument extends WithId<Document> {
-  url: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
-  prefix: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
 }
 
 export interface DatabaseDocument extends ManifestEntry {
@@ -36,18 +16,11 @@ export interface DatabaseDocument extends ManifestEntry {
   includeInGlobalSearch: boolean;
 }
 
-export interface ReposBranchesDocument extends WithId<Document> {
-  project: string;
-  search: any;
-  branches: any;
-  prodDeployable: boolean;
-  internalOnly: boolean;
-}
-
-export interface BranchEntry {
-  name: string;
-  gitBranchName: string;
-  urlSlug: string;
-  isStableBranch: boolean;
+export interface Branch {
+  branchName: string;
   active: boolean;
+  urlSlug?: string | undefined;
+  search: string;
+  project: string;
+  prodDeployable: boolean;
 }

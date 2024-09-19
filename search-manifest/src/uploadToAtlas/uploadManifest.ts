@@ -1,5 +1,5 @@
 import { Manifest } from "../generateManifest/manifest";
-import { db, teardown } from "./searchConnector";
+import { db } from "./searchConnector";
 import assert from "assert";
 import { RefreshInfo, DatabaseDocument } from "./types";
 import { generateHash, joinUrl } from "./utils";
@@ -18,9 +18,19 @@ const composeUpserts = async (
   const documents = manifest.documents;
   return documents.map((document) => {
     assert.strictEqual(typeof document.slug, "string");
+    // DOP-3545 and DOP-3585
+    // slug is possible to be empty string ''
     assert.ok(document.slug || document.slug === "");
 
+    // DOP-3962
+    // We need a slug field with no special chars for keyword search
+    // and exact match, e.g. no "( ) { } [ ] ^ “ ~ * ? : \ /" present
     document.strippedSlug = document.slug.replaceAll("/", "");
+
+    //don't need to sort facets first??
+    // if (document.facets) {
+    //   document.facets = sortFacetsObject(document.facets, trieFacets);
+    // }
 
     const newDocument: DatabaseDocument = {
       ...document,
@@ -28,7 +38,7 @@ const composeUpserts = async (
       url: joinUrl(manifest.url, document.slug),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
-      includeInGlobalSearch: manifest.global ?? false,
+      includeInGlobalSearch: manifest.global,
     };
 
     return {
@@ -50,8 +60,11 @@ export const uploadManifest = async (
 ) => {
   //check that manifest documents exist
   if (!manifest?.documents?.length) {
-    return Promise.reject(new Error("Invalid manifest"));
+    return Promise.reject(new Error("Invalid manifest "));
   }
+  //get searchProperty, url
+  //TODO: pass in a db session
+
   //start a session
   let documentsColl;
   try {
@@ -64,9 +77,7 @@ export const uploadManifest = async (
     deleted: 0,
     upserted: 0,
     modified: 0,
-    errors: false,
     dateStarted: new Date(),
-    dateFinished: null,
     elapsedMS: null,
   };
 
@@ -87,6 +98,7 @@ export const uploadManifest = async (
   //check property types
   console.info(`Starting transaction`);
   assert.strictEqual(typeof manifest.global, "boolean");
+  assert.ok(manifest.global);
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);
 
@@ -103,12 +115,12 @@ export const uploadManifest = async (
       manifestRevisionId: { $ne: hash },
     });
     status.deleted += result?.deletedCount ?? 0;
+    return status;
   } catch (e) {
     throw new Error(
       `Error writing upserts to Search.documents collection with error ${e}`
     );
   } finally {
     await teardown();
-    return status;
   }
 };

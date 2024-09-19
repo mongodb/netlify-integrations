@@ -68,11 +68,12 @@ export async function checkForNewSnootyVersion(run: NetlifyPluginUtils["run"]) {
     });
 
     if (currentSha === latestSha) {
-      console.log(
-        "Current commit does not match the latest commit. Updating the snooty frontend repo"
-      );
+      console.log("No changes to the frontend. No update needed.");
       return;
     }
+    console.log(
+      "Current commit does not match the latest commit. Updating the snooty frontend repo"
+    );
     const prevPackageLockHash = await getPackageLockHash();
     await run.command("git pull --rebase", { cwd: `${process.cwd()}/snooty` });
 
