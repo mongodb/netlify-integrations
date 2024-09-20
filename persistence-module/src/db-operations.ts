@@ -1,6 +1,6 @@
 import * as mongodb from "mongodb";
 import { db } from "./connector";
-import { ObjectId } from "mongodb";
+import { ObjectId, Document } from "mongodb";
 
 export const bulkWrite = async (
   operations: mongodb.AnyBulkWriteOperation[],
@@ -38,4 +38,20 @@ export const insert = async (docs: any[], collection: string, buildId: ObjectId,
   } finally {
     if (printTime) console.timeEnd(timerLabel);
   }
+};
+
+
+export const bulkUpsertAll = async (items: Document[], collection: string) => {
+  const operations: mongodb.AnyBulkWriteOperation[] = [];
+  items.forEach((item: Document) => {
+    const op = {
+      updateOne: {
+        filter: { _id: item.id },
+        update: { $set: item },
+        upsert: true,
+      },
+    };
+    operations.push(op);
+  });
+  return bulkWrite(operations, collection);
 };
