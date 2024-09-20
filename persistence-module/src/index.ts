@@ -3,7 +3,8 @@ import { NetlifyIntegration } from '@netlify/sdk';
 import { readdir, existsSync } from 'fs';
 import { promisify } from 'util';
 import {  updatePages } from './update-pages';
-import { getPageDocuments } from './util/files';
+import { getAssetPages, getDocumentPages,  } from './util/files';
+import { upsertAssets } from './assets';
 
 const readdirAsync = promisify(readdir);
 
@@ -24,9 +25,12 @@ integration.addBuildEventHandler(
       recursive: true,
     });
 
-    const pageAstObjects = await getPageDocuments(zipContents)
+    const sourcePages = await getDocumentPages(zipContents)
+    const assetPages = await getAssetPages(zipContents)
+    
 
-    await updatePages(pageAstObjects, 'updated_documents');
+    await Promise.all([updatePages(sourcePages, 'updated_documents'), upsertAssets(assetPages)])
+
     console.log('=========== Persistence Module Integration ================');
   }
 );
