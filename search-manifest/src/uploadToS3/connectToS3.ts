@@ -1,6 +1,6 @@
 import { S3Client } from "@aws-sdk/client-s3";
 
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESSS_KEY;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY;
 const AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID;
 
 export const connectToS3 = (): S3Client => {
