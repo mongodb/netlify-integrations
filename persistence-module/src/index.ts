@@ -13,10 +13,8 @@ const ZIP_PATH = `${process.cwd()}/bundle`;
 integration.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run } }) => {
-    /**
-     * Minor note that persistence module also handles merging of ToCs for embedded products
-     */
-    console.log('=========== Chatbot Data Upload Integration ================');
+
+    console.log('=========== Persistence Module Integration ================');
 
     const bundleDirExists = existsSync(`${process.cwd()}/bundle`);
 
@@ -29,7 +27,7 @@ integration.addBuildEventHandler(
     const pageAstObjects = await getPageDocuments(zipContents)
 
     await updatePages(pageAstObjects, 'updated_documents');
-    console.log('=========== Chatbot Data Upload Integration ================');
+    console.log('=========== Persistence Module Integration ================');
   }
 );
 
