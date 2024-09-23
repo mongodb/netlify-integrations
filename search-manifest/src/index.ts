@@ -72,7 +72,7 @@ integration.addBuildEventHandler(
     //uploads manifests to atlas
     console.log("=========== Uploading Manifests =================");
     try {
-      const status = await uploadManifest(manifest, searchProperty);
+      await uploadManifest(manifest, searchProperty);
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     }

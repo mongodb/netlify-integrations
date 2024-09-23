@@ -1,12 +1,14 @@
 
 [ {
         "repoName": "docs-app-services",
-        "branches": [{
+        "branches": [
+            {
             "gitBranchName": "master",
-            "urlSlug" : "",
+            "urlSlug" : " ",
             "isStableBranch": true,
             "active": true
-        }],
+        }
+    ],
         "project": "atlas-app-services",
         "internalOnly": false, 
         "prodDeployable": true

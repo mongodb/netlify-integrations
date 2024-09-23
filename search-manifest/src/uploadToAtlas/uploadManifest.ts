@@ -25,7 +25,7 @@ const composeUpserts = async (
     const newDocument: DatabaseDocument = {
       ...document,
       lastModified: lastModified,
-      url: joinUrl(manifest.url, document.slug),
+      url: joinUrl({ base: manifest.url, path: document.slug }),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
       includeInGlobalSearch: manifest.global ?? false,
@@ -55,7 +55,10 @@ export const uploadManifest = async (
   //start a session
   let documentsColl;
   try {
-    const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
+    const dbSession = await db({
+      uri: ATLAS_SEARCH_URI,
+      dbName: SEARCH_DB_NAME,
+    });
     documentsColl = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
     console.error("issue starting session for Search Database", e);

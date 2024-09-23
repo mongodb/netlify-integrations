@@ -1,6 +1,7 @@
 import { Collection, Db, Document, WithId } from "mongodb";
 import { db, teardown } from "./searchConnector";
 import {
+  BranchEntry,
   DatabaseDocument,
   DocsetsDocument,
   ReposBranchesDocument,
@@ -8,19 +9,14 @@ import {
 import { assertTrailingSlash } from "./utils";
 import { deleteStaleProperties } from "./deleteStaleProperties";
 
-
 // helper function to find the associated branch
-const getBranch = (branches: any, branchName: string) => {
+export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   for (const branchObj of branches) {
     if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
-      return branchObj;
+      return { ...branchObj };
     }
   }
-  return undefined;
-};
-
-export const _getBranch = (branches: any, branchName: string) => {
-  return getBranch(branches, branchName);
+  throw new Error(`Branch ${branchName} not found in branches object`);
 };
 
 const getProperties = async (branchName: string) => {
@@ -47,7 +43,7 @@ const getProperties = async (branchName: string) => {
 
   try {
     //connect to database and get repos_branches, docsets collections
-    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
+    dbSession = await db({ uri: ATLAS_CLUSTER0_URI, dbName: SNOOTY_DB_NAME });
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
@@ -85,17 +81,10 @@ const getProperties = async (branchName: string) => {
   const { project } = repo;
 
   try {
-    const {
-      urlSlug,
-      gitBranchName,
-      isStableBranch,
-      active,
-    }: {
-      urlSlug: string;
-      gitBranchName: string;
-      isStableBranch: boolean;
-      active: boolean;
-    } = getBranch(repo.branches, branchName);
+    const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
+      repo.branches,
+      branchName
+    );
     includeInGlobalSearch = isStableBranch;
     version = urlSlug || gitBranchName;
     searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
@@ -110,11 +99,11 @@ const getProperties = async (branchName: string) => {
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
       );
-    } else if (!active) {
+    }
+    if (!active) {
       deleteStaleProperties(searchProperty);
       throw new Error(
         `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
-
       );
     }
   } catch (e) {
@@ -131,12 +120,13 @@ const getProperties = async (branchName: string) => {
         docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
       );
     }
+    return { searchProperty, url, includeInGlobalSearch };
   } catch (e) {
     console.error(`Error while getting docsets entry in Atlas ${e}`);
     throw e;
+  } finally {
+    await teardown();
   }
-  await teardown();
-  return { searchProperty, url, includeInGlobalSearch };
 };
 
 export default getProperties;

@@ -1,3 +1,5 @@
+import { Facet } from "./createFacets";
+
 //change this to an interface
 export class ManifestEntry {
   slug: string;
@@ -9,7 +11,7 @@ export class ManifestEntry {
   preview?: string | null;
   tags: string | null;
   //TODO: add type
-  facets: any;
+  facets: Facet;
 
   // TODO: add type for entry
   constructor(entry: any) {

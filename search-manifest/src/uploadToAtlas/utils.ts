@@ -3,7 +3,7 @@ import crypto from "crypto";
 export function generateHash(data: string): Promise<string> {
   const hash = crypto.createHash("sha256");
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     hash.on("readable", () => {
       const data = hash.read();
       if (data) {
@@ -16,7 +16,13 @@ export function generateHash(data: string): Promise<string> {
   });
 }
 
-export function joinUrl(base: string, path: string): string {
+export function joinUrl({
+  base,
+  path,
+}: {
+  base: string;
+  path: string;
+}): string {
   return base.replace(/\/*$/, "/") + path.replace(/^\/*/, "");
 }
 
