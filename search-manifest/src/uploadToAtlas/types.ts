@@ -9,21 +9,17 @@ export interface RefreshInfo {
   elapsedMS: number | null;
 }
 
+interface EnvironmentConfig {
+  dev: string;
+  stg: string;
+  dotcomstg: string;
+  dotcomprd: string;
+  prd: string;
+}
+
 export interface DocsetsDocument extends WithId<Document> {
-  url: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
-  prefix: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
+  url: EnvironmentConfig;
+  prefix: EnvironmentConfig;
 }
 
 export interface DatabaseDocument extends ManifestEntry {
