@@ -72,7 +72,7 @@ integration.addBuildEventHandler(
     manifest.url = url;
     manifest.global = includeInGlobalSearch;
 
-    //TODO: upload manifests to S3
+    //upload manifests to S3
     const bucket = "docs-search-indexes-test";
     //TODO: change this values based on environments
     const prefix = "search-indexes/ab-testing";
