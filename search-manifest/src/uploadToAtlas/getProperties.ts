@@ -8,6 +8,7 @@ import {
 import { assertTrailingSlash } from "./utils";
 import { deleteStaleProperties } from "./deleteStaleProperties";
 
+
 // helper function to find the associated branch
 const getBranch = (branches: any, branchName: string) => {
   for (const branchObj of branches) {
@@ -113,6 +114,7 @@ const getProperties = async (branchName: string) => {
       deleteStaleProperties(searchProperty);
       throw new Error(
         `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
+
       );
     }
   } catch (e) {
