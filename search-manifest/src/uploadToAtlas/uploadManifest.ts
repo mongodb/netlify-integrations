@@ -65,7 +65,8 @@ export const uploadManifest = async (
     upserted: 0,
     modified: 0,
     dateStarted: new Date(),
-    elapsedMS: null,
+    //TODO: set elapsed ms
+    elapsedMS: 0,
   };
 
   const hash = await generateHash(manifest.toString());

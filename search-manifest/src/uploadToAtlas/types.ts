@@ -6,7 +6,7 @@ export interface RefreshInfo {
   upserted: number;
   modified: number;
   dateStarted: Date;
-  elapsedMS: number | null;
+  elapsedMS: number;
 }
 
 interface EnvironmentConfig {

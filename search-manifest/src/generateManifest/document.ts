@@ -63,8 +63,8 @@ export class Document {
       if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
         robots = false;
 
-      keywords = val?.keywords ?? null;
-      description = val?.description ?? null;
+      keywords = val?.keywords;
+      description = val?.description;
     }
 
     return [robots, keywords, description];
@@ -203,7 +203,7 @@ export class Document {
 
     if (this.noIndex) {
       console.info("Refusing to index");
-      return null;
+      return;
     }
 
     const document = new ManifestEntry({

@@ -11,7 +11,7 @@ export class Manifest {
     this.global = includeInGlobalSearch;
   }
 
-  addDocument(document: ManifestEntry | null) {
+  addDocument(document: ManifestEntry) {
     //Add a document to the manifest
     if (document) {
       this.documents.push(document);

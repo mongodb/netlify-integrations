@@ -37,8 +37,8 @@ export const generateManifest = async () => {
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifestDocument();
-    //add document to manifest object
-    manifest.addDocument(processedDoc);
+    //add document to manifest object if it was able to be indexed
+    if (processedDoc) manifest.addDocument(processedDoc);
   }
   return manifest;
 };
@@ -56,6 +56,7 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
+    //TODO: create an interface for this return type
     const {
       searchProperty,
       url,
