@@ -87,10 +87,14 @@ describe("given an array of branches and a branch name, the corrct output is ret
   });
 
   test("given a branch name that doesn't exist in the branches array, undefined is returned", () => {
-    expect(getBranch(branches, BRANCH_NAME_GIBBERISH)).toEqual(undefined);
+    expect(() => getBranch(branches, BRANCH_NAME_GIBBERISH)).toThrowError(
+      new Error(`Branch ${BRANCH_NAME_GIBBERISH} not found in branches object`)
+    );
   });
   test("given a branch name and an empty branches array, undefined is returned", () => {
-    expect(getBranch([], BRANCH_NAME_MASTER)).toEqual(undefined);
+    expect(() => getBranch([], BRANCH_NAME_MASTER)).toThrowError(
+      `Branch ${BRANCH_NAME_MASTER} not found in branches object`
+    );
   });
 });
 
