@@ -6,8 +6,8 @@ export interface RefreshInfo {
   upserted: number;
   modified: number;
   errors: boolean;
+
   dateStarted: Date;
-  dateFinished: Date | null;
   elapsedMS: number | null;
 }
 

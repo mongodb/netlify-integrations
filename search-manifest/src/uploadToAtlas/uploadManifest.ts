@@ -65,8 +65,8 @@ export const uploadManifest = async (
     upserted: 0,
     modified: 0,
     errors: false,
+
     dateStarted: new Date(),
-    dateFinished: null,
     elapsedMS: null,
   };
 
@@ -103,12 +103,13 @@ export const uploadManifest = async (
       manifestRevisionId: { $ne: hash },
     });
     status.deleted += result?.deletedCount ?? 0;
+    return status;
+
   } catch (e) {
     throw new Error(
       `Error writing upserts to Search.documents collection with error ${e}`
     );
   } finally {
     await teardown();
-    return status;
   }
 };
