@@ -27,10 +27,12 @@ import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { afterEach } from "node:test";
 
+
 const BRANCH_NAME_MASTER = "master";
 const BRANCH_NAME_BETA = "beta";
 const BRANCH_NAME_GIBBERISH = "gibberish";
 let db: mongodb.Db;
+
 
 const DOCS_COMPASS_NAME = "docs-compass";
 const DOCS_CLOUD_NAME = "cloud-docs";
@@ -39,6 +41,7 @@ const DOCS_MONGODB_INTERNAL_NAME = "docs-mongodb-internal";
 
 beforeAll(async () => {
   db = await mockDb();
+
   await insert(db, "repos_branches", repos_branches);
   await insert(db, "docsets", docsets);
 });
@@ -231,3 +234,4 @@ describe(
   },
   { timeout: 10000 }
 );
+
