@@ -142,7 +142,7 @@ describe(
       const manifest1 = await getManifest("mms-master");
       await uploadManifest(manifest1, "mms-docs-stable");
       //reopen connection to db
-      db = await mockDb();
+      await mockDb();
       //check number of documents initially in db
       const documentCount = await db
         .collection<DatabaseDocument>("documents")
@@ -151,6 +151,7 @@ describe(
       //getProperties for beta doens't change number of documents in collection
       process.env.repo_name = "docs-compass";
       await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
+      await mockDb();
       expect(
         await db.collection<DatabaseDocument>("documents").countDocuments()
       ).toEqual(documentCount);
@@ -175,26 +176,24 @@ describe(
       const manifest1 = await getManifest("mms-master");
 
       await uploadManifest(manifest1, "mms-docs-stable");
-      db = await mockDb();
+      await mockDb();
 
       const manifest2 = await getManifest("mms-v1.3");
       await uploadManifest(manifest2, "mms-docs-v1.3");
 
-      db = await mockDb();
+      await mockDb();
 
-      let documentCount;
-      let documentCount2;
       //trying to get properties for repo removes those older documents
       process.env.REPO_NAME = "mms-docs";
-      documentCount = await db
+      const documentCount = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       await expect(getProperties(BRANCH_NAME_MASTER)).rejects.toThrow();
       //throws
       //no return type
 
-      db = await mockDb();
-      documentCount2 = await db
+      await mockDb();
+      const documentCount2 = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       expect(documentCount2).toEqual(
@@ -209,23 +208,23 @@ describe(
       const manifest1 = await getManifest("compass-master");
 
       await uploadManifest(manifest1, "compass-current");
-      db = await mockDb();
+      await mockDb();
 
       const manifest2 = await getManifest("compass-beta");
       await uploadManifest(manifest2, "compass-upcoming");
-      db = await mockDb();
+      await mockDb();
 
       //trying to get properties for repo removes only the older documents from that specific branch, beta
       let documentCount;
       let documentCount2;
       //trying to get properties for repo removes those older documents
+
       process.env.REPO_NAME = "docs-compass";
       documentCount = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
-
-      db = await mockDb();
+      await mockDb();
       documentCount2 = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();

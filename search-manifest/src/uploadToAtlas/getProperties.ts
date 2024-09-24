@@ -33,7 +33,7 @@ const getProperties = async (branchName: string) => {
 
   let dbSession: Db;
   let repos_branches: Collection<DatabaseDocument>;
-  let docsets;
+  let docsets: Collection<DatabaseDocument>;
   let url: string = "";
   let searchProperty: string = "";
   let includeInGlobalSearch: boolean = false;
@@ -47,7 +47,6 @@ const getProperties = async (branchName: string) => {
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
-    console.log("issue starting session for Snooty Pool Database", e);
     throw new Error(`issue starting session for Snooty Pool Database ${e}`);
   }
 
@@ -81,6 +80,20 @@ const getProperties = async (branchName: string) => {
   const { project } = repo;
 
   try {
+    const docsetsQuery = { project: { $eq: project } };
+    docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+    if (docsetRepo) {
+      //TODO: change based on environment
+      url = assertTrailingSlash(
+        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
+      );
+    }
+  } catch (e) {
+    console.error(`Error while getting docsets entry in Atlas ${e}`);
+    throw e;
+  }
+
+  try {
     const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
       repo.branches,
       branchName
@@ -111,22 +124,7 @@ const getProperties = async (branchName: string) => {
     throw e;
   }
 
-  try {
-    const docsetsQuery = { project: { $eq: project } };
-    docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
-    if (docsetRepo) {
-      //TODO: change based on environment
-      url = assertTrailingSlash(
-        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
-      );
-    }
-    return { searchProperty, url, includeInGlobalSearch };
-  } catch (e) {
-    console.error(`Error while getting docsets entry in Atlas ${e}`);
-    throw e;
-  } finally {
-    await teardown();
-  }
+  return { searchProperty, url, includeInGlobalSearch };
 };
 
 export default getProperties;
