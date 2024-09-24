@@ -13,9 +13,7 @@ export class Manifest {
 
   addDocument(document: ManifestEntry) {
     //Add a document to the manifest
-    if (document) {
-      this.documents.push(document);
-    }
+    this.documents.push(document);
   }
 
   export() {
