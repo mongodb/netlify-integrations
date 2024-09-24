@@ -11,7 +11,6 @@ import getProperties from "./uploadToAtlas/getProperties";
 import { upload_manifest_to_s3 } from "./uploadToS3/uploadManifest";
 import { teardown } from "./uploadToAtlas/searchConnector";
 
-
 const readdirAsync = promisify(readdir);
 
 const integration = new NetlifyIntegration();
@@ -71,18 +70,16 @@ integration.addBuildEventHandler(
       includeInGlobalSearch: boolean;
     } = await getProperties(branch);
 
-
     //upload manifests to S3
-    const bucket = "docs-search-indexes-test";
-    //TODO: change this values based on environments
-    const prefix = "search-indexes/ab-testing";
-    const fileName = `${projectName}-${branch}.json`;
-    const s3Status = await upload_manifest_to_s3(
-      bucket,
-      prefix,
-      fileName,
-      manifest.export()
-    );
+    const uploadParams = {
+      bucket: "docs-search-indexes-test",
+      //TODO: change this values based on environments
+      prefix: "search-indexes/ab-testing",
+      fileName: `${projectName}-${branch}.json`,
+      manifest: manifest.export(),
+    };
+
+    const s3Status = await upload_manifest_to_s3({ ...uploadParams });
 
     console.log(`S3 upload status: ${s3Status}`);
     console.log("=========== Finished Uploading to S3  ================");

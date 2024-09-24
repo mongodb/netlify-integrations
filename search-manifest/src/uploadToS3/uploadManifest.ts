@@ -4,16 +4,10 @@ import { connectToS3 } from "./connectToS3";
 
 const upload = async (
   client: S3Client,
-  bucket: string,
-  key: string,
-  manifest: string
+  params: { Bucket: string; Key: string; Body: string }
 ) => {
   try {
-    const command = new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: manifest,
-    });
+    const command = new PutObjectCommand(params);
     const response = await client.send(command);
     return response;
   } catch (e) {
@@ -21,14 +15,19 @@ const upload = async (
   }
 };
 
-export const upload_manifest_to_s3 = async (
-  bucket: string,
-  prefix: string,
-  fileName: string,
-  manifest: string
-) => {
-  let client;
-  //TODO, maybe also ensure there isn't a double trailing slash here to begin with ?? (altho idk y there would be)
+export const uploadManifestToS3 = async ({
+  bucket,
+  prefix,
+  fileName,
+  manifest,
+}: {
+  bucket: string;
+  prefix: string;
+  fileName: string;
+  manifest: string;
+}) => {
+  let client: S3Client;
+  //TODO: maybe also ensure there isn't a double trailing slash here to begin with ?? (altho idk y there would be)
   prefix = assertTrailingSlash(prefix);
   const key = prefix + fileName;
   try {
@@ -36,6 +35,11 @@ export const upload_manifest_to_s3 = async (
   } catch (e) {
     throw e;
   }
-  const uploadStatus = await upload(client, bucket, key, manifest);
+  const putObjectParams = {
+    Bucket: bucket,
+    Key: key,
+    Body: manifest,
+  };
+  const uploadStatus = await upload(client, { ...putObjectParams });
   return uploadStatus;
 };

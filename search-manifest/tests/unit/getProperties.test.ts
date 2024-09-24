@@ -105,6 +105,7 @@ describe("Given a branchname, get the properties associated with it from repos_b
     process.env.REPO_NAME = DOCS_COMPASS_NAME;
     const compassMasterProperties = {
       searchProperty: "compass-current",
+      projectName: "compass",
       url: "http://mongodb.com/docs/compass/",
       includeInGlobalSearch: true,
     };
@@ -118,6 +119,7 @@ describe("Given a branchname, get the properties associated with it from repos_b
     process.env.REPO_NAME = DOCS_CLOUD_NAME;
     const cloudDocsMasterProperties = {
       searchProperty: "atlas-master",
+      projectName: "cloud-docs",
       url: "http://mongodb.com/docs/atlas/",
       includeInGlobalSearch: true,
     };
@@ -173,7 +175,6 @@ describe(
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("mms-master");
 
-
       await uploadManifest(manifest1, "mms-docs-stable");
       await mockDb();
 
@@ -191,7 +192,6 @@ describe(
       //throws
       //no return type
 
-
       await mockDb();
       const documentCount2 = await db
 
@@ -207,7 +207,6 @@ describe(
       db = await mockDb();
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("compass-master");
-
 
       await uploadManifest(manifest1, "compass-current");
       await mockDb();
