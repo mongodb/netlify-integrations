@@ -108,7 +108,6 @@ describe(
     afterEach(async () => {
       await removeDocuments("documents");
     });
-
     let manifest1: Manifest = new Manifest(
       nodeManifest.url,
       nodeManifest.includeInGlobalSearch
@@ -201,3 +200,4 @@ describe(
   },
   { timeout: 10000 }
 );
+

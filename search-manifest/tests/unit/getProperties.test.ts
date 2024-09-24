@@ -8,7 +8,7 @@ import {
   afterAll,
 } from "vitest";
 import getProperties, {
-  _getBranch,
+  getBranch,
 } from "../../src/uploadToAtlas/getProperties";
 import {
   mockDb,
@@ -21,7 +21,7 @@ import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
 import * as mongodb from "mongodb";
-import { DatabaseDocument } from "../../src/uploadToAtlas/types";
+import { BranchEntry, DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { Manifest } from "../../src/generateManifest/manifest";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
@@ -66,9 +66,9 @@ afterAll(async () => {
 
 describe("given an array of branches and a branch name, the corrct output is returned", () => {
   //mock branches object
-  const branches: any = repos_branches[1].branches;
+  const branches: Array<BranchEntry> = repos_branches[1].branches;
   test("given a branch name that exists in the branches array, the correct branch object is returned", () => {
-    expect(_getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
+    expect(getBranch(branches, BRANCH_NAME_MASTER)).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
@@ -77,7 +77,7 @@ describe("given an array of branches and a branch name, the corrct output is ret
   });
 
   test("given a branch name that exists with different capitalization than in the branches array, the correct branch object is still returned", () => {
-    expect(_getBranch(branches, "MASTER")).toEqual({
+    expect(getBranch(branches, "MASTER")).toEqual({
       gitBranchName: "master",
       isStableBranch: true,
       urlSlug: "current",
@@ -86,10 +86,14 @@ describe("given an array of branches and a branch name, the corrct output is ret
   });
 
   test("given a branch name that doesn't exist in the branches array, undefined is returned", () => {
-    expect(_getBranch(branches, BRANCH_NAME_GIBBERISH)).toEqual(undefined);
+    expect(() => getBranch(branches, BRANCH_NAME_GIBBERISH)).toThrowError(
+      new Error(`Branch ${BRANCH_NAME_GIBBERISH} not found in branches object`)
+    );
   });
   test("given a branch name and an empty branches array, undefined is returned", () => {
-    expect(_getBranch([], BRANCH_NAME_MASTER)).toEqual(undefined);
+    expect(() => getBranch([], BRANCH_NAME_MASTER)).toThrowError(
+      `Branch ${BRANCH_NAME_MASTER} not found in branches object`
+    );
   });
 });
 
@@ -126,7 +130,7 @@ describe("Given a branchname, get the properties associated with it from repos_b
 
 describe(
   "GetProperties behaves as expected for stale properties",
-  async () => {
+  () => {
     afterEach(async () => {
       console.log(await removeDocuments("documents"));
     });
@@ -135,9 +139,9 @@ describe(
       //populate db with manifests
       db = await mockDb();
       const manifest1 = await getManifest("mms-master");
-      const status = await uploadManifest(manifest1, "mms-docs-stable");
+      await uploadManifest(manifest1, "mms-docs-stable");
       //reopen connection to db
-      db = await mockDb();
+      await mockDb();
       //check number of documents initially in db
       const documentCount = await db
         .collection<DatabaseDocument>("documents")
@@ -169,27 +173,28 @@ describe(
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("mms-master");
 
-      const status = await uploadManifest(manifest1, "mms-docs-stable");
-      db = await mockDb();
+
+      await uploadManifest(manifest1, "mms-docs-stable");
+      await mockDb();
 
       const manifest2 = await getManifest("mms-v1.3");
-      const status2 = await uploadManifest(manifest2, "mms-docs-v1.3");
+      await uploadManifest(manifest2, "mms-docs-v1.3");
 
-      db = await mockDb();
+      await mockDb();
 
-      let documentCount;
-      let documentCount2;
       //trying to get properties for repo removes those older documents
       process.env.REPO_NAME = "mms-docs";
-      documentCount = await db
+      const documentCount = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       await expect(getProperties(BRANCH_NAME_MASTER)).rejects.toThrow();
       //throws
       //no return type
 
-      db = await mockDb();
-      documentCount2 = await db
+
+      await mockDb();
+      const documentCount2 = await db
+
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       expect(documentCount2).toEqual(
@@ -203,24 +208,25 @@ describe(
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("compass-master");
 
-      const status = await uploadManifest(manifest1, "compass-current");
-      db = await mockDb();
+
+      await uploadManifest(manifest1, "compass-current");
+      await mockDb();
 
       const manifest2 = await getManifest("compass-beta");
-      const status2 = await uploadManifest(manifest2, "compass-upcoming");
-      db = await mockDb();
+      await uploadManifest(manifest2, "compass-upcoming");
+      await mockDb();
 
       //trying to get properties for repo removes only the older documents from that specific branch, beta
       let documentCount;
       let documentCount2;
       //trying to get properties for repo removes those older documents
+
       process.env.REPO_NAME = "docs-compass";
       documentCount = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();
       await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
-
-      db = await mockDb();
+      await mockDb();
       documentCount2 = await db
         .collection<DatabaseDocument>("documents")
         .countDocuments();

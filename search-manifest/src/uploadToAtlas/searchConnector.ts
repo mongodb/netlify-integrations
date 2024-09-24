@@ -12,13 +12,13 @@ export const teardown = async () => {
 };
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
-export const db = async (uri: string, db_name: string) => {
+export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
   client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
-    dbInstance = client.db(db_name);
+    dbInstance = client.db(dbName);
   } catch (error) {
-    const err = `Error at db client connection: ${error} for uri ${uri} and db name ${db_name}`;
+    const err = `Error at db client connection: ${error} for uri ${uri} and db name ${dbName}`;
     console.error(err);
     throw err;
   }

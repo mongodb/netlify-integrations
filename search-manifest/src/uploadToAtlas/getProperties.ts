@@ -1,6 +1,7 @@
 import { Collection, Db, Document, WithId } from "mongodb";
 import { db, teardown } from "./searchConnector";
 import {
+  BranchEntry,
   DatabaseDocument,
   DocsetsDocument,
   ReposBranchesDocument,
@@ -9,17 +10,13 @@ import { assertTrailingSlash } from "./utils";
 import { deleteStaleProperties } from "./deleteStaleProperties";
 
 // helper function to find the associated branch
-const getBranch = (branches: any, branchName: string) => {
+export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   for (const branchObj of branches) {
     if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
-      return branchObj;
+      return { ...branchObj };
     }
   }
-  return undefined;
-};
-
-export const _getBranch = (branches: any, branchName: string) => {
-  return getBranch(branches, branchName);
+  throw new Error(`Branch ${branchName} not found in branches object`);
 };
 
 const getProperties = async (branchName: string) => {
@@ -36,7 +33,7 @@ const getProperties = async (branchName: string) => {
 
   let dbSession: Db;
   let repos_branches: Collection<DatabaseDocument>;
-  let docsets;
+  let docsets: Collection<DatabaseDocument>;
   let url: string = "";
   let searchProperty: string = "";
   let includeInGlobalSearch: boolean = false;
@@ -46,11 +43,10 @@ const getProperties = async (branchName: string) => {
 
   try {
     //connect to database and get repos_branches, docsets collections
-    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
+    dbSession = await db({ uri: ATLAS_CLUSTER0_URI, dbName: SNOOTY_DB_NAME });
     repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
     docsets = dbSession.collection<DatabaseDocument>("docsets");
   } catch (e) {
-    console.log("issue starting session for Snooty Pool Database", e);
     throw new Error(`issue starting session for Snooty Pool Database ${e}`);
   }
 
@@ -84,17 +80,24 @@ const getProperties = async (branchName: string) => {
   const { project } = repo;
 
   try {
-    const {
-      urlSlug,
-      gitBranchName,
-      isStableBranch,
-      active,
-    }: {
-      urlSlug: string;
-      gitBranchName: string;
-      isStableBranch: boolean;
-      active: boolean;
-    } = getBranch(repo.branches, branchName);
+    const docsetsQuery = { project: { $eq: project } };
+    docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+    if (docsetRepo) {
+      //TODO: change based on environment
+      url = assertTrailingSlash(
+        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
+      );
+    }
+  } catch (e) {
+    console.error(`Error while getting docsets entry in Atlas ${e}`);
+    throw e;
+  }
+
+  try {
+    const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
+      repo.branches,
+      branchName
+    );
     includeInGlobalSearch = isStableBranch;
     version = urlSlug || gitBranchName;
     searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
@@ -109,7 +112,8 @@ const getProperties = async (branchName: string) => {
       throw new Error(
         `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
       );
-    } else if (!active) {
+    }
+    if (!active) {
       deleteStaleProperties(searchProperty);
       throw new Error(
         `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
@@ -119,22 +123,8 @@ const getProperties = async (branchName: string) => {
     console.error(`Error`, e);
     throw e;
   }
-
-  try {
-    const docsetsQuery = { project: { $eq: project } };
-    docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
-    if (docsetRepo) {
-      //TODO: change based on environment
-      url = assertTrailingSlash(
-        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
-      );
-    }
-  } catch (e) {
-    console.error(`Error while getting docsets entry in Atlas ${e}`);
-    throw e;
-  }
-  await teardown();
   return { searchProperty, projectName: project, url, includeInGlobalSearch };
+
 };
 
 export default getProperties;

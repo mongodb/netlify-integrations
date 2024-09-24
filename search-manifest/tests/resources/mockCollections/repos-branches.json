@@ -1,7 +1,8 @@
 
 [ {
         "repoName": "docs-app-services",
-        "branches": [{
+        "branches": [
+            {
             "gitBranchName": "master",
             "urlSlug" : "",
             "isStableBranch": true,

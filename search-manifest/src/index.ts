@@ -9,6 +9,8 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { upload_manifest_to_s3 } from "./uploadToS3/uploadManifest";
+import { teardown } from "./uploadToAtlas/searchConnector";
+
 
 const readdirAsync = promisify(readdir);
 
@@ -38,8 +40,8 @@ export const generateManifest = async () => {
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifestDocument();
-    //add document to manifest object
-    manifest.addDocument(processedDoc);
+    //add document to manifest object if it was able to be indexed
+    if (processedDoc) manifest.addDocument(processedDoc);
   }
   return manifest;
 };
@@ -69,8 +71,6 @@ integration.addBuildEventHandler(
       includeInGlobalSearch: boolean;
     } = await getProperties(branch);
 
-    manifest.url = url;
-    manifest.global = includeInGlobalSearch;
 
     //upload manifests to S3
     const bucket = "docs-search-indexes-test";
@@ -90,11 +90,18 @@ integration.addBuildEventHandler(
     //uploads manifests to atlas
     console.log("=========== Uploading Manifests to Atlas=================");
     try {
-      const status = await uploadManifest(manifest, searchProperty);
+      manifest.url = url;
+      manifest.global = includeInGlobalSearch;
+
+      //uploads manifests to atlas
+      console.log("=========== Uploading Manifests =================");
+      await uploadManifest(manifest, searchProperty);
+      console.log("=========== Manifests uploaded to Atlas =================");
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
+    } finally {
+      teardown();
     }
-    console.log("=========== Manifests uploaded to Atlas =================");
   }
 );
 

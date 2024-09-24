@@ -1,6 +1,7 @@
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import { ManifestEntry } from "./manifestEntry";
+import { BSON } from "bson";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -18,7 +19,7 @@ export class Document {
   noIndex: any;
   reasons: any;
 
-  constructor(doc: any) {
+  constructor(doc: BSON.Document) {
     this.tree = doc;
 
     //find metadata
@@ -63,8 +64,8 @@ export class Document {
       if ("robots" in val && (val.robots == "None" || val.robots == "noindex"))
         robots = false;
 
-      keywords = val?.keywords ?? null;
-      description = val?.description ?? null;
+      keywords = val?.keywords;
+      description = val?.description;
     }
 
     return [robots, keywords, description];
@@ -203,7 +204,7 @@ export class Document {
 
     if (this.noIndex) {
       console.info("Refusing to index");
-      return null;
+      return;
     }
 
     const document = new ManifestEntry({
