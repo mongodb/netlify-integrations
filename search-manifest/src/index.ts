@@ -8,7 +8,7 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
-import { upload_manifest_to_s3 } from "./uploadToS3/uploadManifest";
+import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
 import { teardown } from "./uploadToAtlas/searchConnector";
 
 const readdirAsync = promisify(readdir);
@@ -79,7 +79,7 @@ integration.addBuildEventHandler(
       manifest: manifest.export(),
     };
 
-    const s3Status = await upload_manifest_to_s3({ ...uploadParams });
+    const s3Status = await uploadManifestToS3({ ...uploadParams });
 
     console.log(`S3 upload status: ${s3Status}`);
     console.log("=========== Finished Uploading to S3  ================");
