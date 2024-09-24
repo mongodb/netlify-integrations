@@ -13,7 +13,6 @@ import nodeManifest from "../resources/s3Manifests/node-current.json";
 import { mockDb, insert, removeDocuments } from "../utils/mockDB";
 import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
-import { hash } from "node:crypto";
 import { generateHash } from "../../src/uploadToAtlas/utils";
 
 const PROPERTY_NAME = "dummyName";
@@ -200,4 +199,3 @@ describe(
   },
   { timeout: 10000 }
 );
-
