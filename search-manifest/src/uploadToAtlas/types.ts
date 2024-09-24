@@ -4,25 +4,22 @@ import { ManifestEntry } from "../generateManifest/manifestEntry";
 export interface RefreshInfo {
   deleted: number;
   upserted: number;
+  modified: number;
   dateStarted: Date;
-  elapsedMS: number | null;
+  elapsedMS: number;
+}
+
+interface EnvironmentConfig {
+  dev: string;
+  stg: string;
+  dotcomstg: string;
+  dotcomprd: string;
+  prd: string;
 }
 
 export interface DocsetsDocument extends WithId<Document> {
-  url: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
-  prefix: {
-    dev: string;
-    stg: string;
-    dotcomstg: string;
-    dotcomprd: string;
-    prd: string;
-  };
+  url: EnvironmentConfig;
+  prefix: EnvironmentConfig;
 }
 
 export interface DatabaseDocument extends ManifestEntry {
@@ -35,14 +32,17 @@ export interface DatabaseDocument extends ManifestEntry {
 
 export interface ReposBranchesDocument extends WithId<Document> {
   project: string;
-  search: any;
-  branches: any;
+  search: {
+    categoryTitle: string;
+    categoryName?: string;
+  };
+  branches: Array<BranchEntry>;
   prodDeployable: boolean;
   internalOnly: boolean;
 }
 
 export interface BranchEntry {
-  name: string;
+  name?: string;
   gitBranchName: string;
   urlSlug: string;
   isStableBranch: boolean;

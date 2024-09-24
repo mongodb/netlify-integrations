@@ -1,3 +1,5 @@
+import { Facet } from "./createFacets";
+
 //change this to an interface
 export class ManifestEntry {
   slug: string;
@@ -8,8 +10,10 @@ export class ManifestEntry {
   code: { lang: string | null; value: string }[];
   preview?: string | null;
   tags: string | null;
-  facets: any;
+  //TODO: add type
+  facets: Facet;
 
+  // TODO: add type for entry
   constructor(entry: any) {
     this.slug = entry.slug;
     this.title = entry.title;

@@ -9,8 +9,6 @@ const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${pr
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
 
-//TODO: make an interface/class for the uploads?
-
 const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
@@ -27,7 +25,7 @@ const composeUpserts = async (
     const newDocument: DatabaseDocument = {
       ...document,
       lastModified: lastModified,
-      url: joinUrl(manifest.url, document.slug),
+      url: joinUrl({ base: manifest.url, path: document.slug }),
       manifestRevisionId: hash,
       searchProperty: [searchProperty],
       includeInGlobalSearch: manifest.global ?? false,
@@ -57,16 +55,21 @@ export const uploadManifest = async (
   //start a session
   let documentsColl;
   try {
-    const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
+    const dbSession = await db({
+      uri: ATLAS_SEARCH_URI,
+      dbName: SEARCH_DB_NAME,
+    });
     documentsColl = dbSession.collection<DatabaseDocument>("documents");
   } catch (e) {
-    console.log("issue starting session for Search Database", e);
+    console.error("issue starting session for Search Database", e);
   }
   const status: RefreshInfo = {
     deleted: 0,
     upserted: 0,
+    modified: 0,
     dateStarted: new Date(),
-    elapsedMS: null,
+    //TODO: set elapsed ms
+    elapsedMS: 0,
   };
 
   const hash = await generateHash(manifest.toString());
@@ -81,11 +84,9 @@ export const uploadManifest = async (
   );
   const operations = [...upserts];
 
-  //TODO: how do we want to delete stale properties? delete manifests with that property if can't be found in repos_branches? but if can't be found in repos_branches.. then won't know what searchproperty is
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-
   console.info(`Starting transaction`);
   assert.strictEqual(typeof manifest.global, "boolean");
   assert.strictEqual(typeof hash, "string");
@@ -96,9 +97,15 @@ export const uploadManifest = async (
       const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
         ordered: false,
       });
-      status.deleted += bulkWriteStatus?.deletedCount ?? 0;
+      status.modified += bulkWriteStatus?.modifiedCount ?? 0;
       status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
     }
+    const result = await documentsColl?.deleteMany({
+      searchProperty: searchProperty,
+      manifestRevisionId: { $ne: hash },
+    });
+    status.deleted += result?.deletedCount ?? 0;
+
     return status;
   } catch (e) {
     throw new Error(

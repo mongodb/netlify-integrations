@@ -1,11 +1,14 @@
 
 [ {
         "repoName": "docs-app-services",
-        "branches": [{
+        "branches": [
+            {
             "gitBranchName": "master",
-            "urlSlug" : "",
-            "isStableBranch": "true"
-        }],
+            "urlSlug" : " ",
+            "isStableBranch": true,
+            "active": true
+        }
+    ],
         "project": "atlas-app-services",
         "internalOnly": false, 
         "prodDeployable": true
@@ -16,12 +19,14 @@
             {
                 "gitBranchName": "master",
                 "isStableBranch": true,
-                "urlSlug": "current"
+                "urlSlug": "current",
+                "active": true
             },
             {
                 "gitBranchName": "beta", 
                 "urlSlug": "upcoming",
-                "isStableBranch": false
+                "isStableBranch": false,
+                "active": false
             }
         ],
         "project": "compass",
@@ -37,7 +42,9 @@
             {
                 "gitBranchName": "master",
                 "urlSlug": "",
-                "isStableBranch": true
+                "isStableBranch": true,
+                "active": true
+
             }
         ],
         "project": "cloud-docs",
@@ -47,6 +54,40 @@
         },
         "internalOnly": false,
         "prodDeployable": true
+    },
+    {
+        "repoName": "docs-mongodb-internal",
+        "branches": [
+            {
+                "gitBranchName": "v5.0",
+                "active": true,
+                "urlSlug": "stable",
+                "isStableBranch": false
+            }
+        ],
+        "project": "docs",
+        "internalOnly": true,
+        "prodDeployable": false
+    },
+      {
+        "repoName": "mms-docs",
+        "branches": [
+            {
+                "gitBranchName": "master",
+                "active": true,
+                "urlSlug": "stable",
+                "isStableBranch": true
+            },
+            {
+                "gitBranchName": "v1.3",
+                "active": true,
+                "urlSlug": "v1.3",
+                "isStableBranch": false
+            }
+        ],
+        "project": "mms-docs",
+        "internalOnly": true,
+        "prodDeployable": false
     }
 ]
 

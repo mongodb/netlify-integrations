@@ -8,6 +8,7 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
+import { teardown } from "./uploadToAtlas/searchConnector";
 
 const readdirAsync = promisify(readdir);
 
@@ -37,8 +38,8 @@ export const generateManifest = async () => {
     //put file into Document object
     //export Document object
     const processedDoc = new Document(decoded).exportAsManifestDocument();
-    //add document to manifest object
-    manifest.addDocument(processedDoc);
+    //add document to manifest object if it was able to be indexed
+    if (processedDoc) manifest.addDocument(processedDoc);
   }
   return manifest;
 };
@@ -56,26 +57,33 @@ integration.addBuildEventHandler(
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
-    const {
-      searchProperty,
-      url,
-      includeInGlobalSearch,
-    }: { searchProperty: string; url: string; includeInGlobalSearch: boolean } =
-      await getProperties(branch);
+    //TODO: create an interface for this return type
 
-    manifest.url = url;
-    manifest.global = includeInGlobalSearch;
-
-    //TODO: upload manifests to S3
-
-    //uploads manifests to atlas
-    console.log("=========== Uploading Manifests =================");
     try {
+      const {
+        searchProperty,
+        url,
+        includeInGlobalSearch,
+      }: {
+        searchProperty: string;
+        url: string;
+        includeInGlobalSearch: boolean;
+      } = await getProperties(branch);
+
+      manifest.url = url;
+      manifest.global = includeInGlobalSearch;
+
+      //TODO: upload manifests to S3
+
+      //uploads manifests to atlas
+      console.log("=========== Uploading Manifests =================");
       await uploadManifest(manifest, searchProperty);
+      console.log("=========== Manifests uploaded to Atlas =================");
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
+    } finally {
+      teardown();
     }
-    console.log("=========== Manifests uploaded to Atlas =================");
   }
 );
 
