@@ -1,4 +1,3 @@
-
 import { db, teardown } from "./searchConnector";
 import { DatabaseDocument } from "./types";
 
