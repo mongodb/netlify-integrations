@@ -70,6 +70,8 @@ integration.addBuildEventHandler(
       includeInGlobalSearch: boolean;
     } = await getProperties(branch);
 
+    //uploads manifests to S3
+    console.log("=========== Uploading Manifests to S3=================");
     //upload manifests to S3
     const uploadParams = {
       bucket: "docs-search-indexes-test",
@@ -81,11 +83,9 @@ integration.addBuildEventHandler(
 
     const s3Status = await uploadManifestToS3({ ...uploadParams });
 
-    console.log(`S3 upload status: ${s3Status}`);
+    console.log(`S3 upload status: ${JSON.stringify(s3Status)}`);
     console.log("=========== Finished Uploading to S3  ================");
 
-    //uploads manifests to atlas
-    console.log("=========== Uploading Manifests to Atlas=================");
     try {
       manifest.url = url;
       manifest.global = includeInGlobalSearch;
