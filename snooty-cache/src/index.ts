@@ -56,9 +56,10 @@ integration.addBuildEventHandler(
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(`current dir ${process.cwd()}`);
-  run.command(
-    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip && unzip -d . mut.zip"
+  await run.command(
+    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
   );
+  // && unzip -d . mut.zip
   run.command("ls -a");
   // run.command("mut-redirects config/redirects -o .htaccess");
   // run.command("ls -a");
