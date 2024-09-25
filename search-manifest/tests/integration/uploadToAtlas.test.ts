@@ -15,90 +15,90 @@ import { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 import { generateHash } from "../../src/uploadToAtlas/utils";
 
-const PROPERTY_NAME = "dummyName";
+const PROPERTY_NAME = 'dummyName';
 
 //teardown connections
 beforeEach(async () => {
-  vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
-    const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
-    return {
-      teardown: teardownMockDbClient,
-      db: async () => {
-        const db = await mockDb();
-        return db;
-      },
-    };
-  });
+	vi.mock('../../src/uploadToAtlas/searchConnector', async () => {
+		const { mockDb, teardownMockDbClient } = await import('../utils/mockDB');
+		return {
+			teardown: teardownMockDbClient,
+			db: async () => {
+				const db = await mockDb();
+				return db;
+			},
+		};
+	});
 });
 
 const checkCollection = async () => {
-  const db = await mockDb();
-  const documentCount = await db
-    .collection<DatabaseDocument>("documents")
-    .estimatedDocumentCount();
-  expect(documentCount).toEqual(0);
+	const db = await mockDb();
+	const documentCount = await db
+		.collection<DatabaseDocument>('documents')
+		.estimatedDocumentCount();
+	expect(documentCount).toEqual(0);
 };
 
 afterAll(async () => {
-  //teardown db instance
-  const { teardownMockDbClient } = await import("../utils/mockDB");
-  await teardownMockDbClient();
+	//teardown db instance
+	const { teardownMockDbClient } = await import('../utils/mockDB');
+	await teardownMockDbClient();
 });
 
 // given empty manifest, test that it doesn't run
 describe("Upload manifest doesn't work for invalid manifests", () => {
-  let manifest: Manifest;
+	let manifest: Manifest;
 
-  test("throws an error for an empty manifest", async () => {
-    expect(
-      async () => await uploadManifest(manifest, PROPERTY_NAME)
-    ).rejects.toThrowError();
-  });
+	test('throws an error for an empty manifest', async () => {
+		expect(
+			async () => await uploadManifest(manifest, PROPERTY_NAME),
+		).rejects.toThrowError();
+	});
 
-  test("throws an error for a manifest with 0 documents", async () => {
-    manifest = new Manifest("", true);
-    expect(
-      async () => await uploadManifest(manifest, PROPERTY_NAME)
-    ).rejects.toThrowError();
-  });
+	test('throws an error for a manifest with 0 documents', async () => {
+		manifest = new Manifest('', true);
+		expect(
+			async () => await uploadManifest(manifest, PROPERTY_NAME),
+		).rejects.toThrowError();
+	});
 });
 
 // given manifests, test that it uploads said manifests
-describe("Upload manifest uploads to Atlas db", () => {
-  afterEach(async () => {
-    await removeDocuments("documents");
-  });
-  let manifest: Manifest;
+describe('Upload manifest uploads to Atlas db', () => {
+	afterEach(async () => {
+		await removeDocuments('documents');
+	});
+	let manifest: Manifest;
 
-  test("constant nodeManifest uploads correct number of documents", async () => {
-    manifest = new Manifest(
-      nodeManifest.url,
-      nodeManifest.includeInGlobalSearch
-    );
-    manifest.documents = nodeManifest.documents;
+	test('constant nodeManifest uploads correct number of documents', async () => {
+		manifest = new Manifest(
+			nodeManifest.url,
+			nodeManifest.includeInGlobalSearch,
+		);
+		manifest.documents = nodeManifest.documents;
 
-    await uploadManifest(manifest, PROPERTY_NAME);
+		await uploadManifest(manifest, PROPERTY_NAME);
 
-    //check that manifests have been uploaded
-    const db = await mockDb();
-    const documents = db.collection<DatabaseDocument>("documents");
-    //count number of documents in collection
-    expect(await documents.countDocuments()).toEqual(manifest.documents.length);
-  });
+		//check that manifests have been uploaded
+		const db = await mockDb();
+		const documents = db.collection<DatabaseDocument>('documents');
+		//count number of documents in collection
+		expect(await documents.countDocuments()).toEqual(manifest.documents.length);
+	});
 
-  test("Generated node manifest uploads correct number of documents", async () => {
-    //get new manifest
-    manifest = await getManifest("node");
+	test('Generated node manifest uploads correct number of documents', async () => {
+		//get new manifest
+		manifest = await getManifest('node');
 
-    //  upload manifest
-    const status = await uploadManifest(manifest, PROPERTY_NAME);
-    expect(status.upserted).toEqual(manifest.documents.length);
+		//  upload manifest
+		const status = await uploadManifest(manifest, PROPERTY_NAME);
+		expect(status.upserted).toEqual(manifest.documents.length);
 
-    //check that manifests have been uploaded
-    const db = await mockDb();
-    const documents = db.collection<DatabaseDocument>("documents");
-    expect(await documents.countDocuments()).toEqual(manifest.documents.length);
-  });
+		//check that manifests have been uploaded
+		const db = await mockDb();
+		const documents = db.collection<DatabaseDocument>('documents');
+		expect(await documents.countDocuments()).toEqual(manifest.documents.length);
+	});
 });
 
 describe(

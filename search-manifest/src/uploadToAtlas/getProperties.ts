@@ -20,16 +20,16 @@ export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
 };
 
 const getProperties = async (branchName: string) => {
-  const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-  const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
-  const REPO_NAME = process.env.REPO_NAME;
+	const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
+	const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
+	const REPO_NAME = process.env.REPO_NAME;
 
-  //check that an environment variable for repo name was set
-  if (!REPO_NAME) {
-    throw new Error(
-      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
-    );
-  }
+	//check that an environment variable for repo name was set
+	if (!REPO_NAME) {
+		throw new Error(
+			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
+		);
+	}
 
   let dbSession: Db;
   let repos_branches: Collection<DatabaseDocument>;
@@ -50,34 +50,34 @@ const getProperties = async (branchName: string) => {
     throw new Error(`issue starting session for Snooty Pool Database ${e}`);
   }
 
-  const query = {
-    repoName: REPO_NAME,
-  };
+	const query = {
+		repoName: REPO_NAME,
+	};
 
-  try {
-    repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
-      projection: {
-        _id: 0,
-        project: 1,
-        search: 1,
-        branches: 1,
-        prodDeployable: 1,
-        internalOnly: 1,
-      },
-    });
-    if (!repo) {
-      throw new Error(
-        `Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
-          query
-        )}`
-      );
-    }
-  } catch (e) {
-    console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
-    throw e;
-  }
+	try {
+		repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+			projection: {
+				_id: 0,
+				project: 1,
+				search: 1,
+				branches: 1,
+				prodDeployable: 1,
+				internalOnly: 1,
+			},
+		});
+		if (!repo) {
+			throw new Error(
+				`Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
+					query,
+				)}`,
+			);
+		}
+	} catch (e) {
+		console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
+		throw e;
+	}
 
-  const { project } = repo;
+	const { project } = repo;
 
   try {
     const docsetsQuery = { project: { $eq: project } };

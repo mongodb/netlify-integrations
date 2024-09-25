@@ -1,5 +1,5 @@
-import { Db } from "mongodb";
-import * as mongodb from "mongodb";
+import type { Db } from 'mongodb';
+import * as mongodb from 'mongodb';
 
 // We should only ever have one client active at a time.
 
@@ -8,7 +8,7 @@ let dbInstance: Db;
 let client: mongodb.MongoClient;
 
 export const teardown = async () => {
-  await client.close();
+	await client.close();
 };
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
