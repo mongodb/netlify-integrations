@@ -61,9 +61,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   );
   await run.command("unzip -d . mut.zip");
 
-  process.chdir("snooty/config");
-  run.command("ls -a");
-  await run.command("mut-redirects redirects");
+  process.chdir("./snooty");
+  await run.command("ls -a");
+  await run.command("mut-redirects config/redirects");
   // run.command("ls -a");
 });
 
