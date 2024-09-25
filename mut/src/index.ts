@@ -3,5 +3,6 @@ import { NetlifyExtension } from "@netlify/sdk";
 
 const extension = new NetlifyExtension();
 
-export { extension };
+extension.addBuildEventHandler("onSuccess", async () => {});
 
+export { extension };
