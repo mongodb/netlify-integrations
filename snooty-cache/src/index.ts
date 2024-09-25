@@ -56,10 +56,10 @@ integration.addBuildEventHandler(
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(`current dir ${process.cwd()}`);
-  run.command("echo current dir ${process.cwd()}");
   run.command(
-    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip"
+    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip && unzip -d . mut.zip"
   );
+  run.command("cd docs-cpp-master && ls -a");
 });
 
 integration.addBuildEventHandler(
