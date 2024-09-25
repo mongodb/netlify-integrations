@@ -2,27 +2,24 @@ import type { WithId } from 'mongodb';
 import type { ManifestEntry } from '../generateManifest/manifestEntry';
 
 export interface RefreshInfo {
-	deleted: number;
-	upserted: number;
-	dateStarted: Date;
-	elapsedMS: number | null;
+  deleted: number;
+  upserted: number;
+  modified: number;
+  dateStarted: Date;
+  elapsedMS: number;
+}
+
+interface EnvironmentConfig {
+  dev: string;
+  stg: string;
+  dotcomstg: string;
+  dotcomprd: string;
+  prd: string;
 }
 
 export interface DocsetsDocument extends WithId<Document> {
-	url: {
-		dev: string;
-		stg: string;
-		dotcomstg: string;
-		dotcomprd: string;
-		prd: string;
-	};
-	prefix: {
-		dev: string;
-		stg: string;
-		dotcomstg: string;
-		dotcomprd: string;
-		prd: string;
-	};
+  url: EnvironmentConfig;
+  prefix: EnvironmentConfig;
 }
 
 export interface DatabaseDocument extends ManifestEntry {
@@ -34,17 +31,20 @@ export interface DatabaseDocument extends ManifestEntry {
 }
 
 export interface ReposBranchesDocument extends WithId<Document> {
-	project: string;
-	search: any;
-	branches: any;
-	prodDeployable: boolean;
-	internalOnly: boolean;
+  project: string;
+  search: {
+    categoryTitle: string;
+    categoryName?: string;
+  };
+  branches: Array<BranchEntry>;
+  prodDeployable: boolean;
+  internalOnly: boolean;
 }
 
 export interface BranchEntry {
-	name: string;
-	gitBranchName: string;
-	urlSlug: string;
-	isStableBranch: boolean;
-	active: boolean;
+  name?: string;
+  gitBranchName: string;
+  urlSlug: string;
+  isStableBranch: boolean;
+  active: boolean;
 }

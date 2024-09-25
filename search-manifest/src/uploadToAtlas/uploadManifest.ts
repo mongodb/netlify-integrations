@@ -9,8 +9,6 @@ const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${pr
 //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
 
-//TODO: make an interface/class for the uploads?
-
 const composeUpserts = async (
 	manifest: Manifest,
 	searchProperty: string,
@@ -24,14 +22,14 @@ const composeUpserts = async (
 
 		document.strippedSlug = document.slug.replaceAll('/', '');
 
-		const newDocument: DatabaseDocument = {
-			...document,
-			lastModified: lastModified,
-			url: joinUrl(manifest.url, document.slug),
-			manifestRevisionId: hash,
-			searchProperty: [searchProperty],
-			includeInGlobalSearch: manifest.global ?? false,
-		};
+    const newDocument: DatabaseDocument = {
+      ...document,
+      lastModified: lastModified,
+      url: joinUrl({ base: manifest.url, path: document.slug }),
+      manifestRevisionId: hash,
+      searchProperty: [searchProperty],
+      includeInGlobalSearch: manifest.global ?? false,
+    };
 
 		return {
 			updateOne: {
@@ -50,24 +48,29 @@ export const uploadManifest = async (
 	manifest: Manifest,
 	searchProperty: string,
 ) => {
-	//check that manifest documents exist
-	if (!manifest?.documents?.length) {
-		return Promise.reject(new Error('Invalid manifest'));
-	}
-	//start a session
-	let documentsColl;
-	try {
-		const dbSession = await db(ATLAS_SEARCH_URI, SEARCH_DB_NAME);
-		documentsColl = dbSession.collection<DatabaseDocument>('documents');
-	} catch (e) {
-		console.log('issue starting session for Search Database', e);
-	}
-	const status: RefreshInfo = {
-		deleted: 0,
-		upserted: 0,
-		dateStarted: new Date(),
-		elapsedMS: null,
-	};
+  //check that manifest documents exist
+  if (!manifest?.documents?.length) {
+    return Promise.reject(new Error("Invalid manifest"));
+  }
+  //start a session
+  let documentsColl;
+  try {
+    const dbSession = await db({
+      uri: ATLAS_SEARCH_URI,
+      dbName: SEARCH_DB_NAME,
+    });
+    documentsColl = dbSession.collection<DatabaseDocument>("documents");
+  } catch (e) {
+    console.error("issue starting session for Search Database", e);
+  }
+  const status: RefreshInfo = {
+    deleted: 0,
+    upserted: 0,
+    modified: 0,
+    dateStarted: new Date(),
+    //TODO: set elapsed ms
+    elapsedMS: 0,
+  };
 
 	const hash = await generateHash(manifest.toString());
 	//TODO: should we add a property for createdAt?
@@ -81,30 +84,34 @@ export const uploadManifest = async (
 	);
 	const operations = [...upserts];
 
-	//TODO: how do we want to delete stale properties? delete manifests with that property if can't be found in repos_branches? but if can't be found in repos_branches.. then won't know what searchproperty is
-	//TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
+  //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
-	//check property types
+  //check property types
+  console.info(`Starting transaction`);
+  assert.strictEqual(typeof manifest.global, "boolean");
+  assert.strictEqual(typeof hash, "string");
+  assert.ok(hash);
 
-	console.info(`Starting transaction`);
-	assert.strictEqual(typeof manifest.global, 'boolean');
-	assert.strictEqual(typeof hash, 'string');
-	assert.ok(hash);
+  try {
+    if (operations.length > 0) {
+      const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
+        ordered: false,
+      });
+      status.modified += bulkWriteStatus?.modifiedCount ?? 0;
+      status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
+    }
+    const result = await documentsColl?.deleteMany({
+      searchProperty: searchProperty,
+      manifestRevisionId: { $ne: hash },
+    });
+    status.deleted += result?.deletedCount ?? 0;
 
-	try {
-		if (operations.length > 0) {
-			const bulkWriteStatus = await documentsColl?.bulkWrite(operations, {
-				ordered: false,
-			});
-			status.deleted += bulkWriteStatus?.deletedCount ?? 0;
-			status.upserted += bulkWriteStatus?.upsertedCount ?? 0;
-		}
-		return status;
-	} catch (e) {
-		throw new Error(
-			`Error writing upserts to Search.documents collection with error ${e}`,
-		);
-	} finally {
-		await teardown();
-	}
+    return status;
+  } catch (e) {
+    throw new Error(
+      `Error writing upserts to Search.documents collection with error ${e}`
+    );
+  } finally {
+    await teardown();
+  }
 };

@@ -6,8 +6,9 @@ import { BSON } from 'bson';
 import { Document } from './generateManifest/document';
 import { uploadManifest } from './uploadToAtlas/uploadManifest';
 
-import { readdir, readFileSync } from 'fs';
-import getProperties from './uploadToAtlas/getProperties';
+import { readdir, readFileSync } from "fs";
+import getProperties from "./uploadToAtlas/getProperties";
+import { teardown } from "./uploadToAtlas/searchConnector";
 
 const readdirAsync = promisify(readdir);
 
@@ -30,17 +31,17 @@ export const generateManifest = async () => {
 		);
 	});
 
-	process.chdir('documents');
-	for (const entry of mappedEntries) {
-		//each file is read and decoded
-		const decoded = BSON.deserialize(readFileSync(`${entry}`));
-		//put file into Document object
-		//export Document object
-		const processedDoc = new Document(decoded).exportAsManifestDocument();
-		//add document to manifest object
-		manifest.addDocument(processedDoc);
-	}
-	return manifest;
+  process.chdir("documents");
+  for (const entry of mappedEntries) {
+    //each file is read and decoded
+    const decoded = BSON.deserialize(readFileSync(`${entry}`));
+    //put file into Document object
+    //export Document object
+    const processedDoc = new Document(decoded).exportAsManifestDocument();
+    //add document to manifest object if it was able to be indexed
+    if (processedDoc) manifest.addDocument(processedDoc);
+  }
+  return manifest;
 };
 
 //Return indexing data from a page's AST for search purposes.
@@ -55,28 +56,35 @@ integration.addBuildEventHandler(
 		//use export function for uploading to S3
 		const manifest = await generateManifest();
 
-		console.log('=========== finished generating manifests ================');
-		const {
-			searchProperty,
-			url,
-			includeInGlobalSearch,
-		}: { searchProperty: string; url: string; includeInGlobalSearch: boolean } =
-			await getProperties(branch);
+    console.log("=========== finished generating manifests ================");
+    //TODO: create an interface for this return type
 
-		manifest.url = url;
-		manifest.global = includeInGlobalSearch;
+    try {
+      const {
+        searchProperty,
+        url,
+        includeInGlobalSearch,
+      }: {
+        searchProperty: string;
+        url: string;
+        includeInGlobalSearch: boolean;
+      } = await getProperties(branch);
 
-		//TODO: upload manifests to S3
+      manifest.url = url;
+      manifest.global = includeInGlobalSearch;
 
-		//uploads manifests to atlas
-		console.log('=========== Uploading Manifests =================');
-		try {
-			await uploadManifest(manifest, searchProperty);
-		} catch (e) {
-			console.log('Manifest could not be uploaded', e);
-		}
-		console.log('=========== Manifests uploaded to Atlas =================');
-	},
+      //TODO: upload manifests to S3
+
+      //uploads manifests to atlas
+      console.log("=========== Uploading Manifests =================");
+      await uploadManifest(manifest, searchProperty);
+      console.log("=========== Manifests uploaded to Atlas =================");
+    } catch (e) {
+      console.log("Manifest could not be uploaded", e);
+    } finally {
+      teardown();
+    }
+  }
 );
 
 export { integration };
