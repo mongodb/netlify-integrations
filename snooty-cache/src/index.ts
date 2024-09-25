@@ -60,6 +60,8 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
   );
   await run.command("unzip -d . mut.zip");
+  run.command("ls -a");
+
   await run.command("mut-redirects snooty/config/redirects -o .htaccess");
   // run.command("ls -a");
 });
