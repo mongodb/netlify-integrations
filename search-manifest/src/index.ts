@@ -1,10 +1,10 @@
 // Documentation: https://sdk.netlify.com
-import { NetlifyIntegration } from "@netlify/sdk";
-import { Manifest } from "./generateManifest/manifest";
-import { promisify } from "util";
-import { BSON } from "bson";
-import { Document } from "./generateManifest/document";
-import { uploadManifest } from "./uploadToAtlas/uploadManifest";
+import { NetlifyIntegration } from '@netlify/sdk';
+import { Manifest } from './generateManifest/manifest';
+import { promisify } from 'util';
+import { BSON } from 'bson';
+import { Document } from './generateManifest/document';
+import { uploadManifest } from './uploadToAtlas/uploadManifest';
 
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
@@ -15,21 +15,21 @@ const readdirAsync = promisify(readdir);
 const integration = new NetlifyIntegration();
 
 export const generateManifest = async () => {
-  // create Manifest object
-  const manifest = new Manifest();
-  console.log("=========== generating manifests ================");
+	// create Manifest object
+	const manifest = new Manifest();
+	console.log('=========== generating manifests ================');
 
-  //go into documents directory and get list of file entries
-  const entries = await readdirAsync("documents", { recursive: true });
+	//go into documents directory and get list of file entries
+	const entries = await readdirAsync('documents', { recursive: true });
 
-  const mappedEntries = entries.filter((fileName) => {
-    return (
-      fileName.includes(".bson") &&
-      !fileName.includes("images") &&
-      !fileName.includes("includes") &&
-      !fileName.includes("sharedinclude")
-    );
-  });
+	const mappedEntries = entries.filter((fileName) => {
+		return (
+			fileName.includes('.bson') &&
+			!fileName.includes('images') &&
+			!fileName.includes('includes') &&
+			!fileName.includes('sharedinclude')
+		);
+	});
 
   process.chdir("documents");
   for (const entry of mappedEntries) {
@@ -46,15 +46,15 @@ export const generateManifest = async () => {
 
 //Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler(
-  "onSuccess",
-  async ({ utils: { run }, netlifyConfig }) => {
-    // Get content repo zipfile in AST representation.
+	'onSuccess',
+	async ({ utils: { run }, netlifyConfig }) => {
+		// Get content repo zipfile in AST representation.
 
-    await run.command("unzip -o bundle.zip");
-    const branch = netlifyConfig.build?.environment["BRANCH"];
+		await run.command('unzip -o bundle.zip');
+		const branch = netlifyConfig.build?.environment['BRANCH'];
 
-    //use export function for uploading to S3
-    const manifest = await generateManifest();
+		//use export function for uploading to S3
+		const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
     //TODO: create an interface for this return type
