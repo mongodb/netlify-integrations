@@ -59,7 +59,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   run.command(
     "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip && unzip -d . mut.zip"
   );
-  run.command("cd docs-cpp-master && ls -a");
+  run.command("ls -a");
 });
 
 integration.addBuildEventHandler(
