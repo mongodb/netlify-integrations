@@ -2,13 +2,13 @@ import type { ManifestEntry } from './manifestEntry';
 
 export class Manifest {
 	url: string;
-	global: boolean;
+	global?: boolean;
 	documents: ManifestEntry[];
 
-	constructor(includeInGlobalSearch: boolean, url = '') {
+	constructor(url = '', includeInGlobalSearch = false) {
 		this.url = url;
-		this.global = includeInGlobalSearch;
 		this.documents = [];
+		this.global = includeInGlobalSearch;
 	}
 
 	addDocument(document: ManifestEntry | null) {

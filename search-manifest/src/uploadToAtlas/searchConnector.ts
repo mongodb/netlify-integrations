@@ -12,6 +12,10 @@ import * as mongodb from 'mongodb';
 let dbInstance: Db;
 let client: mongodb.MongoClient;
 
+export const teardown = async () => {
+	await client.close();
+};
+
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async (uri: string, db_name: string) => {
 	client = new mongodb.MongoClient(uri);

@@ -1,11 +1,28 @@
-import type { Db } from 'mongodb';
-import { db } from './searchConnector';
-import type { DatabaseDocument } from './types';
+import { type Collection, type Db, Document, WithId } from 'mongodb';
+import { db, teardown } from './searchConnector';
+import type {
+	DatabaseDocument,
+	DocsetsDocument,
+	ReposBranchesDocument,
+} from './types';
+import { assertTrailingSlash } from './utils';
 
-// get whether branch is stable as well - set global from this?
-const getProperties = async () => {
+// helper function to find the associated branch
+const getBranch = (branches: any, branchName: string) => {
+	for (const branchObj of branches) {
+		if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
+			return branchObj;
+		}
+	}
+	return undefined;
+};
+
+export const _getBranch = (branches: any, branchName: string) => {
+	return getBranch(branches, branchName);
+};
+
+const getProperties = async (branchName: string) => {
 	const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-	//TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 	const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 	const REPO_NAME = process.env.REPO_NAME;
 
@@ -17,19 +34,23 @@ const getProperties = async () => {
 	}
 
 	let dbSession: Db;
-	let repos_branches;
+	let repos_branches: Collection<DatabaseDocument>;
 	let docsets;
 	let url = '';
 	let searchProperty = '';
-	let repo: any;
-	let docsetRepo: any;
+	let includeInGlobalSearch = false;
+	let repo: ReposBranchesDocument | null;
+	let docsetRepo: DocsetsDocument | null;
+	let version: string;
 
 	try {
+		//connect to database and get repos_branches, docsets collections
 		dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
 		repos_branches = dbSession.collection<DatabaseDocument>('repos_branches');
 		docsets = dbSession.collection<DatabaseDocument>('docsets');
 	} catch (e) {
 		console.log('issue starting session for Snooty Pool Database', e);
+		throw new Error(`issue starting session for Snooty Pool Database ${e}`);
 	}
 
 	const query = {
@@ -37,30 +58,75 @@ const getProperties = async () => {
 	};
 
 	try {
-		repo = await repos_branches?.find(query).toArray();
+		repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+			projection: {
+				_id: 0,
+				project: 1,
+				search: 1,
+				branches: 1,
+				prodDeployable: 1,
+				internalOnly: 1,
+			},
+		});
+		if (!repo) {
+			throw new Error(
+				`Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
+					query,
+				)}`,
+			);
+		}
 	} catch (e) {
 		console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
 		throw e;
 	}
 
-	if (repo.length && repo[0].prodDeployable && repo[0].search) {
-		const project = repo[0].project;
-		searchProperty = repo[0].search.categoryTitle;
-		try {
-			const docsetsQuery = { project: { $eq: project } };
-			docsetRepo = await docsets?.find(docsetsQuery).toArray();
-			if (docsetRepo.length) {
-				url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-			}
-		} catch (e) {
-			console.error(`Error while getting docsets entry in Atlas ${e}`);
-			throw e;
+	const { project } = repo;
+
+	try {
+		const {
+			urlSlug,
+			gitBranchName,
+			isStableBranch,
+		}: {
+			urlSlug: string;
+			gitBranchName: string;
+			isStableBranch: boolean;
+			active: boolean;
+		} = getBranch(repo.branches, branchName);
+		includeInGlobalSearch = isStableBranch;
+		version = urlSlug || gitBranchName;
+		searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
+
+		if (
+			repo.internalOnly ||
+			!repo.prodDeployable ||
+			!repo.search?.categoryTitle
+		) {
+			//TODO: deletestaleproperties here potentially instead of throwing or returning
+			throw new Error(
+				`Search manifest should not be generated for repo ${REPO_NAME}`,
+			);
 		}
+	} catch (e) {
+		console.error(`Error`, e);
+		throw e;
 	}
-	//check that repos exists, only one repo
-	//TODO: make sure branch is active
-	//if any of this is not true add operations with deletestaledocuments and deletestaleproperties
-	return [searchProperty, url];
+
+	try {
+		const docsetsQuery = { project: { $eq: project } };
+		docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+		if (docsetRepo) {
+			//TODO: change based on environment
+			url = assertTrailingSlash(
+				docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd,
+			);
+		}
+	} catch (e) {
+		console.error(`Error while getting docsets entry in Atlas ${e}`);
+		throw e;
+	}
+	await teardown();
+	return { searchProperty, url, includeInGlobalSearch };
 };
 
 export default getProperties;

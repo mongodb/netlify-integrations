@@ -1,0 +1,53 @@
+[
+	{
+		"repoName": "docs-app-services",
+		"branches": [
+			{
+				"gitBranchName": "master",
+				"urlSlug": "",
+				"isStableBranch": "true"
+			}
+		],
+		"project": "atlas-app-services",
+		"internalOnly": false,
+		"prodDeployable": true
+	},
+	{
+		"repoName": "docs-compass",
+		"branches": [
+			{
+				"gitBranchName": "master",
+				"isStableBranch": true,
+				"urlSlug": "current"
+			},
+			{
+				"gitBranchName": "beta",
+				"urlSlug": "upcoming",
+				"isStableBranch": false
+			}
+		],
+		"project": "compass",
+		"search": {
+			"categoryTitle": "Compass"
+		},
+		"internalOnly": false,
+		"prodDeployable": true
+	},
+	{
+		"repoName": "cloud-docs",
+		"branches": [
+			{
+				"gitBranchName": "master",
+				"urlSlug": "",
+				"isStableBranch": true
+			}
+		],
+		"project": "cloud-docs",
+		"search": {
+			"categoryName": "atlas",
+			"categoryTitle": "Atlas"
+		},
+		"internalOnly": false,
+		"prodDeployable": true
+	}
+]

@@ -1,9 +1,6 @@
 import { describe, expect, afterEach, test, it, vi, beforeAll } from 'vitest';
-import { generateManifest } from '../../src';
 import nodeManifest from '../resources/s3Manifests/node-current.json';
 import kotlinManifest from '../resources/s3Manifests/kotlin-upcoming.json';
-import * as fs from 'fs';
-import { Manifest } from '../../src/generateManifest/manifest';
 import type { ManifestEntry } from '../../src/generateManifest/manifestEntry';
 import { getManifest } from '../utils/getManifest';
 
@@ -21,11 +18,6 @@ describe.each([
 	it('has the correct document length', () => {
 		expect(manifest.documents).toHaveLength(s3Manifest.documents.length);
 	});
-
-	it('has the correct includeInGlobalSearch value'),
-		() => {
-			expect(manifest.global).toEqual(s3Manifest.includeInGlobalSearch);
-		};
 });
 
 describe.each([
@@ -70,7 +62,7 @@ describe.each([
 			//code
 			expect(manifest.documents[0].code).toEqual(equivDoc.code);
 		});
-		//preview FAILS
+		//preview
 		it('matches preview', () => {
 			expect(manifest.documents[0].preview).toEqual(equivDoc.preview);
 		});

@@ -1,0 +1,50 @@
+[
+	{
+		"project": "atlas-app-services",
+		"prefix": {
+			"stg": "atlas/app-services",
+			"prd": "atlas/app-services",
+			"dotcomstg": "docs/atlas/app-services",
+			"dotcomprd": "docs/atlas/app-services"
+		},
+		"url": {
+			"dev": "https://docs-atlas-staging.mongodb.com",
+			"stg": "https://docs-atlas-staging.mongodb.com",
+			"prd": "https://docs.atlas.mongodb.com",
+			"dotcomprd": "http://mongodb.com/",
+			"dotcomstg": "https://mongodbcom-cdn.website.staging.corp.mongodb.com/"
+		}
+	},
+	{
+		"project": "compass",
+		"prefix": {
+			"stg": "compass",
+			"prd": "compass",
+			"dotcomstg": "docs/compass",
+			"dotcomprd": "docs/compass"
+		},
+		"url": {
+			"dev": "https://docs-mongodborg-staging.corp.mongodb.com",
+			"stg": "https://docs-mongodborg-staging.corp.mongodb.com",
+			"prd": "https://docs.mongodb.com",
+			"dotcomprd": "http://mongodb.com/",
+			"dotcomstg": "https://mongodbcom-cdn.website.staging.corp.mongodb.com/"
+		}
+	},
+	{
+		"project": "cloud-docs",
+		"prefix": {
+			"stg": "",
+			"prd": "",
+			"dotcomstg": "docs/atlas",
+			"dotcomprd": "docs/atlas"
+		},
+		"url": {
+			"dev": "https://docs-atlas-staging.mongodb.com",
+			"stg": "https://docs-atlas-staging.mongodb.com",
+			"prd": "https://docs.atlas.mongodb.com",
+			"dotcomprd": "http://mongodb.com/",
+			"dotcomstg": "https://mongodbcom-cdn.website.staging.corp.mongodb.com/"
+		}
+	}
+]
