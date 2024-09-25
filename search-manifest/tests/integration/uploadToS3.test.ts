@@ -45,7 +45,7 @@ describe("upload manifest to S3 behaves as expected", () => {
     manifest: MANIFEST.export(),
   };
 
-  test("tests upload manifest to S3", async () => {
+  test("given sufficient parameters, upload to S3 resolves", async () => {
     expect(uploadManifestToS3(uploadParams)).resolves.toStrictEqual(output);
   });
 });

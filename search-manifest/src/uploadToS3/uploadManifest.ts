@@ -11,7 +11,7 @@ const upload = async (
     const response = await client.send(command);
     return response;
   } catch (e) {
-    throw e;
+    throw new Error(`Error uploading manifests to s3 ${e}`);
   }
 };
 
@@ -40,6 +40,6 @@ export const uploadManifestToS3 = async ({
     Key: key,
     Body: manifest,
   };
-  const uploadStatus = await upload(client, { ...putObjectParams });
+  const uploadStatus = await upload(client, putObjectParams);
   return uploadStatus;
 };
