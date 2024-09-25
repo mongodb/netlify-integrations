@@ -1,5 +1,7 @@
-import { NetlifyIntegration } from "@netlify/sdk";
+// Documentation: https://sdk.netlify.com
+import { NetlifyExtension } from "@netlify/sdk";
 
-const integration = new NetlifyIntegration();
+const extension = new NetlifyExtension();
 
-integration.addBuildEventHandler("onSuccess", () => {});
+export { extension };
+

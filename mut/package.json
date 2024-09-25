@@ -4,12 +4,14 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "netlify-integration build -a",
-    "dev": "netlify-integration dev -a",
-    "preview": "netlify-integration preview"
+    "build": "netlify-extension build -a",
+    "dev": "netlify-extension dev -a"
   },
   "dependencies": {
-    "@netlify/sdk": "^2.4.3",
+    "@netlify/sdk": "^2.4.3"
+  },
+  "devDependencies": {
+    "@netlify/netlify-plugin-netlify-extension": "^1.0.3",
     "typescript": "^5.6.2"
   }
 }

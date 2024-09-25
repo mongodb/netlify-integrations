@@ -4,10 +4,7 @@
     "module": "ES2022",
     "moduleResolution": "bundler",
     "strict": true,
-    "rootDir": ".",
-    "paths": {
-      "bson": ["./node_modules/bson/src/"]
-    }
+    "rootDir": "."
   },
   "exclude": [
     "node_modules",
