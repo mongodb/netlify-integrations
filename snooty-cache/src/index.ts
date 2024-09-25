@@ -39,7 +39,7 @@ integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run, cache } }) => {
     console.log("Creating cache files...");
-    await run.command("./snooty-parser/snooty/snooty create-cache .");
+    await "./snooty-parser/snooty/snooty create-cache .";
     console.log("Cache files created");
     const filesPaths = await readdirAsync(process.cwd());
 
@@ -57,6 +57,9 @@ integration.addBuildEventHandler(
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(`current dir ${process.cwd()}`);
   run.command("echo current dir ${process.cwd()}");
+  run.command(
+    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip"
+  );
 });
 
 integration.addBuildEventHandler(
