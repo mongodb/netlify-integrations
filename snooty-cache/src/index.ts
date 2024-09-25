@@ -54,6 +54,10 @@ integration.addBuildEventHandler(
   }
 );
 
+integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+  run.command(`echo current dir ${process.cwd()}`);
+});
+
 integration.addBuildEventHandler(
   "onEnd",
   async ({ utils: { run, status } }) => {
