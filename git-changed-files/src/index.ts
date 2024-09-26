@@ -67,7 +67,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
 integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 	console.log('Checking if any files changed on git -----');
-	console.log('Modified files TEST:', git.modifiedFiles);
+	console.log('Modified files TEST HELLO:', git.modifiedFiles);
 
 	if (!process.env.DEPLOY_PRIME_URL) {
 		console.error('ERROR! process.env.DEPLOY_PRIME_URL is not defined.');
@@ -86,7 +86,7 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 		});
 	}
 
-  console.log("trying to get reponame");
+  console.log("trying to get REPO NAME");
 	const REPO_NAME = process.env.REPO_NAME;
 	//check that an environment variable for repo name was set
 	if (!REPO_NAME) {
