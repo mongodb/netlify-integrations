@@ -64,7 +64,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   process.chdir("./config");
   await run.command("ls -a");
-  await run.command(`${process.cwd}/mut/mut-redirects redirects -o .htaccess`);
+  await run.command(
+    `${process.cwd()}/mut/mut-redirects redirects -o .htaccess`
+  );
   // run.command("ls -a");
 });
 

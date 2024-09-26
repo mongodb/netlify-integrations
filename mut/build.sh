@@ -15,7 +15,7 @@ cd docs-cpp-master
 ls -a
 
 mut-redirects config/redirects -o .htaccess
-
+    
 
 
 
