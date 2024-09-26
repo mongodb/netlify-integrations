@@ -51,6 +51,11 @@ integration.addBuildEventHandler(
     // Get content repo zipfile in AST representation.
 
     await run.command("unzip -o bundle.zip");
+    console.log("CONFIG", JSON.stringify(netlifyConfig));
+    console.log(
+      "ENV",
+      console.log("CONFIG", JSON.stringify(netlifyConfig.build.environment))
+    );
     const branch = netlifyConfig.build?.environment["BRANCH"];
 
     //use export function for uploading to S3
