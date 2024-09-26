@@ -6,6 +6,7 @@ import { readdir, existsSync } from "fs";
 
 import { promisify } from "util";
 import { checkForNewSnootyVersion } from "./snooty-frontend-version-check";
+import { chdir } from "process";
 
 const readdirAsync = promisify(readdir);
 
@@ -65,8 +66,9 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   }
 
   await run.command(
-    `${process.cwd()}/mut/mut-redirects config/redirects -o /snooty/public/.htaccess`
+    `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/.htaccess`
   );
+  process.chdir("snooty");
   run.command("ls -a");
 });
 
