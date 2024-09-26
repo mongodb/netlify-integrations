@@ -88,6 +88,7 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 
   console.log("trying to get REPO NAME");
 	const REPO_NAME = process.env.REPO_NAME;
+  console.log("the repo name is: ", REPO_NAME);
 	//check that an environment variable for repo name was set
 	if (!REPO_NAME) {
 		throw new Error(
