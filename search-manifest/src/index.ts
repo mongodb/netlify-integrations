@@ -54,8 +54,9 @@ integration.addBuildEventHandler(
     console.log("CONFIG", JSON.stringify(netlifyConfig));
     console.log(
       "ENVIRONMENT",
-      console.log("CONFIG", JSON.stringify(netlifyConfig.build.environment))
+      console.log("CONFIG", netlifyConfig.build.environment["SITE_NAME"])
     );
+
     const branch = netlifyConfig.build?.environment["BRANCH"];
 
     //use export function for uploading to S3
