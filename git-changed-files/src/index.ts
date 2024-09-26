@@ -67,7 +67,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
 integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 	console.log('Checking if any files changed on git -----');
-	console.log('Modified files:', git.modifiedFiles);
+	console.log('Modified files TEST:', git.modifiedFiles);
 
 	if (!process.env.DEPLOY_PRIME_URL) {
 		console.error('ERROR! process.env.DEPLOY_PRIME_URL is not defined.');
