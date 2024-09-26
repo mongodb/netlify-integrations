@@ -1,23 +1,23 @@
 import {
-  describe,
-  beforeEach,
-  expect,
-  test,
-  vi,
-  beforeAll,
-  afterAll,
-} from "vitest";
+	describe,
+	beforeEach,
+	expect,
+	test,
+	vi,
+	beforeAll,
+	afterAll,
+} from 'vitest';
 import getProperties, {
   getBranch,
 } from "../../src/uploadToAtlas/getProperties";
 import {
-  mockDb,
-  teardownMockDbClient,
-  insert,
-  removeDocuments,
-} from "../utils/mockDB";
+	mockDb,
+	teardownMockDbClient,
+	insert,
+	removeDocuments,
+} from '../utils/mockDB';
 // simulate the repos_branches collection in an object
-import repos_branches from "../resources/mockCollections/repos-branches.json";
+import repos_branches from '../resources/mockCollections/repos-branches.json';
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
 import * as mongodb from "mongodb";
@@ -60,9 +60,9 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  //teardown db instance
-  await removeDocuments("repos_branches");
-  await teardownMockDbClient();
+	//teardown db instance
+	await removeDocuments('repos_branches');
+	await teardownMockDbClient();
 });
 
 describe("given an array of branches and a branch name, the corrct output is returned", () => {
@@ -99,20 +99,20 @@ describe("given an array of branches and a branch name, the corrct output is ret
 });
 
 //two tests for a repo with multiple branches, one test for a repo with only one branch
-describe("Given a branchname, get the properties associated with it from repos_branches", () => {
-  //mock repo name
-  test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_COMPASS_NAME}`, async () => {
-    //define expected properties object for master branch of Compass repo
-    process.env.REPO_NAME = DOCS_COMPASS_NAME;
-    const compassMasterProperties = {
-      searchProperty: "compass-current",
-      url: "http://mongodb.com/docs/compass/",
-      includeInGlobalSearch: true,
-    };
-    expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
-      compassMasterProperties
-    );
-  });
+describe('Given a branchname, get the properties associated with it from repos_branches', () => {
+	//mock repo name
+	test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_COMPASS_NAME}`, async () => {
+		//define expected properties object for master branch of Compass repo
+		process.env.REPO_NAME = DOCS_COMPASS_NAME;
+		const compassMasterProperties = {
+			searchProperty: 'compass-current',
+			url: 'http://mongodb.com/docs/compass/',
+			includeInGlobalSearch: true,
+		};
+		expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
+			compassMasterProperties,
+		);
+	});
 
   test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_CLOUD_NAME}`, async () => {
     //define expected properties object for master branch of cloud-docs repo

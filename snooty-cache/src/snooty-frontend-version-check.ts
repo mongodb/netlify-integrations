@@ -1,17 +1,17 @@
-import { NetlifyPluginUtils } from "@netlify/build";
-import axios from "axios";
-import { createHash } from "crypto";
-import { existsSync } from "fs";
+import type { NetlifyPluginUtils } from '@netlify/build';
+import axios from 'axios';
+import { createHash } from 'crypto';
+import { existsSync } from 'fs';
 
-import { readFile } from "fs";
-import { promisify } from "util";
+import { readFile } from 'fs';
+import { promisify } from 'util';
 
 const readFileAsync = promisify(readFile);
 
 interface GitHubCommitResponse {
-  commit: {
-    sha: string;
-  };
+	commit: {
+		sha: string;
+	};
 }
 
 /**
@@ -21,34 +21,34 @@ interface GitHubCommitResponse {
  * @returns latest commit hash of the netlify-poc branch
  */
 async function getLatestSnootyCommit(): Promise<string | undefined> {
-  try {
-    const response = await axios.get<GitHubCommitResponse>(
-      "https://api.github.com/repos/mongodb/snooty/branches/netlify-poc",
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
-      }
-    );
+	try {
+		const response = await axios.get<GitHubCommitResponse>(
+			'https://api.github.com/repos/mongodb/snooty/branches/netlify-poc',
+			{
+				headers: {
+					Accept: 'application/vnd.github+json',
+					'X-GitHub-Api-Version': '2022-11-28',
+				},
+			},
+		);
 
-    const latestSha = response.data.commit.sha;
+		const latestSha = response.data.commit.sha;
 
-    return latestSha;
-  } catch (e) {
-    console.error("Could not retrieve latest SHA", e);
-  }
+		return latestSha;
+	} catch (e) {
+		console.error('Could not retrieve latest SHA', e);
+	}
 }
 
 async function getPackageLockHash(): Promise<string> {
-  const packageLock = await readFileAsync(
-    `${process.cwd()}/snooty/package-lock.json`
-  );
+	const packageLock = await readFileAsync(
+		`${process.cwd()}/snooty/package-lock.json`,
+	);
 
-  const hashSum = createHash("sha256");
-  hashSum.update(packageLock);
+	const hashSum = createHash('sha256');
+	hashSum.update(packageLock);
 
-  return hashSum.digest("hex");
+	return hashSum.digest('hex');
 }
 
 /**
@@ -56,37 +56,37 @@ async function getPackageLockHash(): Promise<string> {
  * it checks to see if the latest commit sha matches
  * @param run the exec util provided by Netlify
  */
-export async function checkForNewSnootyVersion(run: NetlifyPluginUtils["run"]) {
-  console.log("Checking Snooty frontend version");
-  const snootyDirExists = existsSync(`${process.cwd()}/snooty`);
+export async function checkForNewSnootyVersion(run: NetlifyPluginUtils['run']) {
+	console.log('Checking Snooty frontend version');
+	const snootyDirExists = existsSync(`${process.cwd()}/snooty`);
 
-  if (snootyDirExists) {
-    const latestSha = await getLatestSnootyCommit();
+	if (snootyDirExists) {
+		const latestSha = await getLatestSnootyCommit();
 
-    const { stdout: currentSha } = await run.command("git rev-parse HEAD", {
-      cwd: `${process.cwd()}/snooty`,
-    });
+		const { stdout: currentSha } = await run.command('git rev-parse HEAD', {
+			cwd: `${process.cwd()}/snooty`,
+		});
 
-    if (currentSha === latestSha) {
-      console.log("No changes to the frontend. No update needed.");
-      return;
-    }
-    console.log(
-      "Current commit does not match the latest commit. Updating the snooty frontend repo"
-    );
-    const prevPackageLockHash = await getPackageLockHash();
-    await run.command("git pull --rebase", { cwd: `${process.cwd()}/snooty` });
+		if (currentSha === latestSha) {
+			console.log('No changes to the frontend. No update needed.');
+			return;
+		}
+		console.log(
+			'Current commit does not match the latest commit. Updating the snooty frontend repo',
+		);
+		const prevPackageLockHash = await getPackageLockHash();
+		await run.command('git pull --rebase', { cwd: `${process.cwd()}/snooty` });
 
-    const updatedPackageLockHash = await getPackageLockHash();
+		const updatedPackageLockHash = await getPackageLockHash();
 
-    if (prevPackageLockHash === updatedPackageLockHash) {
-      console.log(
-        "Package-lock.json is unchanged. Not installing any additional dependencies"
-      );
-      return;
-    }
-    console.log("Dependencies updating. Installing updates.");
-    await run.command("npm ci", { cwd: `${process.cwd()}/snooty` });
-    console.log("Updates for the frontend completed!");
-  }
+		if (prevPackageLockHash === updatedPackageLockHash) {
+			console.log(
+				'Package-lock.json is unchanged. Not installing any additional dependencies',
+			);
+			return;
+		}
+		console.log('Dependencies updating. Installing updates.');
+		await run.command('npm ci', { cwd: `${process.cwd()}/snooty` });
+		console.log('Updates for the frontend completed!');
+	}
 }

@@ -1,4 +1,4 @@
-import { generateManifest } from "../../src";
+import { generateManifest } from '../../src';
 
 export const getManifest = async (manifestName: string) => {
   process.chdir(`./documents/docs-${manifestName}`);

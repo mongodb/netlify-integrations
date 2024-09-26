@@ -1,5 +1,5 @@
-import { WithId } from "mongodb";
-import { ManifestEntry } from "../generateManifest/manifestEntry";
+import type { WithId } from 'mongodb';
+import type { ManifestEntry } from '../generateManifest/manifestEntry';
 
 export interface RefreshInfo {
   deleted: number;
@@ -23,11 +23,11 @@ export interface DocsetsDocument extends WithId<Document> {
 }
 
 export interface DatabaseDocument extends ManifestEntry {
-  url: string;
-  lastModified: Date;
-  manifestRevisionId: string;
-  searchProperty: string[];
-  includeInGlobalSearch: boolean;
+	url: string;
+	lastModified: Date;
+	manifestRevisionId: string;
+	searchProperty: string[];
+	includeInGlobalSearch: boolean;
 }
 
 export interface ReposBranchesDocument extends WithId<Document> {
