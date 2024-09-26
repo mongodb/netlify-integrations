@@ -85,6 +85,17 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 			summary: markdownList.join('\n'),
 		});
 	}
+
+  console.log("trying to get reponame");
+	const REPO_NAME = process.env.REPO_NAME;
+	//check that an environment variable for repo name was set
+	if (!REPO_NAME) {
+		throw new Error(
+			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
+		);
+	} else {
+		console.log("the repo name is: ", REPO_NAME);
+	}
 });
 
 
