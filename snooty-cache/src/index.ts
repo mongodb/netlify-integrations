@@ -62,11 +62,10 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 
   await run.command("unzip -d . mut.zip");
 
-  await run.command("ls -a");
   await run.command(
     `${process.cwd()}/mut/mut-redirects config/redirects -o .htaccess`
   );
-  // run.command("ls -a");
+  run.command("ls -a");
 });
 
 integration.addBuildEventHandler(
