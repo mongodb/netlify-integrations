@@ -1,11 +1,11 @@
 // Documentation: https://sdk.netlify.com
 
+import { readdir } from 'node:fs';
+import { promisify } from 'node:util';
 import { NetlifyIntegration } from '@netlify/sdk';
 
-import { readdir } from 'fs';
-
-import { promisify } from 'util';
 import { checkForNewSnootyVersion } from './snooty-frontend-version-check';
+import { downloadPersistenceModule } from './persistence';
 
 const readdirAsync = promisify(readdir);
 
@@ -32,6 +32,8 @@ integration.addBuildEventHandler(
 		await Promise.all(cacheFiles.map((cacheFile) => cache.restore(cacheFile)));
 
 		await checkForNewSnootyVersion(run);
+
+		await downloadPersistenceModule(run.command);
 	},
 );
 
@@ -77,10 +79,10 @@ integration.addBuildEventHandler(
 		let errorCount = 0;
 		let warningCount = 0;
 
-		logsSplit.forEach((row) => {
+		for (const row of logsSplit) {
 			if (row.includes('ERROR')) errorCount += 1;
 			if (row.includes('WARNING')) warningCount += 1;
-		});
+		}
 
 		status.show({
 			title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
