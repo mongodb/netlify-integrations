@@ -59,7 +59,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   const mutDirExists = existsSync(`${process.cwd()}/mut`);
   if (!mutDirExists) {
     await run.command(
-      "if test -f /mutcurl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
+      "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
     );
     await run.command("unzip -d . mut.zip");
   }
