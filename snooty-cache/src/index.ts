@@ -68,8 +68,6 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   await run.command(
     `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
   );
-  process.chdir("snooty/public");
-  run.command("ls -a");
 });
 
 integration.addBuildEventHandler(
