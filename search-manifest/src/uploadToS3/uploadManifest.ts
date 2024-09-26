@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { assertTrailingSlash } from "../uploadToAtlas/utils";
+import { assertTrailingSlash } from "../utils";
 import { connectToS3 } from "./connectToS3";
+import { s3UploadParams } from "../types";
 
 const upload = async (
   client: S3Client,
@@ -20,12 +21,7 @@ export const uploadManifestToS3 = async ({
   prefix,
   fileName,
   manifest,
-}: {
-  bucket: string;
-  prefix: string;
-  fileName: string;
-  manifest: string;
-}) => {
+}: s3UploadParams) => {
   let client: S3Client;
   //TODO: maybe also ensure there isn't a double trailing slash here to begin with ?? (altho idk y there would be)
   prefix = assertTrailingSlash(prefix);
@@ -35,11 +31,11 @@ export const uploadManifestToS3 = async ({
   } catch (e) {
     throw e;
   }
-  const putObjectParams = {
+
+  const uploadStatus = await upload(client, {
     Bucket: bucket,
     Key: key,
     Body: manifest,
-  };
-  const uploadStatus = await upload(client, putObjectParams);
+  });
   return uploadStatus;
 };

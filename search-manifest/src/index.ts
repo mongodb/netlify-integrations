@@ -10,6 +10,7 @@ import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
 import { teardown } from "./uploadToAtlas/searchConnector";
+import { s3UploadParams } from "./types";
 
 const readdirAsync = promisify(readdir);
 
@@ -73,7 +74,7 @@ integration.addBuildEventHandler(
     //uploads manifests to S3
     console.log("=========== Uploading Manifests to S3=================");
     //upload manifests to S3
-    const uploadParams = {
+    const uploadParams: s3UploadParams = {
       bucket: "docs-search-indexes-test",
       //TODO: change this values based on environments
       prefix: "search-indexes/ab-testing",

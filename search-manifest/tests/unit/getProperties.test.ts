@@ -1,27 +1,27 @@
 import {
-	describe,
-	beforeEach,
-	expect,
-	test,
-	vi,
-	beforeAll,
-	afterAll,
-} from 'vitest';
+  describe,
+  beforeEach,
+  expect,
+  test,
+  vi,
+  beforeAll,
+  afterAll,
+} from "vitest";
 import getProperties, {
   getBranch,
 } from "../../src/uploadToAtlas/getProperties";
 import {
-	mockDb,
-	teardownMockDbClient,
-	insert,
-	removeDocuments,
-} from '../utils/mockDB';
+  mockDb,
+  teardownMockDbClient,
+  insert,
+  removeDocuments,
+} from "../utils/mockDB";
 // simulate the repos_branches collection in an object
-import repos_branches from '../resources/mockCollections/repos-branches.json';
+import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
 import * as mongodb from "mongodb";
-import { BranchEntry, DatabaseDocument } from "../../src/uploadToAtlas/types";
+import { BranchEntry, DatabaseDocument } from "../../src/types";
 import { Manifest } from "../../src/generateManifest/manifest";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
@@ -59,9 +59,9 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-	//teardown db instance
-	await removeDocuments('repos_branches');
-	await teardownMockDbClient();
+  //teardown db instance
+  await removeDocuments("repos_branches");
+  await teardownMockDbClient();
 });
 
 describe("given an array of branches and a branch name, the corrct output is returned", () => {
