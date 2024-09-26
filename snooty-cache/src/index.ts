@@ -2,7 +2,7 @@
 
 import { NetlifyIntegration } from "@netlify/sdk";
 
-import { readdir } from "fs";
+import { readdir, existsSync } from "fs";
 
 import { promisify } from "util";
 import { checkForNewSnootyVersion } from "./snooty-frontend-version-check";
@@ -56,11 +56,13 @@ integration.addBuildEventHandler(
 
 integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
   console.log(`current dir ${process.cwd()}`);
-  await run.command(
-    "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
-  );
-
-  await run.command("unzip -d . mut.zip");
+  const mutDirExists = existsSync(`${process.cwd()}/mut`);
+  if (!mutDirExists) {
+    await run.command(
+      "if test -f /mutcurl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
+    );
+    await run.command("unzip -d . mut.zip");
+  }
 
   await run.command(
     `${process.cwd()}/mut/mut-redirects config/redirects -o /snooty/public/.htaccess`
