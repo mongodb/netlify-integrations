@@ -59,6 +59,8 @@ integration.addBuildEventHandler(
 integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run, status } }) => {
+    let redirectErrs: string = "";
+
     console.log("Downloading Mut...");
     await run.command(
       `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
@@ -66,15 +68,17 @@ integration.addBuildEventHandler(
     await run.command("unzip -d . -qq mut.zip");
     try {
       console.log("Running mut-redirects...");
-      const stderr = await run.command(
+      const { stderr } = await run.command(
         `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
       );
+      redirectErrs = stderr;
+    } catch (e) {
+      console.log(`Error occurred while running mut-redirects: ${e}`);
+    } finally {
       status.show({
         title: `Error processing redirect rules`,
-        summary: `${stderr}`,
+        summary: `${redirectErrs}`,
       });
-    } catch (e) {
-      console.log(`Error occurred while running mut-redirects`);
     }
   }
 );
