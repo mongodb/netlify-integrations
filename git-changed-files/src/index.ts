@@ -54,7 +54,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run }, netlifyCo
 
 	console.log("trying to get reponame");
 	const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
-  console.log(process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
+  console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
 	//check that an environment variable for repo name was set
 	if (!repoName) {
 		throw new Error(
