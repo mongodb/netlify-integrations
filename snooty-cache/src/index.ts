@@ -62,7 +62,12 @@ integration.addBuildEventHandler(
     let redirectErrs: string = "";
 
     console.log("Downloading Mut...");
-    await run("curl", ["-L", "-o", "mut.zip", `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`]);
+    await run("curl", [
+      "-L",
+      "-o",
+      "mut.zip",
+      `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`,
+    ]);
     await run.command("unzip -d . -qq mut.zip");
     try {
       console.log("Running mut-redirects...");
@@ -71,6 +76,7 @@ integration.addBuildEventHandler(
       );
     } catch (e) {
       console.log(`Error occurred while running mut-redirects: ${e}`);
+    }
   }
 );
 
