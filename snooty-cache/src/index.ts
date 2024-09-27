@@ -56,21 +56,28 @@ integration.addBuildEventHandler(
   }
 );
 
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-  console.log("Downloading Mut...");
-  await run.command(
-    `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
-  );
-  await run.command("unzip -d . mut.zip");
-  try {
-    console.log("Running mut-redirects...");
+integration.addBuildEventHandler(
+  "onSuccess",
+  async ({ utils: { run, status } }) => {
+    console.log("Downloading Mut...");
     await run.command(
-      `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
+      `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
     );
-  } catch (e) {
-    console.log(`Error while running mut redirects: ${e}`);
+    await run.command("unzip -d . -qq mut.zip");
+    try {
+      console.log("Running mut-redirects...");
+      await run.command(
+        `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
+      );
+    } catch (e) {
+      console.log(`Error occurred while running mut-redirects: ${e}`);
+      status.show({
+        title: `Error processing redirect rules`,
+        summary: `${e}`,
+      });
+    }
   }
-});
+);
 
 integration.addBuildEventHandler(
   "onEnd",
