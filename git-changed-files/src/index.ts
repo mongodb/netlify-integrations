@@ -39,34 +39,34 @@ const integration = new NetlifyIntegration();
 // };
 
   // some code from DOP-5023
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run }, netlifyConfig }) => {
-	// console.log(`current dir ${process.cwd()}`);
-	// // download the mut repo 
-	// await run.command(
-	//   "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
-	// );
-	// await run.command("unzip -d . mut.zip");
+// integration.addBuildEventHandler("onSuccess", async ({ utils: { run }, netlifyConfig }) => {
+// 	// console.log(`current dir ${process.cwd()}`);
+// 	// // download the mut repo 
+// 	// await run.command(
+// 	//   "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
+// 	// );
+// 	// await run.command("unzip -d . mut.zip");
   
-	// await run.command("cd snooty/config");
-	// run.command("ls -a");
-	// await run.command("mut-redirects snooty/config/redirects");
-	// // run.command("ls -a");
+// 	// await run.command("cd snooty/config");
+// 	// run.command("ls -a");
+// 	// await run.command("mut-redirects snooty/config/redirects");
+// 	// // run.command("ls -a");
 
-	console.log("HELLO THIS IS MY TEST");
-	const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
-  console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
-	//check that an environment variable for repo name was set
-	if (!repoName) {
-		throw new Error(
-			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
-		);
-	} else {
-		console.log("the repo name is: ", repoName);
-	}
+// 	console.log("HELLO THIS IS MY TEST");
+// 	const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
+//   console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
+// 	//check that an environment variable for repo name was set
+// 	if (!repoName) {
+// 		throw new Error(
+// 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
+// 		);
+// 	} else {
+// 		console.log("the repo name is: ", repoName);
+// 	}
 
-  });
+//   });
 
-integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
+integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlifyConfig}) => {
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files TEST HELLO:', git.modifiedFiles);
 
@@ -88,15 +88,16 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 	}
 
   console.log("trying to get REPO NAME");
-	const REPO_NAME = process.env.REPO_NAME;
-  console.log("the repo name is: ", REPO_NAME);
+  const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
+    console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
+  console.log("the repo name is: ", repoName);
 	//check that an environment variable for repo name was set
-	if (!REPO_NAME) {
+	if (!repoName) {
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
 		);
 	} else {
-		console.log("the repo name is: ", REPO_NAME);
+		console.log("the repo name is: ", repoName);
 	}
 });
 
