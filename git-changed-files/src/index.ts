@@ -39,7 +39,7 @@ const integration = new NetlifyIntegration();
 // };
 
   // some code from DOP-5023
-integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+integration.addBuildEventHandler("onSuccess", async ({ utils: { run }, netlifyConfig }) => {
 	// console.log(`current dir ${process.cwd()}`);
 	// // download the mut repo 
 	// await run.command(
@@ -53,14 +53,15 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
 	// // run.command("ls -a");
 
 	console.log("trying to get reponame");
-	const REPO_NAME = process.env.REPO_NAME;
+	const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
+  console.log(process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
 	//check that an environment variable for repo name was set
-	if (!REPO_NAME) {
+	if (!repoName) {
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
 		);
 	} else {
-		console.log("the repo name is: ", REPO_NAME);
+		console.log("the repo name is: ", repoName);
 	}
 
   });
