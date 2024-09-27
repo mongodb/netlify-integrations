@@ -1,5 +1,5 @@
-import { Collection, Db, Document, WithId } from "mongodb";
-import { db, teardown } from "./searchConnector";
+import { Collection, Db } from "mongodb";
+import { db, getCollection, teardown } from "./searchConnector";
 import {
   BranchEntry,
   DatabaseDocument,
@@ -8,6 +8,9 @@ import {
 } from "../types";
 import { assertTrailingSlash } from "../utils";
 import { deleteStaleProperties } from "./deleteStale";
+
+const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
+const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
@@ -20,8 +23,6 @@ export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
 };
 
 const getProperties = async (branchName: string) => {
-  const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-  const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
   const REPO_NAME = process.env.REPO_NAME;
 
   //check that an environment variable for repo name was set
@@ -31,9 +32,6 @@ const getProperties = async (branchName: string) => {
     );
   }
 
-  let dbSession: Db;
-  let repos_branches: Collection<DatabaseDocument>;
-  let docsets: Collection<DatabaseDocument>;
   let url: string = "";
   let searchProperty: string = "";
   let includeInGlobalSearch: boolean = false;
@@ -41,14 +39,13 @@ const getProperties = async (branchName: string) => {
   let docsetRepo: DocsetsDocument | null;
   let version: string;
 
-  try {
-    //connect to database and get repos_branches, docsets collections
-    dbSession = await db({ uri: ATLAS_CLUSTER0_URI, dbName: SNOOTY_DB_NAME });
-    repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
-    docsets = dbSession.collection<DatabaseDocument>("docsets");
-  } catch (e) {
-    throw new Error(`issue starting session for Snooty Pool Database ${e}`);
-  }
+  //connect to database and get repos_branches, docsets collections
+  const dbSession = await db({
+    uri: ATLAS_CLUSTER0_URI,
+    dbName: SNOOTY_DB_NAME,
+  });
+  const repos_branches = getCollection(dbSession, "repos_branches");
+  const docsets = getCollection(dbSession, "docsets");
 
   const query = {
     repoName: REPO_NAME,
@@ -119,11 +116,16 @@ const getProperties = async (branchName: string) => {
         `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
       );
     }
+    return {
+      searchProperty,
+      projectName: project,
+      url,
+      includeInGlobalSearch,
+    };
   } catch (e) {
     console.error(`Error`, e);
     throw e;
   }
-  return { searchProperty, projectName: project, url, includeInGlobalSearch };
 };
 
 export default getProperties;

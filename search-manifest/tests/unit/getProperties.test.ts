@@ -47,8 +47,12 @@ beforeAll(async () => {
 beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
     const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
+    const { getCollection } = await import(
+      "../../src/uploadToAtlas/searchConnector"
+    );
     return {
       teardown: teardownMockDbClient,
+      getCollection: getCollection,
       db: async () => {
         //mock db of repos_branches
         db = await mockDb();
@@ -152,6 +156,7 @@ describe(
       //getProperties for beta doens't change number of documents in collection
       process.env.repo_name = "docs-compass";
       await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
+      await mockDb();
       expect(
         await db.collection<DatabaseDocument>("documents").countDocuments()
       ).toEqual(documentCount);

@@ -1,5 +1,6 @@
-import type { Db } from 'mongodb';
-import * as mongodb from 'mongodb';
+import type { Db } from "mongodb";
+import * as mongodb from "mongodb";
+import { DatabaseDocument } from "../types";
 
 // We should only ever have one client active at a time.
 
@@ -8,7 +9,7 @@ let dbInstance: Db;
 let client: mongodb.MongoClient;
 
 export const teardown = async () => {
-	await client.close();
+  await client.close();
 };
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
@@ -23,4 +24,14 @@ export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
     throw err;
   }
   return dbInstance;
+};
+
+export const getCollection = (dbSession: Db, collection: string) => {
+  try {
+    return dbSession.collection<DatabaseDocument>(collection);
+  } catch (e) {
+    throw new Error(
+      `Error getting ${collection} collection from client: ${dbSession}`
+    );
+  }
 };
