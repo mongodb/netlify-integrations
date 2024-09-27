@@ -52,7 +52,7 @@ integration.addBuildEventHandler("onSuccess", async ({ utils: { run }, netlifyCo
 	// await run.command("mut-redirects snooty/config/redirects");
 	// // run.command("ls -a");
 
-	console.log("trying to get reponame");
+	console.log("HELLO THIS IS MY TEST");
 	const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
   console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
 	//check that an environment variable for repo name was set
