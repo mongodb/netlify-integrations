@@ -1,10 +1,13 @@
 import type { NetlifyPluginUtils } from '@netlify/build';
 import { existsSync } from 'node:fs';
 
+const WORKER_POOL_PATH = `${process.cwd()}/docs-worker-pool`;
+const PERSISTENCE_PATH = `${WORKER_POOL_PATH}/modules/persistence`;
+
 export async function downloadPersistenceModule(
 	run: NetlifyPluginUtils['run'],
 ): Promise<void> {
-	const isModuleDownloaded = existsSync(`${process.cwd()}/docs-worker-pool`);
+	const isModuleDownloaded = existsSync(WORKER_POOL_PATH);
 
 	if (isModuleDownloaded) return;
 
@@ -13,14 +16,14 @@ export async function downloadPersistenceModule(
 	);
 
 	await run.command('git sparse-checkout set --no-cone modules/persistence', {
-		cwd: `${process.cwd()}/docs-worker-pool`,
+		cwd: WORKER_POOL_PATH,
 	});
 
 	await run.command('npm ci', {
-		cwd: `${process.cwd()}/docs-worker-pool/modules/persistence`,
+		cwd: PERSISTENCE_PATH,
 	});
 
 	await run.command('npm run build', {
-		cwd: `${process.cwd()}/docs-worker-pool/modules/persistence`,
+		cwd: PERSISTENCE_PATH,
 	});
 }
