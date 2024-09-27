@@ -19,7 +19,7 @@ export const getDocsetEntry = async (
   const docsetsQuery = { project: { $eq: project } };
   const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
   if (!docset) {
-    throw new Error(`Error while getting docsets entry in Atlas ${e}`);
+    throw new Error(`Error while getting docsets entry in Atlas`);
   }
   return docset;
 };
