@@ -19,9 +19,13 @@ const PROPERTY_NAME = "dummyName";
 
 //teardown connections
 beforeEach(async () => {
-  vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
+  vi.mock("../../src/uploadToAtlas/searchConnector", async (importOriginal) => {
     const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
+    const { getCollection } = await import(
+      "../../src/uploadToAtlas/searchConnector"
+    );
     return {
+      getCollection: getCollection,
       teardown: teardownMockDbClient,
       db: async () => {
         const db = await mockDb();

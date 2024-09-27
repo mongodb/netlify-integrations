@@ -12,6 +12,49 @@ import { deleteStaleProperties } from "./deleteStale";
 const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 
+export const getRepo = async ({
+  repoName,
+  repos_branches,
+}: {
+  repoName: string;
+  repos_branches: Collection<DatabaseDocument>;
+}) => {
+  const query = {
+    repoName: repoName,
+  };
+
+  const repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+    projection: {
+      _id: 0,
+      project: 1,
+      search: 1,
+      branches: 1,
+      prodDeployable: 1,
+      internalOnly: 1,
+    },
+  });
+  if (!repo) {
+    throw new Error(
+      `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
+        query
+      )}`
+    );
+  }
+  if (
+    repo.internalOnly ||
+    !repo.prodDeployable ||
+    !repo.search?.categoryTitle
+  ) {
+    // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
+    await deleteStaleProperties(repo.project);
+    throw new Error(
+      `Search manifest should not be generated for repo ${repoName}. Removing all associated manifests`
+    );
+  }
+
+  return repo;
+};
+
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   for (const branchObj of branches) {
@@ -35,7 +78,6 @@ const getProperties = async (branchName: string) => {
   let url: string = "";
   let searchProperty: string = "";
   let includeInGlobalSearch: boolean = false;
-  let repo: ReposBranchesDocument | null;
   let docsetRepo: DocsetsDocument | null;
   let version: string;
 
@@ -47,32 +89,10 @@ const getProperties = async (branchName: string) => {
   const repos_branches = getCollection(dbSession, "repos_branches");
   const docsets = getCollection(dbSession, "docsets");
 
-  const query = {
+  const repo: ReposBranchesDocument = await getRepo({
     repoName: REPO_NAME,
-  };
-
-  try {
-    repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
-      projection: {
-        _id: 0,
-        project: 1,
-        search: 1,
-        branches: 1,
-        prodDeployable: 1,
-        internalOnly: 1,
-      },
-    });
-    if (!repo) {
-      throw new Error(
-        `Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
-          query
-        )}`
-      );
-    }
-  } catch (e) {
-    console.error(`Error while getting repos_branches entry in Atlas: ${e}`);
-    throw e;
-  }
+    repos_branches,
+  });
 
   const { project } = repo;
 
@@ -99,17 +119,6 @@ const getProperties = async (branchName: string) => {
     version = urlSlug || gitBranchName;
     searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
 
-    if (
-      repo.internalOnly ||
-      !repo.prodDeployable ||
-      !repo.search?.categoryTitle
-    ) {
-      // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
-      await deleteStaleProperties(project);
-      throw new Error(
-        `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
-      );
-    }
     if (!active) {
       deleteStaleProperties(searchProperty);
       throw new Error(

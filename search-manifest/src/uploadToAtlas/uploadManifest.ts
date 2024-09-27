@@ -1,5 +1,5 @@
 import type { Manifest } from "../generateManifest/manifest";
-import { db, teardown } from "./searchConnector";
+import { db, getCollection, teardown } from "./searchConnector";
 import assert from "assert";
 import type { RefreshInfo, DatabaseDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
@@ -52,17 +52,13 @@ export const uploadManifest = async (
   if (!manifest?.documents?.length) {
     return Promise.reject(new Error("Invalid manifest"));
   }
-  //start a session
-  let documentsColl;
-  try {
-    const dbSession = await db({
-      uri: ATLAS_SEARCH_URI,
-      dbName: SEARCH_DB_NAME,
-    });
-    documentsColl = dbSession.collection<DatabaseDocument>("documents");
-  } catch (e) {
-    console.error("issue starting session for Search Database", e);
-  }
+
+  const dbSession = await db({
+    uri: ATLAS_SEARCH_URI,
+    dbName: SEARCH_DB_NAME,
+  });
+  const documentsColl = getCollection(dbSession, "documents");
+
   const status: RefreshInfo = {
     deleted: 0,
     upserted: 0,
