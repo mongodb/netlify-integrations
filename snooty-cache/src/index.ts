@@ -33,7 +33,11 @@ integration.addBuildEventHandler(
 
     await checkForNewSnootyVersion(run);
 
-    await downloadPersistenceModule(run);
+    try {
+      await downloadPersistenceModule(run);
+    } catch (e) {
+      console.error('Unable to run the persistence module', e);
+    }
   },
 );
 
