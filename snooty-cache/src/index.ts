@@ -56,57 +56,55 @@ integration.addBuildEventHandler(
   }
 );
 
-  integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
-    console.log("Downloading Mut...");
-    await run.command(
-      `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
-    );
-    await run.command("unzip -d . mut.zip");
-    try{
+integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
+  console.log("Downloading Mut...");
+  await run.command(
+    `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
+  );
+  await run.command("unzip -d . mut.zip");
+  try {
     console.log("Running mut-redirects...");
     await run.command(
       `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
     );
-    }
-    catch (e) {
-      console.log(`Error while running mut redirects: ${e}`);
-    }
-  });
+  } catch (e) {
+    console.log(`Error while running mut redirects: ${e}`);
+  }
+});
 
-  integration.addBuildEventHandler(
-    "onEnd",
-    async ({ utils: { run, status } }) => {
-      console.log("Creating cache files...");
-      const { all, stderr, stdout } = await run.command(
-        "./snooty-parser/snooty/snooty create-cache .",
-        { all: true }
-      );
+integration.addBuildEventHandler(
+  "onEnd",
+  async ({ utils: { run, status } }) => {
+    console.log("Creating cache files...");
+    const { all, stderr, stdout } = await run.command(
+      "./snooty-parser/snooty/snooty create-cache .",
+      { all: true }
+    );
 
-      const logs = all ?? stdout + stderr;
+    const logs = all ?? stdout + stderr;
 
-      const logsSplit =
-        logs
-          .split("\n")
-          .filter(
-            (row) =>
-              !row.includes("INFO:snooty.gizaparser.domain") &&
-              !row.includes("INFO:snooty.parser:cache")
-          ) || [];
+    const logsSplit =
+      logs
+        .split("\n")
+        .filter(
+          (row) =>
+            !row.includes("INFO:snooty.gizaparser.domain") &&
+            !row.includes("INFO:snooty.parser:cache")
+        ) || [];
 
-      let errorCount = 0;
-      let warningCount = 0;
+    let errorCount = 0;
+    let warningCount = 0;
 
-      logsSplit.forEach((row) => {
-        if (row.includes("ERROR")) errorCount += 1;
-        if (row.includes("WARNING")) warningCount += 1;
-      });
+    logsSplit.forEach((row) => {
+      if (row.includes("ERROR")) errorCount += 1;
+      if (row.includes("WARNING")) warningCount += 1;
+    });
 
-      status.show({
-        title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
-        summary: logsSplit.join("\n"),
-      });
-    }
-  );
-}
+    status.show({
+      title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
+      summary: logsSplit.join("\n"),
+    });
+  }
+);
 
 export { integration };
