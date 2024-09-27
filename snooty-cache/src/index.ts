@@ -55,22 +55,24 @@ integration.addBuildEventHandler(
     );
   }
 );
-try {
+
   integration.addBuildEventHandler("onSuccess", async ({ utils: { run } }) => {
     console.log("Downloading Mut...");
     await run.command(
       `curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`
     );
     await run.command("unzip -d . mut.zip");
-
+    try{
     console.log("Running mut-redirects...");
     await run.command(
       `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`
     );
+    }
+    catch (e) {
+      console.log(`Error while running mut redirects: ${e}`);
+    }
   });
-} catch (e) {
-  throw new Error(`Error while running mut redirects: ${e}`);
-} finally {
+
   integration.addBuildEventHandler(
     "onEnd",
     async ({ utils: { run, status } }) => {
