@@ -77,7 +77,7 @@ integration.addBuildEventHandler(
     } finally {
       status.show({
         title: `Error processing redirect rules`,
-        summary: `${redirectErrs}`,
+        summary: `Errors ${redirectErrs}  `,
       });
     }
   }
