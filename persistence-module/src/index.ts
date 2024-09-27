@@ -1,8 +1,8 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from '@netlify/sdk';
 import { deserialize } from 'bson';
-import { readdir, readFile, existsSync } from 'fs';
-import { promisify } from 'util';
+import { readdir, readFile, existsSync } from 'node:fs';
+import { promisify } from 'node:util';
 import { type Page, updatePages } from './update-pages';
 
 const readdirAsync = promisify(readdir);

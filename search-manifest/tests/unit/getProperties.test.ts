@@ -20,8 +20,8 @@ import {
 import repos_branches from '../resources/mockCollections/repos-branches.json';
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
-import * as mongodb from "mongodb";
-import { BranchEntry, DatabaseDocument } from "../../src/uploadToAtlas/types";
+import type * as mongodb from "mongodb";
+import type { BranchEntry, DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { Manifest } from "../../src/generateManifest/manifest";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";

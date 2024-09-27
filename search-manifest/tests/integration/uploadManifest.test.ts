@@ -11,7 +11,7 @@ import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import { mockDb, insert, removeDocuments } from "../utils/mockDB";
-import { DatabaseDocument } from "../../src/uploadToAtlas/types";
+import type { DatabaseDocument } from "../../src/uploadToAtlas/types";
 import { getManifest } from "../utils/getManifest";
 import { hash } from "node:crypto";
 import { generateHash } from "../../src/uploadToAtlas/utils";
@@ -108,7 +108,7 @@ describe(
     afterEach(async () => {
       await removeDocuments("documents");
     });
-    let manifest1: Manifest = new Manifest(
+    const manifest1: Manifest = new Manifest(
       nodeManifest.url,
       nodeManifest.includeInGlobalSearch
     );

@@ -1,6 +1,6 @@
-import { Collection, Db, Document, WithId } from "mongodb";
+import { type Collection, type Db, Document, WithId } from "mongodb";
 import { db, teardown } from "./searchConnector";
-import {
+import type {
   BranchEntry,
   DatabaseDocument,
   DocsetsDocument,
@@ -34,9 +34,9 @@ const getProperties = async (branchName: string) => {
   let dbSession: Db;
   let repos_branches: Collection<DatabaseDocument>;
   let docsets: Collection<DatabaseDocument>;
-  let url: string = "";
-  let searchProperty: string = "";
-  let includeInGlobalSearch: boolean = false;
+  let url = "";
+  let searchProperty = "";
+  let includeInGlobalSearch = false;
   let repo: ReposBranchesDocument | null;
   let docsetRepo: DocsetsDocument | null;
   let version: string;

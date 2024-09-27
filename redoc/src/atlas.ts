@@ -124,7 +124,7 @@ function ensureSavedVersionDataMatches(
 		) {
 			throw new Error(`Last successful build data does not include necessary version data:\n
       Version requested: ${apiVersion}${
-				resourceVersion ? ` - ${resourceVersion}` : ``
+				resourceVersion ? ` - ${resourceVersion}` : ''
 			}`);
 		}
 	}
@@ -144,7 +144,7 @@ function createFetchGitHash() {
 				return gitHash;
 			} catch (e) {
 				console.error(e);
-				throw new Error(`Unsuccessful git hash fetch`);
+				throw new Error('Unsuccessful git hash fetch');
 			}
 		},
 		resetGitHashCache: () => {

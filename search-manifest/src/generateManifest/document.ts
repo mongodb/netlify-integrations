@@ -1,7 +1,7 @@
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import { ManifestEntry } from "./manifestEntry";
-import { BSON } from "bson";
+import type { BSON } from "bson";
 
 export class Document {
 	//Return indexing data from a page's JSON-formatted AST for search purposes

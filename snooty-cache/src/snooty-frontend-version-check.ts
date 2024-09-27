@@ -1,10 +1,10 @@
 import type { NetlifyPluginUtils } from '@netlify/build';
 import axios from 'axios';
-import { createHash } from 'crypto';
-import { existsSync } from 'fs';
+import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 
-import { readFile } from 'fs';
-import { promisify } from 'util';
+import { readFile } from 'node:fs';
+import { promisify } from 'node:util';
 
 const readFileAsync = promisify(readFile);
 
