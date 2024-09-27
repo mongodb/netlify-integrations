@@ -7,7 +7,7 @@ import {
   ReposBranchesDocument,
 } from "../types";
 import { assertTrailingSlash } from "../utils";
-import { deleteStaleProperties } from "./deleteStaleProperties";
+import { deleteStaleProperties } from "./deleteStale";
 
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
