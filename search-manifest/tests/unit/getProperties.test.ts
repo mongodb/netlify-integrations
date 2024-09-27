@@ -21,10 +21,7 @@ import repos_branches from '../resources/mockCollections/repos-branches.json';
 //simulate the docsests collection in an object
 import docsets from '../resources/mockCollections/docsets.json';
 import type * as mongodb from 'mongodb';
-import type {
-	BranchEntry,
-	DatabaseDocument,
-} from '../../src/uploadToAtlas/types';
+import type { BranchEntry, DatabaseDocument } from '../../src/types';
 import { Manifest } from '../../src/generateManifest/manifest';
 import { getManifest } from '../utils/getManifest';
 import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
@@ -42,7 +39,6 @@ const DOCS_MONGODB_INTERNAL_NAME = 'docs-mongodb-internal';
 
 beforeAll(async () => {
 	db = await mockDb();
-
 	await insert(db, 'repos_branches', repos_branches);
 	await insert(db, 'docsets', docsets);
 });
@@ -109,6 +105,7 @@ describe('Given a branchname, get the properties associated with it from repos_b
 		process.env.REPO_NAME = DOCS_COMPASS_NAME;
 		const compassMasterProperties = {
 			searchProperty: 'compass-current',
+			projectName: 'compass',
 			url: 'http://mongodb.com/docs/compass/',
 			includeInGlobalSearch: true,
 		};
@@ -122,6 +119,7 @@ describe('Given a branchname, get the properties associated with it from repos_b
 		process.env.REPO_NAME = DOCS_CLOUD_NAME;
 		const cloudDocsMasterProperties = {
 			searchProperty: 'atlas-master',
+			projectName: 'cloud-docs',
 			url: 'http://mongodb.com/docs/atlas/',
 			includeInGlobalSearch: true,
 		};
@@ -154,7 +152,6 @@ describe(
 			//getProperties for beta doens't change number of documents in collection
 			process.env.repo_name = 'docs-compass';
 			await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
-			await mockDb();
 			expect(
 				await db.collection<DatabaseDocument>('documents').countDocuments(),
 			).toEqual(documentCount);
@@ -197,6 +194,7 @@ describe(
 
 			await mockDb();
 			const documentCount2 = await db
+
 				.collection<DatabaseDocument>('documents')
 				.countDocuments();
 			expect(documentCount2).toEqual(

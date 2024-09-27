@@ -1,5 +1,5 @@
-import { joinUrl } from '../../src/uploadToAtlas/utils';
-import { expect, it } from 'vitest';
+import { joinUrl } from "../../src/utils";
+import { expect, it } from "vitest";
 
 //test joinUrl util
 it("correctly joins base URLs with slugs", () => {
