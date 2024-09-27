@@ -17,13 +17,11 @@ const readdirAsync = promisify(readdir);
 const integration = new NetlifyIntegration();
 
 export const generateManifest = async () => {
-  // create Manifest object
   const manifest = new Manifest();
   console.log("=========== generating manifests ================");
 
-  //go into documents directory and get list of file entries
+  // Get list of file entries in documents dir
   const entries = await readdirAsync("documents", { recursive: true });
-
   const mappedEntries = entries.filter((fileName) => {
     return (
       fileName.includes(".bson") &&
@@ -33,14 +31,12 @@ export const generateManifest = async () => {
     );
   });
 
-  process.chdir("documents");
   for (const entry of mappedEntries) {
-    //each file is read and decoded
-    const decoded = BSON.deserialize(readFileSync(`${entry}`));
-    //put file into Document object
-    //export Document object
+    // Read and decode each entry
+    const decoded = BSON.deserialize(readFileSync(`documents/${entry}`));
+
+    // Parse data into a document and format it as a Manifest document
     const processedDoc = new Document(decoded).exportAsManifestDocument();
-    //add document to manifest object if it was able to be indexed
     if (processedDoc) manifest.addDocument(processedDoc);
   }
   return manifest;
@@ -50,12 +46,11 @@ export const generateManifest = async () => {
 integration.addBuildEventHandler(
   "onSuccess",
   async ({ utils: { run }, netlifyConfig }) => {
-    // Get content repo zipfile in AST representation.
+    // Get content repo zipfile as AST representation
 
     await run.command("unzip -o bundle.zip");
     const branch = netlifyConfig.build?.environment["BRANCH"];
 
-    //use export function for uploading to S3
     const manifest = await generateManifest();
 
     console.log("=========== finished generating manifests ================");
@@ -71,9 +66,7 @@ integration.addBuildEventHandler(
       includeInGlobalSearch: boolean;
     } = await getProperties(branch);
 
-    //uploads manifests to S3
     console.log("=========== Uploading Manifests to S3=================");
-    //upload manifests to S3
     const uploadParams: s3UploadParams = {
       bucket: "docs-search-indexes-test",
       //TODO: change this values based on environments
@@ -91,8 +84,7 @@ integration.addBuildEventHandler(
       manifest.url = url;
       manifest.global = includeInGlobalSearch;
 
-      //uploads manifests to atlas
-      console.log("=========== Uploading Manifests =================");
+      console.log("=========== Uploading Manifests to Atlas =================");
       await uploadManifest(manifest, searchProperty);
       console.log("=========== Manifests uploaded to Atlas =================");
     } catch (e) {
