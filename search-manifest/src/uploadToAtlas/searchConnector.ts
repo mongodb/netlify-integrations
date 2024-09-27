@@ -8,7 +8,7 @@ let dbInstance: Db;
 let client: mongodb.MongoClient;
 
 export const teardown = async () => {
-	await client.close();
+  await client.close();
 };
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized

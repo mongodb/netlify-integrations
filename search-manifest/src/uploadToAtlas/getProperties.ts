@@ -1,13 +1,13 @@
-import { type Collection, type Db, Document, WithId } from "mongodb";
-import { db, teardown } from "./searchConnector";
+import { type Collection, type Db, Document, WithId } from 'mongodb';
+import { db, teardown } from './searchConnector';
 import type {
   BranchEntry,
   DatabaseDocument,
   DocsetsDocument,
   ReposBranchesDocument,
-} from "../types";
-import { assertTrailingSlash } from "../utils";
-import { deleteStaleProperties } from "./deleteStaleProperties";
+} from '../types';
+import { assertTrailingSlash } from '../utils';
+import { deleteStaleProperties } from './deleteStaleProperties';
 
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
@@ -27,15 +27,15 @@ const getProperties = async (branchName: string) => {
   //check that an environment variable for repo name was set
   if (!REPO_NAME) {
     throw new Error(
-      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
+      'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
     );
   }
 
   let dbSession: Db;
   let repos_branches: Collection<DatabaseDocument>;
   let docsets: Collection<DatabaseDocument>;
-  let url = "";
-  let searchProperty = "";
+  let url = '';
+  let searchProperty = '';
   let includeInGlobalSearch = false;
   let repo: ReposBranchesDocument | null;
   let docsetRepo: DocsetsDocument | null;
@@ -44,8 +44,8 @@ const getProperties = async (branchName: string) => {
   try {
     //connect to database and get repos_branches, docsets collections
     dbSession = await db({ uri: ATLAS_CLUSTER0_URI, dbName: SNOOTY_DB_NAME });
-    repos_branches = dbSession.collection<DatabaseDocument>("repos_branches");
-    docsets = dbSession.collection<DatabaseDocument>("docsets");
+    repos_branches = dbSession.collection<DatabaseDocument>('repos_branches');
+    docsets = dbSession.collection<DatabaseDocument>('docsets');
   } catch (e) {
     throw new Error(`issue starting session for Snooty Pool Database ${e}`);
   }
@@ -68,8 +68,8 @@ const getProperties = async (branchName: string) => {
     if (!repo) {
       throw new Error(
         `Could not get repos_branches entry for repo ${REPO_NAME}, ${repo}, ${JSON.stringify(
-          query
-        )}`
+          query,
+        )}`,
       );
     }
   } catch (e) {
@@ -85,7 +85,7 @@ const getProperties = async (branchName: string) => {
     if (docsetRepo) {
       //TODO: change based on environment
       url = assertTrailingSlash(
-        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
+        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd,
       );
     }
   } catch (e) {
@@ -96,7 +96,7 @@ const getProperties = async (branchName: string) => {
   try {
     const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
       repo.branches,
-      branchName
+      branchName,
     );
     includeInGlobalSearch = isStableBranch;
     version = urlSlug || gitBranchName;
@@ -110,13 +110,13 @@ const getProperties = async (branchName: string) => {
       // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
       await deleteStaleProperties(project);
       throw new Error(
-        `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`
+        `Search manifest should not be generated for repo ${REPO_NAME}. Removing all associated manifests`,
       );
     }
     if (!active) {
       deleteStaleProperties(searchProperty);
       throw new Error(
-        `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
+        `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`,
       );
     }
   } catch (e) {

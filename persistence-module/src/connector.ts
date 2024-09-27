@@ -11,7 +11,7 @@ const atlasURL = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.en
 const client = new mongodb.MongoClient(atlasURL);
 
 export const teardown = async () => {
-	await client.close();
+  await client.close();
 };
 
 const SNOOTY_DB_NAME = 'snooty_dotcomstg';
@@ -20,14 +20,14 @@ const SNOOTY_DB_NAME = 'snooty_dotcomstg';
 let dbInstance: Db;
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async () => {
-	if (!dbInstance) {
-		try {
-			await client.connect();
-			dbInstance = client.db(SNOOTY_DB_NAME);
-		} catch (error) {
-			console.error(`Error at db client connection: ${error}`);
-			throw error;
-		}
-	}
-	return dbInstance;
+  if (!dbInstance) {
+    try {
+      await client.connect();
+      dbInstance = client.db(SNOOTY_DB_NAME);
+    } catch (error) {
+      console.error(`Error at db client connection: ${error}`);
+      throw error;
+    }
+  }
+  return dbInstance;
 };

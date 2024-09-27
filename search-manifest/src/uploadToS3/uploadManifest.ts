@@ -1,11 +1,11 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { assertTrailingSlash } from "../utils";
-import { connectToS3 } from "./connectToS3";
-import { s3UploadParams } from "../types";
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { assertTrailingSlash } from '../utils';
+import { connectToS3 } from './connectToS3';
+import { s3UploadParams } from '../types';
 
 const upload = async (
   client: S3Client,
-  params: { Bucket: string; Key: string; Body: string }
+  params: { Bucket: string; Key: string; Body: string },
 ) => {
   try {
     const command = new PutObjectCommand(params);
