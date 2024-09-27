@@ -12,7 +12,19 @@ import { deleteStaleProperties } from "./deleteStale";
 const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 
-export const getRepo = async ({
+export const getDocsetEntry = async (
+  docsets: Collection<DatabaseDocument>,
+  project: string
+) => {
+  const docsetsQuery = { project: { $eq: project } };
+  const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+  if (!docset) {
+    throw new Error(`Error while getting docsets entry in Atlas ${e}`);
+  }
+  return docset;
+};
+
+export const getRepoEntry = async ({
   repoName,
   repos_branches,
 }: {
@@ -75,12 +87,6 @@ const getProperties = async (branchName: string) => {
     );
   }
 
-  let url: string = "";
-  let searchProperty: string = "";
-  let includeInGlobalSearch: boolean = false;
-  let docsetRepo: DocsetsDocument | null;
-  let version: string;
-
   //connect to database and get repos_branches, docsets collections
   const dbSession = await db({
     uri: ATLAS_CLUSTER0_URI,
@@ -89,52 +95,41 @@ const getProperties = async (branchName: string) => {
   const repos_branches = getCollection(dbSession, "repos_branches");
   const docsets = getCollection(dbSession, "docsets");
 
-  const repo: ReposBranchesDocument = await getRepo({
+  const repo: ReposBranchesDocument = await getRepoEntry({
     repoName: REPO_NAME,
     repos_branches,
   });
 
   const { project } = repo;
 
-  try {
-    const docsetsQuery = { project: { $eq: project } };
-    docsetRepo = await docsets.findOne<DocsetsDocument>(docsetsQuery);
-    if (docsetRepo) {
-      //TODO: change based on environment
-      url = assertTrailingSlash(
-        docsetRepo.url?.dotcomprd + docsetRepo.prefix.dotcomprd
-      );
-    }
-  } catch (e) {
-    console.error(`Error while getting docsets entry in Atlas ${e}`);
-    throw e;
-  }
+  const docsetEntry = await getDocsetEntry(docsets, project);
+  //TODO: change based on environment
+  const url = assertTrailingSlash(
+    docsetEntry.url?.dotcomprd + docsetEntry.prefix.dotcomprd
+  );
 
-  try {
-    const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
-      repo.branches,
-      branchName
+  const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
+    repo.branches,
+    branchName
+  );
+
+  const includeInGlobalSearch = isStableBranch;
+  const version = urlSlug || gitBranchName;
+  const searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
+
+  if (!active) {
+    await deleteStaleProperties(searchProperty);
+    throw new Error(
+      `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
     );
-    includeInGlobalSearch = isStableBranch;
-    version = urlSlug || gitBranchName;
-    searchProperty = `${repo.search?.categoryName ?? project}-${version}`;
-
-    if (!active) {
-      deleteStaleProperties(searchProperty);
-      throw new Error(
-        `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
-      );
-    }
-    return {
-      searchProperty,
-      projectName: project,
-      url,
-      includeInGlobalSearch,
-    };
-  } catch (e) {
-    console.error(`Error`, e);
-    throw e;
   }
+  await teardown();
+  return {
+    searchProperty,
+    projectName: project,
+    url,
+    includeInGlobalSearch,
+  };
 };
 
 export default getProperties;
