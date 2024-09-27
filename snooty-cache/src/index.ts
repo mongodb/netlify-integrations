@@ -33,7 +33,7 @@ integration.addBuildEventHandler(
 
 		await checkForNewSnootyVersion(run);
 
-		await downloadPersistenceModule(run.command);
+		await downloadPersistenceModule(run);
 	},
 );
 
