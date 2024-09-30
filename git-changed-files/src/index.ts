@@ -1,9 +1,21 @@
 import { NetlifyIntegration } from '@netlify/sdk';
+import { ManifestEntry } from "./manifestEntry";
 
-// import type { Db } from 'mongodb';
-// import * as mongodb from 'mongodb';
+import type { Db } from 'mongodb';
+import { db } from "./searchConnector";
+import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
+
+
+export interface DatabaseDocument extends ManifestEntry {
+  url: string;
+  lastModified: Date;
+  manifestRevisionId: string;
+  searchProperty: string[];
+  includeInGlobalSearch: boolean;
+}
+
 // let dbInstance: Db;
 // let client: mongodb.MongoClient;
 
@@ -68,7 +80,7 @@ const integration = new NetlifyIntegration();
 
 integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlifyConfig}) => {
 	console.log('Checking if any files changed on git -----');
-	console.log('Modified files TEST HELLO:', git.modifiedFiles);
+	console.log('Modified files:', git.modifiedFiles);
 
 	if (!process.env.DEPLOY_PRIME_URL) {
 		console.error('ERROR! process.env.DEPLOY_PRIME_URL is not defined.');
@@ -87,11 +99,12 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlif
 		});
 	}
 
-  console.log("trying to get REPO NAME");
+  // new functionalilty that should be moved ------------------------------------------------------------------
+  console.log("trying to get REPO NAME ------------------------------------");
   const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
-    console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
-  console.log("the repo name is: ", repoName);
-	//check that an environment variable for repo name was set
+  console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
+
+	//check that an environment variable for repo name was set ----------
 	if (!repoName) {
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
@@ -99,7 +112,52 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlif
 	} else {
 		console.log("the repo name is: ", repoName);
 	}
+
+  // do i need to get the branch as well ? 
+
+  // connect to mongodb and pool.docsets to get buck---------
+
+  // download mut and run mut publish----------
 });
+
+const getProperties = async (repo_name: string) => {
+  const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
+  //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
+  const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`; 
+  const second_repo_name = process.env.REPO_NAME;
+
+  console.log(SNOOTY_DB_NAME, second_repo_name, repo_name);
+  
+  let dbSession: Db;
+  let docsets;
+  let url: string = "";
+  let searchProperty: string = "";
+  let repo: any;
+  let docsetRepo: any;
+
+  try {
+    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
+    docsets = dbSession.collection<DatabaseDocument>("docsets");
+  } catch (e) {
+    console.log("issue starting session for Snooty Pool Database", e);
+  }
+
+  const query = {
+    project: repo_name,
+  };
+
+  try {
+    docsetRepo = await docsets?.find(query).toArray();
+    // if (docsetRepo.length) {
+    //   url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
+    // }
+    console.log("succes on getting docset data: ", docsetRepo);
+  } catch (e) {
+    console.error(`Error while getting docsets entry in Atlas ${e}`);
+    throw e;
+  }
+
+}
 
 
 
