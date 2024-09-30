@@ -1,5 +1,11 @@
 import type { Manifest } from "../generateManifest/manifest";
-import { closeSearchDb, db, getCollection, teardown } from "./searchConnector";
+import {
+  closeSearchDb,
+  db,
+  getCollection,
+  getSearchDb,
+  teardown,
+} from "./searchConnector";
 import assert from "assert";
 import type { RefreshInfo, DatabaseDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
@@ -53,10 +59,7 @@ export const uploadManifest = async (
     return Promise.reject(new Error("Invalid manifest"));
   }
 
-  const dbSession = await db({
-    uri: ATLAS_SEARCH_URI,
-    dbName: SEARCH_DB_NAME,
-  });
+  const dbSession = await getSearchDb();
   const documentsColl = getCollection(dbSession, "documents");
 
   const status: RefreshInfo = {

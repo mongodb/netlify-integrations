@@ -21,14 +21,14 @@ export const teardown = async (client: mongodb.MongoClient) => {
 };
 
 export const closeSnootyDb = async () => {
-  if (snootyDbClient) teardown(snootyDbClient);
+  if (snootyDbClient) await teardown(snootyDbClient);
   else {
     console.log("No client connection open to Snooty Db");
   }
 };
 
 export const closeSearchDb = async () => {
-  if (searchDbClient) teardown(searchDbClient);
+  if (searchDbClient) await teardown(searchDbClient);
   else {
     console.log("No client connection open to Search Db");
   }
@@ -39,7 +39,6 @@ export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
   const client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
-    console.log(client);
     const dbInstance = client.db(dbName);
     return dbInstance;
   } catch (error) {
@@ -50,16 +49,18 @@ export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
 };
 
 export const getSearchDb = async () => {
+  console.log("getting search db");
   const uri = ATLAS_SEARCH_URI;
   const dbName = SEARCH_DB_NAME;
-  const searchDbClient = db({ uri, dbName });
+  const searchDbClient = await db({ uri, dbName });
   return searchDbClient;
 };
 
 export const getSnootyDb = async () => {
+  console.log("getting snooty db");
   const uri = ATLAS_CLUSTER0_URI;
   const dbName = SNOOTY_DB_NAME;
-  const snootyDbClient = db({ uri, dbName });
+  const snootyDbClient = await db({ uri, dbName });
   return snootyDbClient;
 };
 
