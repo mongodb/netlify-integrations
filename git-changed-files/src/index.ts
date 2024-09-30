@@ -80,7 +80,7 @@ const integration = new NetlifyIntegration();
 
 //   });
 
-integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlifyConfig}) => {
+integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git } , netlifyConfig}) => {
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
@@ -118,7 +118,7 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlif
   // do i need to get the branch as well ? 
 
   // connect to mongodb and pool.docsets to get buck---------
-  getProperties(repoName);
+  await getProperties(repoName);
   // download mut and run mut publish----------
 });
 
@@ -128,6 +128,7 @@ const getProperties = async (repo_name: string) => {
   const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`; 
   const second_repo_name = process.env.REPO_NAME;
 
+  console.log("im in getpropeties");
   console.log(SNOOTY_DB_NAME, second_repo_name, repo_name);
   
   //connect to database and get repos_branches, docsets collections
@@ -135,11 +136,13 @@ const getProperties = async (repo_name: string) => {
   const repos_branches = getCollection(dbSession, "repos_branches");
   const docsets = getCollection(dbSession, "docsets");
 
+  console.log("connected to databases");
   const repo: ReposBranchesDocument = await getRepoEntry({
     repoName: repo_name,
     repos_branches,
   });
 
+  console.log("got repo");
   const { project } = repo;
   const docsetEntry = await getDocsetEntry(docsets, project);
   console.log("printing the entries I queried --------------------");
