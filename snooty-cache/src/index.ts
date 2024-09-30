@@ -2,9 +2,9 @@
 
 import { NetlifyIntegration } from '@netlify/sdk';
 
-import { readdir } from 'fs';
+import { readdir } from 'node:fs';
 
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 import { checkForNewSnootyVersion } from './snooty-frontend-version-check';
 
 const readdirAsync = promisify(readdir);

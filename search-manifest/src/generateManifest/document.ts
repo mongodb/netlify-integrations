@@ -1,7 +1,7 @@
-import { JSONPath } from "jsonpath-plus";
-import { Facet } from "./createFacets";
-import { ManifestEntry } from "./manifestEntry";
-import { BSON } from "bson";
+import { JSONPath } from 'jsonpath-plus';
+import { Facet } from './createFacets';
+import { ManifestEntry } from './manifestEntry';
+import { BSON } from 'bson';
 
 export class Document {
 	//Return indexing data from a page's JSON-formatted AST for search purposes
@@ -19,8 +19,8 @@ export class Document {
 	noIndex: any;
 	reasons: any;
 
-  constructor(doc: BSON.Document) {
-    this.tree = doc;
+	constructor(doc: BSON.Document) {
+		this.tree = doc;
 
 		//find metadata
 		[this.robots, this.keywords, this.description] = this.findMetadata();
@@ -64,9 +64,9 @@ export class Document {
 			if ('robots' in val && (val.robots == 'None' || val.robots == 'noindex'))
 				robots = false;
 
-      keywords = val?.keywords;
-      description = val?.description;
-    }
+			keywords = val?.keywords;
+			description = val?.description;
+		}
 
 		return [robots, keywords, description];
 	}
@@ -202,10 +202,10 @@ export class Document {
 	exportAsManifestDocument = () => {
 		// Generate the manifest dictionary entry from the AST source
 
-    if (this.noIndex) {
-      console.info("Refusing to index");
-      return;
-    }
+		if (this.noIndex) {
+			console.info('Refusing to index');
+			return;
+		}
 
 		const document = new ManifestEntry({
 			slug: this.slug,

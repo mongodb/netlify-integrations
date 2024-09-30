@@ -3,13 +3,13 @@ import crypto from 'crypto';
 export function generateHash(data: string): Promise<string> {
 	const hash = crypto.createHash('sha256');
 
-  return new Promise((resolve) => {
-    hash.on("readable", () => {
-      const data = hash.read();
-      if (data) {
-        resolve(data.toString("hex"));
-      }
-    });
+	return new Promise((resolve) => {
+		hash.on('readable', () => {
+			const data = hash.read();
+			if (data) {
+				resolve(data.toString('hex'));
+			}
+		});
 
 		hash.write(data);
 		hash.end();
@@ -17,13 +17,13 @@ export function generateHash(data: string): Promise<string> {
 }
 
 export function joinUrl({
-  base,
-  path,
+	base,
+	path,
 }: {
-  base: string;
-  path: string;
+	base: string;
+	path: string;
 }): string {
-  return base.replace(/\/*$/, "/") + path.replace(/^\/*/, "");
+	return base.replace(/\/*$/, '/') + path.replace(/^\/*/, '');
 }
 
 export function assertTrailingSlash(path: string): string {

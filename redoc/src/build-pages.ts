@@ -18,7 +18,7 @@ const COLLECTION_NAME = 'oas_files';
 const OAS_FILE_SERVER =
 	'https://mongodb-mms-build-server.s3.amazonaws.com/openapi/';
 
-export const normalizePath = (path: string) => path.replace(/\/+/g, `/`);
+export const normalizePath = (path: string) => path.replace(/\/+/g, '/');
 export const normalizeUrl = (url: string) => {
 	const urlObject = new URL(url);
 	urlObject.pathname = normalizePath(urlObject.pathname);
@@ -112,7 +112,7 @@ const createFetchGitHash = () => {
 				return gitHash;
 			} catch (e) {
 				console.error(e);
-				throw new Error(`Unsuccessful git hash fetch`);
+				throw new Error('Unsuccessful git hash fetch');
 			}
 		},
 		resetGitHashCache: () => {
@@ -236,7 +236,7 @@ export async function buildOpenAPIPages(
 		}
 
 		// If all builds successful, persist git hash and version data in db
-		if (isSuccessfulBuild && sourceType == 'atlas') {
+		if (isSuccessfulBuild && sourceType === 'atlas') {
 			try {
 				const gitHash = await fetchGitHash();
 				const versions = await fetchVersionData(gitHash, OAS_FILE_SERVER);
