@@ -9,7 +9,11 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
-import { closeSearchDb, teardown } from "./uploadToAtlas/searchConnector";
+import {
+  closeSearchDb,
+  closeSnootyDb,
+  teardown,
+} from "./uploadToAtlas/searchConnector";
 import { s3UploadParams } from "./types";
 
 const readdirAsync = promisify(readdir);
@@ -85,12 +89,14 @@ integration.addBuildEventHandler(
       manifest.global = includeInGlobalSearch;
 
       console.log("=========== Uploading Manifests to Atlas =================");
-      await uploadManifest(manifest, searchProperty);
+      const status = await uploadManifest(manifest, searchProperty);
+      console.log(status);
       console.log("=========== Manifests uploaded to Atlas =================");
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     } finally {
       closeSearchDb();
+      closeSnootyDb();
     }
   }
 );

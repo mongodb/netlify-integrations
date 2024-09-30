@@ -110,6 +110,6 @@ export const uploadManifest = async (
       `Error writing upserts to Search.documents collection with error ${e}`
     );
   } finally {
-    await closeSearchDb();
+    // await closeSearchDb();
   }
 };

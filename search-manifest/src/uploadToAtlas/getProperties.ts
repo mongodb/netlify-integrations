@@ -126,7 +126,7 @@ const getProperties = async (branchName: string) => {
       `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
     );
   }
-  await closeSnootyDb();
+  // await closeSnootyDb();
   return {
     searchProperty,
     projectName: project,
