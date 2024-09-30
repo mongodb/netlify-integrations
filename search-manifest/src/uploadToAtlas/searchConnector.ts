@@ -30,7 +30,7 @@ export const closeSnootyDb = async () => {
 export const closeSearchDb = async () => {
   if (searchDbClient) teardown(searchDbClient);
   else {
-    console.log("No client connection open to Snooty Db");
+    console.log("No client connection open to Search Db");
   }
 };
 

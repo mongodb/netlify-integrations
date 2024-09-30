@@ -1,5 +1,11 @@
 import { Collection, Db } from "mongodb";
-import { closeSnootyDb, db, getCollection, teardown } from "./searchConnector";
+import {
+  closeSnootyDb,
+  db,
+  getCollection,
+  getSnootyDb,
+  teardown,
+} from "./searchConnector";
 import {
   BranchEntry,
   DatabaseDocument,
@@ -88,10 +94,7 @@ const getProperties = async (branchName: string) => {
   }
 
   //connect to database and get repos_branches, docsets collections
-  const dbSession = await db({
-    uri: ATLAS_CLUSTER0_URI,
-    dbName: SNOOTY_DB_NAME,
-  });
+  const dbSession = await getSnootyDb();
   const repos_branches = getCollection(dbSession, "repos_branches");
   const docsets = getCollection(dbSession, "docsets");
 
