@@ -95,8 +95,8 @@ integration.addBuildEventHandler(
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     } finally {
-      closeSearchDb();
-      closeSnootyDb();
+      await closeSearchDb();
+      await closeSnootyDb();
     }
   }
 );

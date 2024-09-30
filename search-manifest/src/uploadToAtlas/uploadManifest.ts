@@ -1,7 +1,6 @@
 import type { Manifest } from "../generateManifest/manifest";
 import {
   closeSearchDb,
-  db,
   getCollection,
   getSearchDb,
   teardown,

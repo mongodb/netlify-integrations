@@ -1,7 +1,6 @@
-import { Collection, Db } from "mongodb";
+import { Collection, Db, DbOptions } from "mongodb";
 import {
   closeSnootyDb,
-  db,
   getCollection,
   getSnootyDb,
   teardown,
@@ -94,7 +93,7 @@ const getProperties = async (branchName: string) => {
   }
 
   //connect to database and get repos_branches, docsets collections
-  const dbSession = await getSnootyDb();
+  const dbSession: Db = await getSnootyDb();
   const repos_branches = getCollection(dbSession, "repos_branches");
   const docsets = getCollection(dbSession, "docsets");
 
