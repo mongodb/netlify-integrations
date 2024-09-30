@@ -11,3 +11,4 @@ config:
     user:
       - read
   integrationLevel: site
+  use_cjs_shims: true
