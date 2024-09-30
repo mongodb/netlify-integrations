@@ -1,5 +1,5 @@
 import { NetlifyIntegration } from '@netlify/sdk';
-import { ManifestEntry } from "./manifestEntry";
+import { ManifestEntry } from './manifestEntry';
 
 import type { Db } from 'mongodb';
 import { db } from "./searchConnector";
