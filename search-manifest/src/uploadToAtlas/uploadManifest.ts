@@ -1,5 +1,5 @@
 import type { Manifest } from "../generateManifest/manifest";
-import { db, getCollection, teardown } from "./searchConnector";
+import { closeSearchDb, db, getCollection, teardown } from "./searchConnector";
 import assert from "assert";
 import type { RefreshInfo, DatabaseDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
@@ -107,6 +107,6 @@ export const uploadManifest = async (
       `Error writing upserts to Search.documents collection with error ${e}`
     );
   } finally {
-    await teardown();
+    await closeSearchDb();
   }
 };

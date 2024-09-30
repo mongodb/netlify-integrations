@@ -1,5 +1,5 @@
 import { Collection, Db } from "mongodb";
-import { db, getCollection, teardown } from "./searchConnector";
+import { closeSnootyDb, db, getCollection, teardown } from "./searchConnector";
 import {
   BranchEntry,
   DatabaseDocument,
@@ -123,7 +123,7 @@ const getProperties = async (branchName: string) => {
       `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
     );
   }
-  await teardown();
+  await closeSnootyDb();
   return {
     searchProperty,
     projectName: project,

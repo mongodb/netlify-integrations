@@ -9,7 +9,7 @@ import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 import { readdir, readFileSync } from "fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
-import { teardown } from "./uploadToAtlas/searchConnector";
+import { closeSearchDb, teardown } from "./uploadToAtlas/searchConnector";
 import { s3UploadParams } from "./types";
 
 const readdirAsync = promisify(readdir);
@@ -90,7 +90,7 @@ integration.addBuildEventHandler(
     } catch (e) {
       console.log("Manifest could not be uploaded", e);
     } finally {
-      teardown();
+      closeSearchDb();
     }
   }
 );
