@@ -1,10 +1,5 @@
 import type { Manifest } from "../generateManifest/manifest";
-import {
-  closeSearchDb,
-  getCollection,
-  getSearchDb,
-  teardown,
-} from "./searchConnector";
+import { getDocumentsCollection } from "./searchConnector";
 import assert from "node:assert";
 import type { RefreshInfo, DatabaseDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
@@ -57,9 +52,7 @@ export const uploadManifest = async (
   if (!manifest?.documents?.length) {
     return Promise.reject(new Error("Invalid manifest"));
   }
-
-  const dbSession = await getSearchDb();
-  const documentsColl = getCollection(dbSession, "documents");
+  const documentsColl = await getDocumentsCollection();
 
   const status: RefreshInfo = {
     deleted: 0,

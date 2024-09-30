@@ -10,8 +10,11 @@ const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${
 const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
-//TODO: change these teamwide env vars in Netlify UI when ready to move to prod
 const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
+
+const REPOS_BRANCHES_COLLECTION = "repos_branches";
+const DOCSETS_COLLECTION = "docsets";
+const DOCUMENTS_COLLECTION = "documents";
 
 let searchDb: mongodb.MongoClient;
 let snootyDb: mongodb.MongoClient;
@@ -21,13 +24,7 @@ export const teardown = async (client: mongodb.MongoClient) => {
 };
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
-export const dbClient = async ({
-  uri,
-  dbName,
-}: {
-  uri: string;
-  dbName: string;
-}) => {
+export const dbClient = async (uri: string) => {
   const client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
@@ -46,7 +43,7 @@ export const getSearchDb = async () => {
   if (searchDb) {
     console.log("search db client already exists, using existing instance");
   } else {
-    searchDb = await dbClient({ uri, dbName });
+    searchDb = await dbClient(uri);
   }
   return searchDb.db(dbName);
 };
@@ -59,19 +56,9 @@ export const getSnootyDb = async () => {
   if (snootyDb) {
     console.log("snooty db client already exists, using existing instance");
   } else {
-    snootyDb = await dbClient({ uri, dbName });
+    snootyDb = await dbClient(uri);
   }
   return snootyDb.db(dbName);
-};
-
-export const getCollection = (dbSession: Db, collection: string) => {
-  try {
-    return dbSession.collection<DatabaseDocument>(collection);
-  } catch (e) {
-    throw new Error(
-      `Error getting ${collection} collection from client: ${dbSession}`
-    );
-  }
 };
 
 export const closeSnootyDb = async () => {
@@ -86,4 +73,19 @@ export const closeSearchDb = async () => {
   else {
     console.log("No client connection open to Search Db");
   }
+};
+
+export const getDocsetsCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<DatabaseDocument>(DOCSETS_COLLECTION);
+};
+
+export const getReposBranchesCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<DatabaseDocument>(REPOS_BRANCHES_COLLECTION);
+};
+
+export const getDocumentsCollection = async () => {
+  const dbSession = await getSearchDb();
+  return dbSession.collection<DatabaseDocument>(DOCUMENTS_COLLECTION);
 };

@@ -1,5 +1,8 @@
 import { type Collection, type Db, DbOptions } from "mongodb";
-import { getCollection, getSnootyDb } from "./searchConnector";
+import {
+  getDocsetsCollection,
+  getReposBranchesCollection,
+} from "./searchConnector";
 import type {
   BranchEntry,
   DatabaseDocument,
@@ -8,9 +11,6 @@ import type {
 } from "../types";
 import { assertTrailingSlash } from "../utils";
 import { deleteStaleProperties } from "./deleteStale";
-
-const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
 
 export const getDocsetEntry = async (
   docsets: Collection<DatabaseDocument>,
@@ -88,9 +88,8 @@ const getProperties = async (branchName: string) => {
   }
 
   //connect to database and get repos_branches, docsets collections
-  const dbSession: Db = await getSnootyDb();
-  const repos_branches = getCollection(dbSession, "repos_branches");
-  const docsets = getCollection(dbSession, "docsets");
+  const repos_branches = await getReposBranchesCollection();
+  const docsets = await getDocsetsCollection();
 
   const repo: ReposBranchesDocument = await getRepoEntry({
     repoName: REPO_NAME,
