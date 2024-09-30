@@ -1,11 +1,6 @@
-import { Collection, Db, DbOptions } from "mongodb";
-import {
-  closeSnootyDb,
-  getCollection,
-  getSnootyDb,
-  teardown,
-} from "./searchConnector";
-import {
+import { type Collection, type Db, DbOptions } from "mongodb";
+import { getCollection, getSnootyDb } from "./searchConnector";
+import type {
   BranchEntry,
   DatabaseDocument,
   DocsetsDocument,
@@ -24,7 +19,7 @@ export const getDocsetEntry = async (
   const docsetsQuery = { project: { $eq: project } };
   const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
   if (!docset) {
-    throw new Error(`Error while getting docsets entry in Atlas`);
+    throw new Error("Error while getting docsets entry in Atlas");
   }
   return docset;
 };
@@ -75,7 +70,7 @@ export const getRepoEntry = async ({
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   for (const branchObj of branches) {
-    if (branchObj.gitBranchName.toLowerCase() == branchName.toLowerCase()) {
+    if (branchObj.gitBranchName.toLowerCase() === branchName.toLowerCase()) {
       return { ...branchObj };
     }
   }

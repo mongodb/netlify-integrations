@@ -5,7 +5,7 @@ import {
   getSearchDb,
   teardown,
 } from "./searchConnector";
-import assert from "assert";
+import assert from "node:assert";
 import type { RefreshInfo, DatabaseDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
 
@@ -85,7 +85,7 @@ export const uploadManifest = async (
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-  console.info(`Starting transaction`);
+  console.info("Starting transaction");
   assert.strictEqual(typeof manifest.global, "boolean");
   assert.strictEqual(typeof hash, "string");
   assert.ok(hash);

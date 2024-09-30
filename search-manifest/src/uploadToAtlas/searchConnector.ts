@@ -1,6 +1,6 @@
 import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
-import { DatabaseDocument } from "../types";
+import type { DatabaseDocument } from "../types";
 
 // We should only ever have one client active at a time.
 

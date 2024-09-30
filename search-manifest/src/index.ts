@@ -1,20 +1,16 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from "@netlify/sdk";
 import { Manifest } from "./generateManifest/manifest";
-import { promisify } from "util";
+import { promisify } from "node:util";
 import { BSON } from "bson";
 import { Document } from "./generateManifest/document";
 import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
-import { readdir, readFileSync } from "fs";
+import { readdir, readFileSync } from "node:fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
-import {
-  closeSearchDb,
-  closeSnootyDb,
-  teardown,
-} from "./uploadToAtlas/searchConnector";
-import { s3UploadParams } from "./types";
+import { closeSearchDb, closeSnootyDb } from "./uploadToAtlas/searchConnector";
+import type { s3UploadParams } from "./types";
 
 const readdirAsync = promisify(readdir);
 
@@ -53,7 +49,7 @@ integration.addBuildEventHandler(
     // Get content repo zipfile as AST representation
 
     await run.command("unzip -o bundle.zip");
-    const branch = netlifyConfig.build?.environment["BRANCH"];
+    const branch = netlifyConfig.build?.environment.BRANCH;
 
     const manifest = await generateManifest();
 

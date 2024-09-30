@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import {
+import type {
   PutObjectCommand,
   PutObjectCommandOutput,
   S3Client,
@@ -7,11 +7,11 @@ import {
 import { mockClient } from "aws-sdk-client-mock";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifestToS3 } from "../../src/uploadToS3/uploadManifest";
-import { s3UploadParams } from "../../src/types";
+import type { s3UploadParams } from "../../src/types";
 
 const MANIFEST = await getManifest("node");
-const PROJECT_NAME = `node`;
-const BRANCH = `master`;
+const PROJECT_NAME = "node";
+const BRANCH = "master";
 
 const output: PutObjectCommandOutput = {
   $metadata: {
