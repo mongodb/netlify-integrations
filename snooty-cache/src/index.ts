@@ -9,6 +9,8 @@ import { checkForNewSnootyVersion } from './snooty-frontend-version-check';
 
 const readdirAsync = promisify(readdir);
 
+const MUT_VERSION = '0.11.4';
+
 const getCacheFilePaths = (filesPaths: string[]): string[] =>
   filesPaths.filter((filePath) => filePath.endsWith('.cache.gz'));
 
@@ -55,6 +57,30 @@ integration.addBuildEventHandler(
 );
 
 integration.addBuildEventHandler(
+  'onSuccess',
+  async ({ utils: { run, status } }) => {
+    const redirectErrs = '';
+
+    console.log('Downloading Mut...');
+    await run('curl', [
+      '-L',
+      '-o',
+      'mut.zip',
+      `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`,
+    ]);
+    await run.command('unzip -d . -qq mut.zip');
+    try {
+      console.log('Running mut-redirects...');
+      await run.command(
+        `${process.cwd()}/mut/mut-redirects config/redirects -o snooty/public/.htaccess`,
+      );
+    } catch (e) {
+      console.log(`Error occurred while running mut-redirects: ${e}`);
+    }
+  },
+);
+
+integration.addBuildEventHandler(
   'onEnd',
   async ({ utils: { run, status } }) => {
     console.log('Creating cache files...');
@@ -81,6 +107,7 @@ integration.addBuildEventHandler(
       if (row.includes('ERROR')) errorCount += 1;
       if (row.includes('WARNING')) warningCount += 1;
     }
+
     status.show({
       title: `Snooty Parser Logs - Errors: ${errorCount} | Warnings: ${warningCount}`,
       summary: logsSplit.join('\n'),
