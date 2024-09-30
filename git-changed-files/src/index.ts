@@ -3,7 +3,7 @@ import { ManifestEntry } from './manifestEntry';
 
 import type { Db } from 'mongodb';
 import { db } from "./searchConnector";
-import * as mongodb from 'mongodb';
+// import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
 
