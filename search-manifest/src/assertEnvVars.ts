@@ -1,4 +1,4 @@
-export const assertEnvVars = (vars: any) => {
+const assertEnvVars = (vars: any) => {
   const missingVars = Object.entries(vars)
     .filter(([, value]) => !value)
     .map(([key]) => `- ${key}`)
@@ -18,5 +18,6 @@ export const getEnvVars = () => {
     DOCSETS_COLLECTION: "docsets",
     DOCUMENTS_COLLECTION: "documents",
   };
-  if (assertEnvVars(ENV_VARS)) return ENV_VARS;
+  assertEnvVars(ENV_VARS);
+  return ENV_VARS;
 };
