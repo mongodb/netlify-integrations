@@ -17,7 +17,7 @@ export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
   client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
-    // console.log(JSON.stringify(client));
+    console.log(client);
     dbInstance = client.db(dbName);
   } catch (error) {
     const err = `Error at db client connection: ${error} for uri ${uri} and db name ${dbName}`;
