@@ -1,5 +1,5 @@
 {
-	"name": "snooty-cache-plugin",
+	"name": "git-changed-files",
 	"version": "0.0.1",
 	"main": "src/index.ts",
 	"type": "module",
@@ -12,7 +12,8 @@
 	"dependencies": {
 		"@netlify/sdk": "^1.60.2-pr-1468.3",
 		"axios": "^1.7.7",
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+    "mongodb": "^6.8.0"
 	},
 	"devDependencies": {
 		"@netlify/build": "^29.50.2",

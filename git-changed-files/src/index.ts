@@ -3,7 +3,7 @@ import { ManifestEntry } from './manifestEntry';
 
 import type { Db } from 'mongodb';
 import { db } from "./searchConnector";
-// import * as mongodb from 'mongodb';
+import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
 
@@ -116,7 +116,7 @@ integration.addBuildEventHandler('onSuccess', ({ utils: { status, git } , netlif
   // do i need to get the branch as well ? 
 
   // connect to mongodb and pool.docsets to get buck---------
-
+  getProperties(repoName);
   // download mut and run mut publish----------
 });
 
