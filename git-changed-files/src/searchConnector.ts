@@ -1,28 +1,75 @@
-import { Db } from "mongodb";
+import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
+import { DatabaseDocument } from "./types";
 
 // We should only ever have one client active at a time.
 
-//TODO: teardown after no longer need client
-// export const teardown = async () => {
-//   await client.close();
-// };
-
 // cached db object, so we can handle initial connection process once if unitialized
-let dbInstance: Db;
-let client: mongodb.MongoClient;
+
+const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
+const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;
+
+const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
+//TODO: change these teamwide env vars in Netlify UI when ready to move to prod
+const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
+
+let searchDbClient: mongodb.MongoClient;
+let snootyDbClient: mongodb.MongoClient;
+
+export const teardown = async (client: mongodb.MongoClient) => {
+  await client.close();
+};
+
+export const closeSnootyDb = async () => {
+  if (snootyDbClient) await teardown(snootyDbClient);
+  else {
+    console.log("No client connection open to Snooty Db");
+  }
+};
+
+export const closeSearchDb = async () => {
+  if (searchDbClient) await teardown(searchDbClient);
+  else {
+    console.log("No client connection open to Search Db");
+  }
+};
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
-export const db = async (uri: string, db_name: string) => {
-  client = new mongodb.MongoClient(uri);
+export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
+  const client = new mongodb.MongoClient(uri);
   try {
     await client.connect();
-    dbInstance = client.db(db_name);
+    const dbInstance = client.db(dbName);
+    return dbInstance;
   } catch (error) {
-    console.error(
-      `Error at db client connection: ${error} for uri ${uri} and db name ${db_name}`
-    );
-    throw error;
+    const err = `Error at db client connection: ${error} for uri ${uri} and db name ${dbName}`;
+    console.error(err);
+    throw err;
   }
-  return dbInstance;
+};
+
+export const getSearchDb = async () => {
+  console.log("getting search db");
+  const uri = ATLAS_SEARCH_URI;
+  const dbName = SEARCH_DB_NAME;
+  const searchDbClient = await db({ uri, dbName });
+  return searchDbClient;
+};
+
+export const getSnootyDb = async () => {
+  console.log("getting snooty db");
+  const uri = ATLAS_CLUSTER0_URI;
+  const dbName = SNOOTY_DB_NAME;
+  const snootyDbClient = await db({ uri, dbName });
+  return snootyDbClient;
+};
+
+export const getCollection = (dbSession: Db, collection: string) => {
+  try {
+    return dbSession.collection<DatabaseDocument>(collection);
+  } catch (e) {
+    throw new Error(
+      `Error getting ${collection} collection from client: ${dbSession}`
+    );
+  }
 };

@@ -1,20 +1,22 @@
 import { NetlifyIntegration } from '@netlify/sdk';
-import { ManifestEntry } from './manifestEntry';
+import {
+  BranchEntry,
+  DatabaseDocument,
+  DocsetsDocument,
+  ReposBranchesDocument,
+} from "./types";
+import {
+  closeSnootyDb,
+  db,
+  getCollection,
+  getSnootyDb,
+  teardown,
+} from "./searchConnector";
 
-import type { Db } from 'mongodb';
-import { db } from "./searchConnector";
+import type { Collection, Db } from 'mongodb';
 import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
-
-
-export interface DatabaseDocument extends ManifestEntry {
-  url: string;
-  lastModified: Date;
-  manifestRevisionId: string;
-  searchProperty: string[];
-  includeInGlobalSearch: boolean;
-}
 
 // let dbInstance: Db;
 // let client: mongodb.MongoClient;
@@ -128,36 +130,79 @@ const getProperties = async (repo_name: string) => {
 
   console.log(SNOOTY_DB_NAME, second_repo_name, repo_name);
   
-  let dbSession: Db;
-  let docsets;
-  let url: string = "";
-  let searchProperty: string = "";
-  let repo: any;
-  let docsetRepo: any;
+  //connect to database and get repos_branches, docsets collections
+  const dbSession = await getSnootyDb();
+  const repos_branches = getCollection(dbSession, "repos_branches");
+  const docsets = getCollection(dbSession, "docsets");
 
-  try {
-    dbSession = await db(ATLAS_CLUSTER0_URI, SNOOTY_DB_NAME);
-    docsets = dbSession.collection<DatabaseDocument>("docsets");
-  } catch (e) {
-    console.log("issue starting session for Snooty Pool Database", e);
-  }
+  const repo: ReposBranchesDocument = await getRepoEntry({
+    repoName: repo_name,
+    repos_branches,
+  });
 
-  const query = {
-    project: repo_name,
-  };
-
-  try {
-    docsetRepo = await docsets?.find(query).toArray();
-    // if (docsetRepo.length) {
-    //   url = docsetRepo[0].url.dotcomprd + docsetRepo[0].prefix.dotcomprd;
-    // }
-    console.log("succes on getting docset data: ", docsetRepo);
-  } catch (e) {
-    console.error(`Error while getting docsets entry in Atlas ${e}`);
-    throw e;
-  }
+  const { project } = repo;
+  const docsetEntry = await getDocsetEntry(docsets, project);
+  console.log("printing the entries I queried --------------------");
+  console.log(repo);
+  console.log(docsetEntry);
 
 }
+
+export const getDocsetEntry = async (
+  docsets: Collection<DatabaseDocument>,
+  project: string
+) => {
+  const docsetsQuery = { project: { $eq: project } };
+  const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+  if (!docset) {
+    throw new Error(`Error while getting docsets entry in Atlas`);
+  }
+  return docset;
+};
+
+export const getRepoEntry = async ({
+  repoName,
+  repos_branches,
+}: {
+  repoName: string;
+  repos_branches: Collection<DatabaseDocument>;
+}) => {
+  const query = {
+    repoName: repoName,
+  };
+
+  const repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+    projection: {
+      _id: 0,
+      project: 1,
+      search: 1,
+      branches: 1,
+      prodDeployable: 1,
+      internalOnly: 1,
+    },
+  });
+  if (!repo) {
+    throw new Error(
+      `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
+        query
+      )}`
+    );
+  }
+  // don't think i need this code for the mut plugin , this is a manifest thing ---------------------------
+  // if (
+  //   repo.internalOnly ||
+  //   !repo.prodDeployable ||
+  //   !repo.search?.categoryTitle
+  // ) {
+  //   // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
+  //   await deleteStaleProperties(repo.project);
+  //   throw new Error(
+  //     `Search manifest should not be generated for repo ${repoName}. Removing all associated manifests`
+  //   );
+  // }
+
+  return repo;
+};
 
 
 
