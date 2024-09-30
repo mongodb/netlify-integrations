@@ -41,7 +41,6 @@ export const generateManifest = async () => {
   }
   return manifest;
 };
-
 //Return indexing data from a page's AST for search purposes.
 integration.addBuildEventHandler(
   "onSuccess",
@@ -49,7 +48,16 @@ integration.addBuildEventHandler(
     // Get content repo zipfile as AST representation
 
     await run.command("unzip -o bundle.zip");
-    const branch = netlifyConfig.build?.environment.BRANCH;
+
+    const branchName = netlifyConfig.build?.environment.BRANCH;
+    const repoName =
+      process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
+    //check that an environment variable for repo name was set
+    if (!repoName || !branchName) {
+      throw new Error(
+        "Repo or branch name was not found, manifest cannot be uploaded to Atlas or S3 "
+      );
+    }
 
     const manifest = await generateManifest();
 
@@ -64,14 +72,14 @@ integration.addBuildEventHandler(
       projectName: string;
       url: string;
       includeInGlobalSearch: boolean;
-    } = await getProperties(branch);
+    } = await getProperties({ branchName, repoName });
 
     console.log("=========== Uploading Manifests to S3=================");
     const uploadParams: s3UploadParams = {
       bucket: "docs-search-indexes-test",
       //TODO: change this values based on environments
       prefix: "search-indexes/ab-testing",
-      fileName: `${projectName}-${branch}.json`,
+      fileName: `${projectName}-${branchName}.json`,
       manifest: manifest.export(),
     };
 

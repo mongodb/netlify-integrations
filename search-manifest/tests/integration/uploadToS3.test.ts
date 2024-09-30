@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import type {
+import {
   PutObjectCommand,
-  PutObjectCommandOutput,
+  type PutObjectCommandOutput,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { mockClient } from "aws-sdk-client-mock";

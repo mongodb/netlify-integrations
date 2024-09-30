@@ -77,22 +77,19 @@ export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   throw new Error(`Branch ${branchName} not found in branches object`);
 };
 
-const getProperties = async (branchName: string) => {
-  const REPO_NAME = process.env.REPO_NAME;
-
-  //check that an environment variable for repo name was set
-  if (!REPO_NAME) {
-    throw new Error(
-      "No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection "
-    );
-  }
-
+const getProperties = async ({
+  branchName,
+  repoName,
+}: {
+  branchName: string;
+  repoName: string;
+}) => {
   //connect to database and get repos_branches, docsets collections
   const repos_branches = await getReposBranchesCollection();
   const docsets = await getDocsetsCollection();
 
   const repo: ReposBranchesDocument = await getRepoEntry({
-    repoName: REPO_NAME,
+    repoName: repoName,
     repos_branches,
   });
 
@@ -116,7 +113,7 @@ const getProperties = async (branchName: string) => {
   if (!active) {
     await deleteStaleProperties(searchProperty);
     throw new Error(
-      `Search manifest should not be generated for inactive version ${version} of repo ${REPO_NAME}. Removing all associated manifests`
+      `Search manifest should not be generated for inactive version ${version} of repo ${repoName}. Removing all associated manifests`
     );
   }
   // await closeSnootyDb();
