@@ -21,6 +21,29 @@ export async function mockDb(): Promise<mongodb.Db> {
   const dbInstance = client.db("dummy_db");
   return dbInstance;
 }
+export const getSearchDb = async () => {
+  const db = await mockDb();
+  return db;
+};
+export const getSnootyDb = async () => {
+  const db = await mockDb();
+  return db;
+};
+
+export const getDocumentsCollection = async () => {
+  const dbSession = await getSearchDb();
+  return dbSession.collection<DatabaseDocument>("documents");
+};
+
+export const getReposBranchesCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<DatabaseDocument>("repos_branches");
+};
+
+export const getDocsetsCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<DatabaseDocument>("docsets");
+};
 
 export const insert = async (
   dbName: mongodb.Db,

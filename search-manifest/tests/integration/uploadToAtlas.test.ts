@@ -1,46 +1,41 @@
 import {
   afterAll,
-  beforeEach,
   afterEach,
   describe,
   expect,
   test,
   vi,
+  beforeAll,
 } from "vitest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { Manifest } from "../../src/generateManifest/manifest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import { mockDb, insert, removeDocuments } from "../utils/mockDB";
-import type { DatabaseDocument } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 import { generateHash } from "../../src/utils";
+import { getDocumentsCollection } from "../../src/uploadToAtlas/searchConnector";
 
 const PROPERTY_NAME = "dummyName";
 
 //teardown connections
-beforeEach(async () => {
-  vi.mock("../../src/uploadToAtlas/searchConnector", async (importOriginal) => {
-    const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
-    const { getCollection } = await import(
-      "../../src/uploadToAtlas/searchConnector"
-    );
+beforeAll(async () => {
+  vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
+    const { getSearchDb, teardownMockDbClient, getDocumentsCollection } =
+      await import("../utils/mockDB");
+
     return {
-      getCollection: getCollection,
+      getSearchDb: getSearchDb,
+      getDocumentsCollection: getDocumentsCollection,
       teardown: teardownMockDbClient,
-      db: async () => {
-        const db = await mockDb();
-        return db;
-      },
     };
   });
 });
 
 const checkCollection = async () => {
-  const db = await mockDb();
-  const documentCount = await db
-    .collection<DatabaseDocument>("documents")
-    .estimatedDocumentCount();
-  expect(documentCount).toEqual(0);
+  const docCount = await (
+    await getDocumentsCollection()
+  ).estimatedDocumentCount();
+  expect(docCount).toEqual(0);
 };
 
 afterAll(async () => {
@@ -84,8 +79,7 @@ describe("Upload manifest uploads to Atlas db", () => {
     await uploadManifest(manifest, PROPERTY_NAME);
 
     //check that manifests have been uploaded
-    const db = await mockDb();
-    const documents = db.collection<DatabaseDocument>("documents");
+    const documents = await getDocumentsCollection();
     //count number of documents in collection
     expect(await documents.countDocuments()).toEqual(manifest.documents.length);
   });
@@ -99,8 +93,7 @@ describe("Upload manifest uploads to Atlas db", () => {
     expect(status.upserted).toEqual(manifest.documents.length);
 
     //check that manifests have been uploaded
-    const db = await mockDb();
-    const documents = db.collection<DatabaseDocument>("documents");
+    const documents = await getDocumentsCollection();
     expect(await documents.countDocuments()).toEqual(manifest.documents.length);
   });
 });
@@ -116,8 +109,7 @@ describe(
       nodeManifest.includeInGlobalSearch
     );
     manifest1.documents = nodeManifest.documents;
-    const db = await mockDb();
-    const documents = db.collection("documents");
+    const documents = await getDocumentsCollection();
     const kotlinManifest = await getManifest("kotlin");
 
     test("nodeManifest uploads all documents", async () => {
@@ -125,8 +117,6 @@ describe(
       const status1 = await uploadManifest(manifest1, PROPERTY_NAME);
       expect(status1.upserted).toEqual(manifest1.documents.length);
       //reopen connection to count current num of documents in collection
-      await mockDb();
-
       expect(await documents.countDocuments()).toEqual(
         manifest1.documents.length
       );
@@ -138,9 +128,7 @@ describe(
 
     test("two separate manifests uplodaded uploads correct number of entries", async () => {
       //find a way to check that there are no documents in the collection yet
-      await mockDb();
       const status = await uploadManifest(manifest1, PROPERTY_NAME);
-      await mockDb();
       expect(await documents.countDocuments()).toEqual(
         manifest1.documents.length
       );
@@ -156,18 +144,14 @@ describe(
 
     test("stale documents from same search property are removed", async () => {
       //upload documents
-      const db = await mockDb();
       const status = await uploadManifest(manifest1, PROPERTY_NAME);
-      await mockDb();
       const status1 = await uploadManifest(kotlinManifest, "docs-kotlin");
       //reopen connection to count current num of documents in collection
-      await mockDb();
       expect(await documents.countDocuments()).toEqual(
         kotlinManifest.documents.length + manifest1.documents.length
       );
 
       //insert entries with random slugs
-      await mockDb();
       const dummyHash = generateHash("dummyManifest");
       const dummyDate = new Date();
       const dummyDocs = [
@@ -184,17 +168,17 @@ describe(
           slug: "dummySlug2",
         },
       ];
-
+      const db = await mockDb();
       insert(db, "documents", dummyDocs);
       //upload node documents again
-      await mockDb();
 
       const status3 = await uploadManifest(manifest1, PROPERTY_NAME);
       expect(status3.deleted).toEqual(dummyDocs.length);
       expect(status3.modified).toEqual(manifest1.documents.length);
       //check all documents have current hash, time
-      await mockDb();
-      const empty = await db.collection<DatabaseDocument>("documents").findOne({
+      const empty = await (
+        await getDocumentsCollection()
+      ).findOne({
         searchProperty: PROPERTY_NAME,
         manifestRevisionId: dummyHash,
       });

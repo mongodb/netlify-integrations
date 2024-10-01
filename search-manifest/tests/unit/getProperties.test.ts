@@ -1,62 +1,57 @@
+import { describe, expect, test, vi, beforeAll, afterAll } from "vitest";
 import {
-  describe,
-  beforeEach,
-  expect,
-  test,
-  vi,
-  beforeAll,
-  afterAll,
-} from "vitest";
+  insert,
+  removeDocuments,
+  teardownMockDbClient,
+  mockDb,
+} from "../utils/mockDB";
+
 import getProperties, {
   getBranch,
 } from "../../src/uploadToAtlas/getProperties";
-import {
-  mockDb,
-  teardownMockDbClient,
-  insert,
-  removeDocuments,
-} from "../utils/mockDB";
+
 // simulate the repos_branches collection in an object
 import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
-import type * as mongodb from "mongodb";
 import type { BranchEntry, DatabaseDocument } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { afterEach } from "node:test";
+import { getDocumentsCollection } from "../../src/uploadToAtlas/searchConnector";
 
 const BRANCH_NAME_MASTER = "master";
 const BRANCH_NAME_BETA = "beta";
 const BRANCH_NAME_GIBBERISH = "gibberish";
-let db: mongodb.Db;
 
 const DOCS_COMPASS_NAME = "docs-compass";
 const DOCS_CLOUD_NAME = "cloud-docs";
 const DOCS_APP_SERVICES_NAME = "docs-app-services";
 const DOCS_MONGODB_INTERNAL_NAME = "docs-mongodb-internal";
+const DOCS_MMS_NAME = "mms-docs";
 
 beforeAll(async () => {
-  db = await mockDb();
+  //insert repo metadata into dummy repos_branches and docsets collections
+  const db = await mockDb();
   await insert(db, "repos_branches", repos_branches);
   await insert(db, "docsets", docsets);
-});
 
-//mock repos_branches database
-beforeEach(async () => {
   vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
-    const { mockDb, teardownMockDbClient } = await import("../utils/mockDB");
-    const { getCollection } = await import(
-      "../../src/uploadToAtlas/searchConnector"
-    );
+    const {
+      teardownMockDbClient,
+      getReposBranchesCollection,
+      getDocsetsCollection,
+      getDocumentsCollection,
+      getSearchDb,
+      getSnootyDb,
+    } = await import("../utils/mockDB");
     return {
       teardown: teardownMockDbClient,
-      getCollection: getCollection,
-      db: async () => {
-        //mock db of repos_branches
-        db = await mockDb();
-        return db;
-      },
+      getSearchDb: getSearchDb,
+      getSnootyDb: getSnootyDb,
+      getDocumentsCollection: getDocumentsCollection,
+      getReposBranchesCollection: getReposBranchesCollection,
+      getDocsetsCollection: getDocsetsCollection,
     };
   });
 });
@@ -105,21 +100,22 @@ describe("Given a branchname, get the properties associated with it from repos_b
   //mock repo name
   test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_COMPASS_NAME}`, async () => {
     //define expected properties object for master branch of Compass repo
-    process.env.REPO_NAME = DOCS_COMPASS_NAME;
     const compassMasterProperties = {
       searchProperty: "compass-current",
       projectName: "compass",
       url: "http://mongodb.com/docs/compass/",
       includeInGlobalSearch: true,
     };
-    expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
-      compassMasterProperties
-    );
+    expect(
+      await getProperties({
+        branchName: BRANCH_NAME_MASTER,
+        repoName: DOCS_COMPASS_NAME,
+      })
+    ).toEqual(compassMasterProperties);
   });
 
   test(`correct properties are retrieved for branch ${BRANCH_NAME_MASTER} of repoName ${DOCS_CLOUD_NAME}`, async () => {
     //define expected properties object for master branch of cloud-docs repo
-    process.env.REPO_NAME = DOCS_CLOUD_NAME;
     const cloudDocsMasterProperties = {
       searchProperty: "atlas-master",
       projectName: "cloud-docs",
@@ -127,9 +123,12 @@ describe("Given a branchname, get the properties associated with it from repos_b
       includeInGlobalSearch: true,
     };
 
-    expect(await getProperties(BRANCH_NAME_MASTER)).toEqual(
-      cloudDocsMasterProperties
-    );
+    expect(
+      await getProperties({
+        branchName: BRANCH_NAME_MASTER,
+        repoName: DOCS_CLOUD_NAME,
+      })
+    ).toEqual(cloudDocsMasterProperties);
   });
 });
 
@@ -142,65 +141,70 @@ describe(
 
     test("getting properties for an inactive branch with no existing documents executes correctly and does not change db document count", async () => {
       //populate db with manifests
-      db = await mockDb();
       const manifest1 = await getManifest("mms-master");
       await uploadManifest(manifest1, "mms-docs-stable");
-      //reopen connection to db
-      await mockDb();
       //check number of documents initially in db
-      const documentCount = await db
-        .collection<DatabaseDocument>("documents")
-        .countDocuments();
+      const documentCount = await (
+        await getDocumentsCollection()
+      ).countDocuments();
 
       //getProperties for beta doens't change number of documents in collection
-      process.env.repo_name = "docs-compass";
-      await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
-      await mockDb();
-      expect(
-        await db.collection<DatabaseDocument>("documents").countDocuments()
-      ).toEqual(documentCount);
+      await expect(
+        getProperties({
+          branchName: BRANCH_NAME_BETA,
+          repoName: DOCS_COMPASS_NAME,
+        })
+      ).rejects.toThrow();
+      expect(await (await getDocumentsCollection()).countDocuments()).toEqual(
+        documentCount
+      );
     });
 
     test("non prod-deployable repo throws and doesn't return properties", async () => {
-      process.env.REPO_NAME = DOCS_MONGODB_INTERNAL_NAME;
-      await expect(getProperties("v5.0")).rejects.toThrow(
-        `Search manifest should not be generated for repo ${process.env.REPO_NAME}. Removing all associated manifests`
+      await expect(
+        getProperties({
+          branchName: "v5.0",
+          repoName: DOCS_MONGODB_INTERNAL_NAME,
+        })
+      ).rejects.toThrow(
+        `Search manifest should not be generated for repo ${DOCS_MONGODB_INTERNAL_NAME}. Removing all associated manifests`
       );
     });
 
     test(`no properties are retrieved for branch on repo ${DOCS_APP_SERVICES_NAME} without a "search" field. `, async () => {
-      process.env.REPO_NAME = DOCS_MONGODB_INTERNAL_NAME;
-      await expect(getProperties(BRANCH_NAME_MASTER)).rejects.toThrow();
+      await expect(
+        getProperties({
+          branchName: BRANCH_NAME_MASTER,
+          repoName: DOCS_MONGODB_INTERNAL_NAME,
+        })
+      ).rejects.toThrow();
     });
 
     test("repo with no search categoryTitle removes all old documents with search properties beginning with that project name", async () => {
-      db = await mockDb();
-
       //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("mms-master");
 
       await uploadManifest(manifest1, "mms-docs-stable");
-      await mockDb();
 
       const manifest2 = await getManifest("mms-v1.3");
       await uploadManifest(manifest2, "mms-docs-v1.3");
 
-      await mockDb();
-
       //trying to get properties for repo removes those older documents
-      process.env.REPO_NAME = "mms-docs";
-      const documentCount = await db
-        .collection<DatabaseDocument>("documents")
-        .countDocuments();
-      await expect(getProperties(BRANCH_NAME_MASTER)).rejects.toThrow();
+      const documentCount = await (
+        await getDocumentsCollection()
+      ).countDocuments();
+      await expect(
+        getProperties({
+          branchName: BRANCH_NAME_MASTER,
+          repoName: DOCS_MMS_NAME,
+        })
+      ).rejects.toThrow();
       //throws
       //no return type
 
-      await mockDb();
-      const documentCount2 = await db
-
-        .collection<DatabaseDocument>("documents")
-        .countDocuments();
+      const documentCount2 = await (
+        await getDocumentsCollection()
+      ).countDocuments();
       expect(documentCount2).toEqual(
         documentCount - manifest1.documents.length - manifest2.documents.length
       );
@@ -208,31 +212,25 @@ describe(
 
     test("getting properties for an inactive branch removes all old documents with that exact project-version searchProperty", async () => {
       //add documents for project from two diff branches to DB-- docs-compass master and beta
-      db = await mockDb();
-      //add documents for project from two diff branches to search DB
       const manifest1 = await getManifest("compass-master");
-
       await uploadManifest(manifest1, "compass-current");
-      await mockDb();
-
       const manifest2 = await getManifest("compass-beta");
       await uploadManifest(manifest2, "compass-upcoming");
-      await mockDb();
 
       //trying to get properties for repo removes only the older documents from that specific branch, beta
-      let documentCount;
-      let documentCount2;
-      //trying to get properties for repo removes those older documents
 
-      process.env.REPO_NAME = "docs-compass";
-      documentCount = await db
-        .collection<DatabaseDocument>("documents")
-        .countDocuments();
-      await expect(getProperties(BRANCH_NAME_BETA)).rejects.toThrow();
-      await mockDb();
-      documentCount2 = await db
-        .collection<DatabaseDocument>("documents")
-        .countDocuments();
+      const documentCount = await (
+        await getDocumentsCollection()
+      ).countDocuments();
+      await expect(
+        getProperties({
+          branchName: BRANCH_NAME_BETA,
+          repoName: DOCS_COMPASS_NAME,
+        })
+      ).rejects.toThrow();
+      const documentCount2 = await (
+        await getDocumentsCollection()
+      ).countDocuments();
       expect(documentCount2).toEqual(
         documentCount - manifest2.documents.length
       );

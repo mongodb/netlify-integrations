@@ -11,7 +11,7 @@ export class ManifestEntry {
   preview?: string | null;
   tags: string | null;
   //TODO: add type
-  facets: Facet;
+  facets: any;
 
   // TODO: add type for entry
   constructor(entry: any) {
