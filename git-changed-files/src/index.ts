@@ -56,17 +56,15 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
   console.log("printing docsentry in buildeventhandler", docsetEntry);
   
   // download mut --------------------------------------------------------------------
-  console.log(`current dir ${process.cwd()}`);
-	// download the mut repo 
+  // console.log(`current dir ${process.cwd()}`);
+	// // download the mut repo 
 	
-  await run.command(
-	  "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
-	);
-	await run.command("unzip -d . mut.zip");
+  // await run.command(
+	//   "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
+	// );
+	// await run.command("unzip -d . mut.zip");
   
-	await run.command("cd snooty/config");
-	run.command("ls -a");
-	// await run.command("mut-redirects snooty/config/redirects");
+	// await run.command("cd snooty/config");
 	// run.command("ls -a");
 
   /*Usage: mut-publish <source> <bucket> --prefix=prefix
