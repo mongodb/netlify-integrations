@@ -254,7 +254,7 @@ const deriveFacets = (tree: any) => {
     const facet = new Facet(
       facetEntry.category,
       facetEntry.value,
-      facetEntry.sub_facets
+      facetEntry.subFacets
     );
     insertKeyVals(facet);
   };
