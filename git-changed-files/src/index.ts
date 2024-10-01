@@ -65,16 +65,6 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
       `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`,
     ]);
     await run.command("unzip -d . -qq mut.zip");
-  // console.log(`current dir ${process.cwd()}`);
-	// // download the mut repo 
-	
-  // await run.command(
-	//   "curl -L -o mut.zip https://github.com/mongodb/mut/releases/download/v0.11.4/mut-v0.11.4-linux_x86_64.zip"
-	// );
-	// await run.command("unzip -d . mut.zip");
-  
-	// await run.command("cd snooty/config");
-	// run.command("ls -a");
 
   /*Usage: mut-publish <source> <bucket> --prefix=prefix
                       (--stage|--deploy)
@@ -83,7 +73,14 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
                       [--deployed-url-prefix=prefix]
                       [--redirect-prefix=prefix]...
                       [--dry-run] [--verbose] [--json] */
-  // need to get the source - public ? (directory) 
+  try {
+    console.log("Running mut-publish...");
+    await run.command(
+      `${process.cwd()}/mut/mut-publish snooty/public /netlify/${docsetEntry.bucket.dotcomstg} --prefix="bianca-testing/docs-qa" --stage`
+    );
+  } catch (e) {
+    console.log(`Error occurred while running mut-publish: ${e}`);
+  }
 });
 
 const getProperties = async (repo_name: string) => {
