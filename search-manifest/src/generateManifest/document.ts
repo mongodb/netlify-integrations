@@ -2,35 +2,44 @@ import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import { ManifestEntry } from "./manifestEntry";
 import type { BSON } from "bson";
+import { metadata } from "../types";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
-  tree: any;
-  robots: any;
-  keywords: any;
-  description: any;
+
+  tree: BSON.Document;
+  robots: boolean;
+  keywords: string | null;
+  description?: string;
   paragraphs: string;
-  code: { lang: string; value: any }[];
-  title: any;
-  headings: any;
+  code: Array<{ lang: string; value: string }>;
+  title: string;
+  headings: Array<string>;
   slug: string;
-  preview?: string;
+  preview: string | null;
   facets: any;
-  noIndex: any;
-  reasons: any;
+  noIndex: boolean;
+  reasons: Array<string>;
 
   constructor(doc: BSON.Document) {
     this.tree = doc;
 
     //find metadata
-    [this.robots, this.keywords, this.description] = this.findMetadata();
+    let { robots, keywords, description } = this.findMetadata();
+
+    this.robots = robots;
+    this.keywords = keywords;
+    this.description = description;
     //find paragraphs
     this.paragraphs = this.findParagraphs();
+
     //find code
     this.code = this.findCode();
 
     //find title, headings
-    [this.title, this.headings] = this.findHeadings();
+    let { title, headings } = this.findHeadings();
+    this.title = title;
+    this.headings = headings;
 
     //derive slug
     this.slug = this.deriveSlug();
@@ -42,13 +51,15 @@ export class Document {
     this.facets = deriveFacets(this.tree);
 
     //noindex, reasons
-    [this.noIndex, this.reasons] = this.getNoIndex();
+    let { noIndex, reasons } = this.getNoIndex();
+    this.noIndex = noIndex;
+    this.reasons = reasons;
   }
 
-  findMetadata() {
+  findMetadata = () => {
     let robots = true; //can be set in the rst if the page is supposed to be crawled
-    let keywords: string | null = null; //keywords is an optional list of strings
-    let description: string | null = null; //this can be optional??
+    let keywords: string = ""; //keywords is an optional list of strings
+    let description: string | undefined; //this can be optional??
 
     const results = JSONPath({
       path: "$..children[?(@.name=='meta')]..options",
@@ -68,8 +79,8 @@ export class Document {
       description = val?.description;
     }
 
-    return [robots, keywords, description];
-  }
+    return { robots, keywords, description };
+  };
 
   findParagraphs() {
     let paragraphs = "";
@@ -93,15 +104,17 @@ export class Document {
 
     const codeContents = [];
     for (const r of results) {
+      // when will there be no value for language?? do we want to set to null if that happens??
       const lang = r.lang ?? null;
+      //TODO: maybe need r.value["value"] here instead
       codeContents.push({ lang: lang, value: r.value });
     }
     return codeContents;
   }
 
   findHeadings() {
-    const headings: string[] = [];
-    let title = "";
+    const headings: Array<string> = [];
+    let title: string = "";
     // Get the children of headings nodes
 
     const results = JSONPath({
@@ -110,7 +123,7 @@ export class Document {
     });
 
     //no heading nodes found?? page doesn't have title, or headings
-    if (!results.length) return [title, headings];
+    if (!results.length) return { title, headings };
 
     for (const r of results) {
       const heading = [];
@@ -128,7 +141,7 @@ export class Document {
     }
 
     title = headings.shift() ?? "";
-    return [title, headings];
+    return { title, headings };
   }
 
   deriveSlug() {
@@ -196,7 +209,7 @@ export class Document {
       reasons.push("This page has no headings");
     }
 
-    return [noIndex, reasons];
+    return { noIndex, reasons };
   }
 
   exportAsManifestDocument = () => {
