@@ -15,6 +15,7 @@ import type { Collection, Db } from 'mongodb';
 import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
+const MUT_VERSION = "0.11.4";
 
 integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run } , netlifyConfig}) => {
 	console.log('Checking if any files changed on git -----');
@@ -56,6 +57,14 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
   console.log("printing docsentry in buildeventhandler", docsetEntry);
   
   // download mut --------------------------------------------------------------------
+  console.log("Downloading Mut...");
+    await run("curl", [
+      "-L",
+      "-o",
+      "mut.zip",
+      `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`,
+    ]);
+    await run.command("unzip -d . -qq mut.zip");
   // console.log(`current dir ${process.cwd()}`);
 	// // download the mut repo 
 	
