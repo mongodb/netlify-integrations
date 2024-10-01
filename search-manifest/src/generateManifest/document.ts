@@ -17,7 +17,7 @@ export class Document {
   headings: Array<string>;
   slug: string;
   preview: string | null;
-  facets: any;
+  facets: Facet;
   noIndex: boolean;
   reasons: Array<string>;
 
@@ -250,7 +250,7 @@ const deriveFacets = (tree: any) => {
     }
   };
 
-  const createFacet = (facetEntry: any) => {
+  const createFacet = (facetEntry: Facet) => {
     const facet = new Facet(
       facetEntry.category,
       facetEntry.value,
