@@ -144,11 +144,12 @@ const getProperties = async (repo_name: string) => {
 
   console.log("got repo");
   const { project } = repo;
-  const docsetEntry = await getDocsetEntry(docsets, project);
+  const docsetEntry: DocsetsDocument = await getDocsetEntry(docsets, project);
   console.log("printing the entries I queried --------------------");
   console.log(repo);
   console.log(docsetEntry);
-
+  console.log("please print the buckets -----");
+  console.log(docsetEntry.bucket);
 }
 
 export const getDocsetEntry = async (

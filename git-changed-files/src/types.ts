@@ -24,9 +24,19 @@ type EnvironmentConfig = {
   prd: string;
 };
 
+type BucketNames = {
+    regression: string;
+    dev: string;
+    stg: string;
+    prd: string;
+    dotcomstg: string;
+    dotcomprd: string;
+};
+
 export interface DocsetsDocument extends WithId<Document> {
   url: EnvironmentConfig;
   prefix: EnvironmentConfig;
+  bucket: BucketNames;
 }
 
 export interface DatabaseDocument extends ManifestEntry {
