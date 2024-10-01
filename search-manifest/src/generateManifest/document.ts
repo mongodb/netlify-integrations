@@ -2,7 +2,7 @@ import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import { ManifestEntry } from "./manifestEntry";
 import type { BSON } from "bson";
-import { metadata } from "../types";
+import type { metadata } from "../types";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -25,7 +25,7 @@ export class Document {
     this.tree = doc;
 
     //find metadata
-    let { robots, keywords, description } = this.findMetadata();
+    const { robots, keywords, description } = this.findMetadata();
 
     this.robots = robots;
     this.keywords = keywords;
@@ -37,7 +37,7 @@ export class Document {
     this.code = this.findCode();
 
     //find title, headings
-    let { title, headings } = this.findHeadings();
+    const { title, headings } = this.findHeadings();
     this.title = title;
     this.headings = headings;
 
@@ -51,7 +51,7 @@ export class Document {
     this.facets = deriveFacets(this.tree);
 
     //noindex, reasons
-    let { noIndex, reasons } = this.getNoIndex();
+    const { noIndex, reasons } = this.getNoIndex();
     this.noIndex = noIndex;
     this.reasons = reasons;
   }
@@ -114,7 +114,7 @@ export class Document {
 
   findHeadings() {
     const headings: Array<string> = [];
-    let title: string = "";
+    let title = "";
     // Get the children of headings nodes
 
     const results = JSONPath({
@@ -235,7 +235,7 @@ export class Document {
   };
 }
 
-const deriveFacets = (tree: any) => {
+const deriveFacets = (tree: BSON.Document) => {
   //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
 
   const insertKeyVals = (facet: any, prefix = "") => {
@@ -250,7 +250,7 @@ const deriveFacets = (tree: any) => {
     }
   };
 
-  const createFacet = (facetEntry: Facet) => {
+  const createFacet = (facetEntry: any) => {
     const facet = new Facet(
       facetEntry.category,
       facetEntry.value,

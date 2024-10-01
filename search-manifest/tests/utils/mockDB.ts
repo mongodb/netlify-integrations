@@ -48,7 +48,7 @@ export const getDocsetsCollection = async () => {
 export const insert = async (
   dbName: mongodb.Db,
   collectionName: string,
-  docs: any[]
+  docs: any
 ) => {
   const coll = dbName.collection(collectionName);
   const result = await coll.insertMany(docs);
