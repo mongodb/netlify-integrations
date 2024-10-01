@@ -14,7 +14,7 @@ import getProperties, {
 import repos_branches from "../resources/mockCollections/repos-branches.json";
 //simulate the docsests collection in an object
 import docsets from "../resources/mockCollections/docsets.json";
-import type { BranchEntry, DatabaseDocument } from "../../src/types";
+import type { BranchEntry } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
 import { afterEach } from "node:test";

@@ -55,3 +55,9 @@ export interface BranchEntry {
   isStableBranch: boolean;
   active: boolean;
 }
+
+export type metadata = {
+  robots: boolean;
+  keywords: string;
+  description?: string;
+};
