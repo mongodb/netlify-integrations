@@ -19,18 +19,18 @@ export const dbClient = async (uri: string) => {
     await client.connect();
     return client;
   } catch (error) {
-    const err = `Error at client connection: ${error} for uri ${uri} `;
+    const err = `Error at client connection: ${error} `;
     console.error(err);
     throw err;
   }
 };
 
 export const getSearchDb = async () => {
-  console.log("Getting search Db");
+  console.log("Getting Search Db");
   const uri = ENV_VARS.ATLAS_SEARCH_URI;
   const dbName = ENV_VARS.SEARCH_DB_NAME;
   if (searchDb) {
-    console.log("search Db client already exists, using existing instance");
+    console.log("Search Db client already exists, using existing instance");
   } else {
     searchDb = await dbClient(uri);
   }
@@ -38,7 +38,7 @@ export const getSearchDb = async () => {
 };
 
 export const getSnootyDb = async () => {
-  console.log("Getting snooty Db");
+  console.log("Getting Snooty Db");
   const uri = ENV_VARS.ATLAS_CLUSTER0_URI;
   const dbName = ENV_VARS.SNOOTY_DB_NAME;
 
