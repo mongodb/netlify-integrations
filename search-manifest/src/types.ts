@@ -58,6 +58,6 @@ export interface BranchEntry {
 
 export type metadata = {
   robots: boolean;
-  keywords: string;
+  keywords: string | null;
   description?: string;
 };

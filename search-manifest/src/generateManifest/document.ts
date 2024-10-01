@@ -56,9 +56,9 @@ export class Document {
     this.reasons = reasons;
   }
 
-  findMetadata = () => {
+  findMetadata = (): metadata => {
     let robots = true; //can be set in the rst if the page is supposed to be crawled
-    let keywords: string = ""; //keywords is an optional list of strings
+    let keywords: string | null = null; //keywords is an optional list of strings
     let description: string | undefined; //this can be optional??
 
     const results = JSONPath({
