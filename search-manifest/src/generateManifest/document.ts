@@ -250,7 +250,7 @@ const deriveFacets = (tree: BSON.Document) => {
     }
   };
 
-  const createFacet = (facetEntry: any) => {
+  const createFacet = (facetEntry: Facet) => {
     const facet = new Facet(
       facetEntry.category,
       facetEntry.value,
