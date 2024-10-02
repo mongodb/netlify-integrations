@@ -1,7 +1,7 @@
 import { NetlifyIntegration } from '@netlify/sdk';
 import { connectToS3 } from "./connectToS3";
-import { S3Client } from "@aws-sdk/client-s3";
-import {
+import type { S3Client } from "@aws-sdk/client-s3";
+import type {
   DatabaseDocument,
   DocsetsDocument,
   ReposBranchesDocument,
@@ -22,6 +22,10 @@ const MUT_VERSION = "0.11.4";
 integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run } , netlifyConfig}) => {
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
+
+
+  process.env.AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY;
+  process.env.AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID;
 
 	if (!process.env.DEPLOY_PRIME_URL) {
 		console.error('ERROR! process.env.DEPLOY_PRIME_URL is not defined.');
