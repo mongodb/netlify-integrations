@@ -86,7 +86,7 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
   try {
     console.log("Running mut-publish...");
     await run.command(
-      `${process.cwd()}/mut/mut-publish snooty/public /netlify/${docsetEntry.bucket.dotcomstg} --prefix="bianca-testing/docs-qa" --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`
+      `${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix="/netlify/docs-qa" --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`
     );
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);
