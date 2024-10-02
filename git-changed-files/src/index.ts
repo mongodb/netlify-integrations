@@ -1,4 +1,6 @@
 import { NetlifyIntegration } from '@netlify/sdk';
+import { connectToS3 } from "./connectToS3";
+import { S3Client } from "@aws-sdk/client-s3";
 import {
   DatabaseDocument,
   DocsetsDocument,
@@ -65,7 +67,15 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
       `https://github.com/mongodb/mut/releases/download/v${MUT_VERSION}/mut-v${MUT_VERSION}-linux_x86_64.zip`,
     ]);
     await run.command("unzip -d . -qq mut.zip");
-
+  
+  // conecting to s3 ------------------------------------------------------------------
+  let client: S3Client;
+  try {
+    console.log("connecting to s3 client --- :)")
+    client = connectToS3();
+  } catch (e) {
+    throw e;
+  }
   /*Usage: mut-publish <source> <bucket> --prefix=prefix
                       (--stage|--deploy)
                       [--all-subdirectories]
