@@ -14,7 +14,6 @@ import {
   teardown,
 } from "./searchConnector";
 import type { Collection, Db } from 'mongodb';
-import * as mongodb from 'mongodb';
 
 const integration = new NetlifyIntegration();
 const MUT_VERSION = "0.11.4";
@@ -39,7 +38,7 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
 
 	if (markdownList.length !== 0) {
 		status.show({
-			title: `URLs to Changed Files`,
+			title: "URLs to Changed Files",
 			summary: markdownList.join('\n'),
 		});
 	}
@@ -54,8 +53,6 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
 		);
-	} else {
-		console.log("the repo name is: ", repoName);
 	}
 
   // connect to mongodb and pool.docsets to get buck---------
@@ -72,14 +69,6 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
     ]);
     await run.command("unzip -d . -qq mut.zip");
   
-  // conecting to s3 ------------------------------------------------------------------
-  let client: S3Client;
-  try {
-    console.log("connecting to s3 client --- :)")
-    client = connectToS3();
-  } catch (e) {
-    throw e;
-  }
   /*Usage: mut-publish <source> <bucket> --prefix=prefix
                       (--stage|--deploy)
                       [--all-subdirectories]
@@ -91,10 +80,8 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
     console.log("Running mut-publish...");
     // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
     const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    console.log(command)
-    await run.command(
-      command
-    );
+    console.log(command);
+    await run.command(command);
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);
   }
