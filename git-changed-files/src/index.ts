@@ -1,6 +1,4 @@
 import { NetlifyIntegration } from '@netlify/sdk';
-import { connectToS3 } from "./connectToS3";
-import type { S3Client } from "@aws-sdk/client-s3";
 import type {
   DatabaseDocument,
   DocsetsDocument,
@@ -85,6 +83,7 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);
   }
+  
 });
 
 const getProperties = async (repo_name: string) => {
