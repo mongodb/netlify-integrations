@@ -78,8 +78,8 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
                       [--dry-run] [--verbose] [--json] */
   try {
     console.log("Running mut-publish...");
-    // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
+    const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
+    // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
     console.log(command);
     await run.command(command);
   } catch (e) {
@@ -126,7 +126,7 @@ export const getDocsetEntry = async (
   const docsetsQuery = { project: { $eq: project } };
   const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
   if (!docset) {
-    throw new Error(`Error while getting docsets entry in Atlas`);
+    throw new Error("Error while getting docsets entry in Atlas");
   }
   return docset;
 };
