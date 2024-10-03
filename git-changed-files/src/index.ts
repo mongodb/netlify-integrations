@@ -77,10 +77,10 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
   try {
     console.log("Running mut-publish...");
     // const command = `${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
+    // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
     // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
     // console.log(command);
-    await run.command(command);
+    await run(`${process.cwd()}/mut/mut-publish`, ["snooty/public", docsetEntry.bucket.dotcomstg, "--prefix=/netlify/docs-qa", "--deploy", `--deployed-url-prefix=${docsetEntry.url.dotcomstg}`, "--json", "--all-subdirectories"], {"input": "y"})
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);
   }
