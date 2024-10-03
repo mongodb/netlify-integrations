@@ -1,21 +1,6 @@
 import type { WithId } from "mongodb";
 import type { ManifestEntry } from "./manifestEntry";
 
-export type RefreshInfo = {
-  deleted: number;
-  upserted: number;
-  modified: number;
-  dateStarted: Date;
-  elapsedMS: number;
-};
-
-export type s3UploadParams = {
-  bucket: string;
-  prefix: string;
-  fileName: string;
-  manifest: string;
-};
-
 type EnvironmentConfig = {
   dev: string;
   stg: string;

@@ -8,9 +8,11 @@ export class ManifestEntry {
     code: { lang: string | null; value: string }[];
     preview?: string | null;
     tags: string | null;
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     facets: any;
   
-    constructor(entry: any) {
+    // biome-ignore lint/suspicious/noExplicitAny: Want it to be any
+      constructor(entry: any) {
       this.slug = entry.slug;
       this.title = entry.title;
       this.headings = entry.headings;

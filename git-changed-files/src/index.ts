@@ -1,17 +1,5 @@
 import { NetlifyIntegration } from '@netlify/sdk';
-import type {
-  DatabaseDocument,
-  DocsetsDocument,
-  ReposBranchesDocument,
-} from "./types";
-import {
-  closeSnootyDb,
-  db,
-  getCollection,
-  getSnootyDb,
-  teardown,
-} from "./searchConnector";
-import type { Collection, Db } from 'mongodb';
+import { getProperties } from './getProperties';
 
 const integration = new NetlifyIntegration();
 const MUT_VERSION = "0.11.4";
@@ -41,23 +29,23 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
 		});
 	}
 
-  // new functionalilty that should be moved ------------------------------------------------------------------
-  console.log("trying to get REPO NAME ------------------------------------");
-  const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment["SITE_NAME"];
-  console.log("NAMES are:",process.env.REPO_NAME,  netlifyConfig.build.environment["SITE_NAME"], repoName);
+  // new functionalilty that should be moved ==========================================================
 
-	//check that an environment variable for repo name was set ----------
+  // accessing repo name
+  const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment.SITE_NAME;
+
 	if (!repoName) {
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
 		);
 	}
+  console.log("repo name is:", process.env.REPO_NAME,  netlifyConfig.build.environment.SITE_NAME, repoName);
 
-  // connect to mongodb and pool.docsets to get buck---------
+  // connect to mongodb and pool.docsets to get bucket
   const docsetEntry = await getProperties(repoName);
   console.log("printing docsentry in buildeventhandler", docsetEntry);
   
-  // download mut --------------------------------------------------------------------
+  // download mut
   console.log("Downloading Mut...");
     await run("curl", [
       "-L",
@@ -76,104 +64,13 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
                       [--dry-run] [--verbose] [--json] */
   try {
     console.log("Running mut-publish...");
-    // const command = `${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public ${docsetEntry.bucket.dotcomstg} --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    // const command = `yes | ${process.cwd()}/mut/mut-publish snooty/public bianca-bucket --prefix=/netlify/docs-qa --deploy --deployed-url-prefix=${docsetEntry.url.dotcomstg} --json --all-subdirectories`;
-    // console.log(command);
+    // TO DO: do I need to log this command below
     await run(`${process.cwd()}/mut/mut-publish`, ["snooty/public", docsetEntry.bucket.dotcomstg, "--prefix=/netlify/docs-qa", "--deploy", `--deployed-url-prefix=${docsetEntry.url.dotcomstg}`, "--json", "--all-subdirectories"], {"input": "y"})
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);
   }
 
 });
-
-const getProperties = async (repo_name: string) => {
-  const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
-  //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-  const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`; 
-  const second_repo_name = process.env.REPO_NAME;
-
-  console.log("im in getpropeties");
-  console.log(SNOOTY_DB_NAME, second_repo_name, repo_name);
-  
-  //connect to database and get repos_branches, docsets collections
-  const dbSession = await getSnootyDb();
-  const repos_branches = getCollection(dbSession, "repos_branches");
-  const docsets = getCollection(dbSession, "docsets");
-
-  console.log("connected to databases");
-  const repo: ReposBranchesDocument = await getRepoEntry({
-    repoName: repo_name,
-    repos_branches,
-  });
-
-  console.log("got repo");
-  const { project } = repo;
-  const docsetEntry: DocsetsDocument = await getDocsetEntry(docsets, project);
-  console.log("printing the entries I queried --------------------");
-  console.log(repo);
-  console.log(docsetEntry);
-  console.log("please print the buckets -----");
-  console.log(docsetEntry.bucket);
-
-  return docsetEntry;
-}
-
-export const getDocsetEntry = async (
-  docsets: Collection<DatabaseDocument>,
-  project: string
-) => {
-  const docsetsQuery = { project: { $eq: project } };
-  const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
-  if (!docset) {
-    throw new Error("Error while getting docsets entry in Atlas");
-  }
-  return docset;
-};
-
-export const getRepoEntry = async ({
-  repoName,
-  repos_branches,
-}: {
-  repoName: string;
-  repos_branches: Collection<DatabaseDocument>;
-}) => {
-  const query = {
-    repoName: repoName,
-  };
-
-  const repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
-    projection: {
-      _id: 0,
-      project: 1,
-      search: 1,
-      branches: 1,
-      prodDeployable: 1,
-      internalOnly: 1,
-    },
-  });
-  if (!repo) {
-    throw new Error(
-      `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
-        query
-      )}`
-    );
-  }
-  // don't think i need this code for the mut plugin , this is a manifest thing ---------------------------
-  // if (
-  //   repo.internalOnly ||
-  //   !repo.prodDeployable ||
-  //   !repo.search?.categoryTitle
-  // ) {
-  //   // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
-  //   await deleteStaleProperties(repo.project);
-  //   throw new Error(
-  //     `Search manifest should not be generated for repo ${repoName}. Removing all associated manifests`
-  //   );
-  // }
-
-  return repo;
-};
 
 
 

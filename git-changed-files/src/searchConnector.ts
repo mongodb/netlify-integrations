@@ -1,6 +1,6 @@
 import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
-import { DatabaseDocument } from "./types";
+import type { DatabaseDocument } from "./types";
 
 // We should only ever have one client active at a time.
 
@@ -15,24 +15,6 @@ const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
 
 let searchDbClient: mongodb.MongoClient;
 let snootyDbClient: mongodb.MongoClient;
-
-export const teardown = async (client: mongodb.MongoClient) => {
-  await client.close();
-};
-
-export const closeSnootyDb = async () => {
-  if (snootyDbClient) await teardown(snootyDbClient);
-  else {
-    console.log("No client connection open to Snooty Db");
-  }
-};
-
-export const closeSearchDb = async () => {
-  if (searchDbClient) await teardown(searchDbClient);
-  else {
-    console.log("No client connection open to Search Db");
-  }
-};
 
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const db = async ({ uri, dbName }: { uri: string; dbName: string }) => {
