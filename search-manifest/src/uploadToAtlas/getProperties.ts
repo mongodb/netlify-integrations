@@ -69,12 +69,12 @@ export const getRepoEntry = async ({
 
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
-  for (const branchObj of branches) {
-    if (branchObj.gitBranchName.toLowerCase() === branchName.toLowerCase()) {
-      return { ...branchObj };
-    }
-  }
-  throw new Error(`Branch ${branchName} not found in branches object`);
+  const branchObj = branches.find(
+    (branch) => branch.gitBranchName.toLowerCase() === branchName.toLowerCase()
+  );
+  if (!branchObj)
+    throw new Error(`Branch ${branchName} not found in branches object`);
+  return branchObj;
 };
 
 const getProperties = async ({
