@@ -7,7 +7,7 @@ import {
 import { mockClient } from "aws-sdk-client-mock";
 import { getManifest } from "../utils/getManifest";
 import { uploadManifestToS3 } from "../../src/uploadToS3/uploadManifest";
-import type { s3UploadParams } from "../../src/types";
+import type { S3UploadParams } from "../../src/types";
 
 const MANIFEST = await getManifest("node-current");
 const PROJECT_NAME = "node";
@@ -39,7 +39,7 @@ beforeEach(async () => {
 });
 
 describe("upload manifest to S3 behaves as expected", () => {
-  const uploadParams: s3UploadParams = {
+  const uploadParams: S3UploadParams = {
     bucket: "docs-search-indexes-test",
     prefix: "search-indexes/ab-testing",
     fileName: `${PROJECT_NAME}-${BRANCH}.json`,

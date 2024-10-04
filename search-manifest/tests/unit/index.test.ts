@@ -4,7 +4,7 @@ import kotlinManifest from "../resources/s3Manifests/kotlin-upcoming.json";
 import compassBetaManifest from "../resources/s3Manifests/compass-upcoming.json";
 import compassMasterManifest from "../resources/s3Manifests/compass-current.json";
 import atlasAppServicesManifest from "../resources/s3Manifests/atlas-app-services-master.json";
-import type { manifestEntry } from "../../src/types";
+import type { ManifestEntry } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 
 describe.each([
@@ -41,8 +41,8 @@ describe.skip.each([
     let slug: string;
 
     //TODO: put in a loop to check multiple manifestEntries against each other
-    let equivDoc: manifestEntry;
-    let manifestDoc: manifestEntry;
+    let equivDoc: ManifestEntry;
+    let manifestDoc: ManifestEntry;
     for (const doc of manifest.documents) {
       slug = doc.slug;
       manifestDoc = doc;

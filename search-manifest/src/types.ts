@@ -8,13 +8,13 @@ export type RefreshInfo = {
   elapsedMS: number;
 };
 
-export type metadata = {
+export type Metadata = {
   robots: boolean;
   keywords: string | null;
   description?: string;
 };
 
-export type s3UploadParams = {
+export type S3UploadParams = {
   bucket: string;
   prefix: string;
   fileName: string;
@@ -64,9 +64,9 @@ export interface SearchDocument {
   includeInGlobalSearch: boolean;
 }
 
-export type manifestFacets = Record<string, Array<string>> | null;
+export type ManifestFacets = Record<string, Array<string>> | null;
 
-export type manifestEntry = {
+export type ManifestEntry = {
   slug: string;
   strippedSlug?: string;
   title: string;
@@ -75,10 +75,10 @@ export type manifestEntry = {
   code: Array<{ lang: string | null; value: string }>;
   preview?: string | null;
   tags: string | null;
-  facets: manifestFacets;
+  facets: ManifestFacets;
 };
 
-export type envVars = {
+export type EnvVars = {
   ATLAS_CLUSTER0_URI: string;
   SNOOTY_DB_NAME: string;
   ATLAS_SEARCH_URI: string;

@@ -10,7 +10,7 @@ import { readdir, readFileSync } from "node:fs";
 import getProperties from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
 import { closeSearchDb, closeSnootyDb } from "./uploadToAtlas/searchConnector";
-import type { s3UploadParams } from "./types";
+import type { S3UploadParams } from "./types";
 
 const readdirAsync = promisify(readdir);
 
@@ -75,7 +75,7 @@ integration.addBuildEventHandler(
     } = await getProperties({ branchName, repoName });
 
     console.log("=========== Uploading Manifests to S3=================");
-    const uploadParams: s3UploadParams = {
+    const uploadArgs: S3UploadParams = {
       bucket: "docs-search-indexes-test",
       //TODO: change this values based on environments
       prefix: "search-indexes/ab-testing",
@@ -83,7 +83,7 @@ integration.addBuildEventHandler(
       manifest: manifest.export(),
     };
 
-    const s3Status = await uploadManifestToS3(uploadParams);
+    const s3Status = await uploadManifestToS3(uploadArgs);
 
     console.log(`S3 upload status: ${JSON.stringify(s3Status)}`);
     console.log("=========== Finished Uploading to S3  ================");

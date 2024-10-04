@@ -1,7 +1,7 @@
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
 import type { BSON } from "bson";
-import type { manifestFacets, metadata, manifestEntry } from "../types";
+import type { ManifestFacets, Metadata, ManifestEntry } from "../types";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -16,7 +16,7 @@ export class Document {
   headings: Array<string>;
   slug: string;
   preview: string | null;
-  facets: manifestFacets;
+  facets: ManifestFacets;
   noIndex: boolean;
   reasons: Array<string>;
 
@@ -55,7 +55,7 @@ export class Document {
     this.reasons = reasons;
   }
 
-  findMetadata = (): metadata => {
+  findMetadata = (): Metadata => {
     let robots = true; //can be set in the rst if the page is supposed to be crawled
     let keywords: string | null = null; //keywords is an optional list of strings
     let description: string | undefined; //this can be optional??
@@ -210,7 +210,7 @@ export class Document {
     return { noIndex, reasons };
   }
 
-  exportAsManifestEntry = (): manifestEntry | "" => {
+  exportAsManifestEntry = (): ManifestEntry | "" => {
     // Generate a manifest entry from a document
 
     if (this.noIndex) {

@@ -1,6 +1,6 @@
-import type { envVars } from "./types";
+import type { EnvVars } from "./types";
 
-const assertEnvVars = (vars: envVars) => {
+const assertEnvVars = (vars: EnvVars) => {
   const missingVars = Object.entries(vars)
     .filter(([, value]) => !value)
     .map(([key]) => `- ${key}`)

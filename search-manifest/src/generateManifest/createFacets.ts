@@ -3,7 +3,7 @@ import { NetlifyIntegration } from "@netlify/sdk";
 export class Facet {
   category: string;
   value: string;
-  subFacets: Array<Facet>;
+  subFacets: Array<Facet> | null;
 
   constructor(category: string, value: string, subFacets: Array<Facet>) {
     this.category = category;
