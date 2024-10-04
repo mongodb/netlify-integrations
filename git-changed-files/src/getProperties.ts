@@ -14,9 +14,6 @@ export const getProperties = async (repo_name: string) => {
     const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`; 
     const second_repo_name = process.env.REPO_NAME;
 
-    console.log("im in getpropeties");
-    console.log(SNOOTY_DB_NAME, second_repo_name, repo_name);
-
     //connect to database and get repos_branches, docsets collections
     const dbSession = await getSnootyDb();
     const repos_branches = getCollection(dbSession, "repos_branches");
