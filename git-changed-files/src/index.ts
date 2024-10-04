@@ -8,7 +8,7 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
-
+  //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
   process.env.AWS_SECRET_ACCESS_KEY = process.env.AWS_S3_SECRET_ACCESS_KEY;
   process.env.AWS_ACCESS_KEY_ID = process.env.AWS_S3_ACCESS_KEY_ID;
 
@@ -30,20 +30,20 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
 	}
 
   // new functionalilty that should be moved ==========================================================
-
+  console.log("start of the mut-publish plugin -----------")
+  
   // accessing repo name
   const repoName = process.env.REPO_NAME ?? netlifyConfig.build.environment.SITE_NAME;
-
 	if (!repoName) {
 		throw new Error(
 			'No repo name supplied as environment variable, manifest cannot be uploaded to Atlas Search.Documents collection ',
 		);
 	}
-  console.log("repo name is:", process.env.REPO_NAME,  netlifyConfig.build.environment.SITE_NAME, repoName);
+  console.log("repo name is:", repoName);
 
   // connect to mongodb and pool.docsets to get bucket
   const docsetEntry = await getProperties(repoName);
-  console.log("printing docsentry in buildeventhandler", docsetEntry);
+  console.log("Succesfully got docsets entry:", docsetEntry);
   
   // download mut
   console.log("Downloading Mut...");
