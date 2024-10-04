@@ -86,7 +86,7 @@ describe("Upload manifest uploads to Atlas db", () => {
 
   test("Generated node manifest uploads correct number of documents", async () => {
     //get new manifest
-    manifest = await getManifest("node");
+    manifest = await getManifest("node-current");
 
     //  upload manifest
     const status = await uploadManifest(manifest, PROPERTY_NAME);

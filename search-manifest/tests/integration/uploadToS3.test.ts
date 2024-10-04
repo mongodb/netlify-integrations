@@ -9,7 +9,7 @@ import { getManifest } from "../utils/getManifest";
 import { uploadManifestToS3 } from "../../src/uploadToS3/uploadManifest";
 import type { s3UploadParams } from "../../src/types";
 
-const MANIFEST = await getManifest("node");
+const MANIFEST = await getManifest("node-current");
 const PROJECT_NAME = "node";
 const BRANCH = "master";
 

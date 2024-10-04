@@ -64,7 +64,7 @@ export interface SearchDocument {
   includeInGlobalSearch: boolean;
 }
 
-export type manifestFacets = Record<string, Array<string> | undefined>;
+export type manifestFacets = Record<string, Array<string>> | null;
 
 export type manifestEntry = {
   slug: string;

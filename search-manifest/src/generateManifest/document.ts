@@ -105,7 +105,6 @@ export class Document {
     for (const r of results) {
       // when will there be no value for language?? do we want to set to null if that happens??
       const lang = r.lang ?? null;
-      //TODO: maybe need r.value["value"] here instead
       codeContents.push({ lang: lang, value: r.value });
     }
     return codeContents;
@@ -259,6 +258,7 @@ const deriveFacets = (tree: BSON.Document) => {
       );
       insertKeyVals(facet);
     }
+    return documentFacets;
   }
-  return documentFacets;
+  return null;
 };

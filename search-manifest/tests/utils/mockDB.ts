@@ -62,7 +62,7 @@ export const insert = async (
 export const removeDocuments = async (collectionName: string) => {
   //delete all documents in repo
   const db = await mockDb();
-  await db.collection<SearchDocument>(collectionName).deleteMany({});
+  await (await getDocumentsCollection()).deleteMany({});
   const documentCount = await db
     .collection<SearchDocument>("documents")
     .countDocuments();

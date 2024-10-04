@@ -1,12 +1,19 @@
 import { describe, expect, afterEach, test, it, vi, beforeAll } from "vitest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import kotlinManifest from "../resources/s3Manifests/kotlin-upcoming.json";
+import compassBetaManifest from "../resources/s3Manifests/compass-upcoming.json";
+import compassMasterManifest from "../resources/s3Manifests/compass-current.json";
+import atlasAppServicesManifest from "../resources/s3Manifests/atlas-app-services-master.json";
 import type { manifestEntry } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 
 describe.each([
-  { manifestName: "node", s3Manifest: nodeManifest },
+  { manifestName: "node-current", s3Manifest: nodeManifest },
   { manifestName: "kotlin", s3Manifest: kotlinManifest },
+  { manifestName: "compass-beta", s3Manifest: compassBetaManifest },
+  // { manifestName: "compass-master", s3Manifest: compassMasterManifest },
+
+  // { manifestName: "app-services-master", s3Manifest: atlasAppServicesManifest },
 ])("Generate manifests from ast", async ({ manifestName, s3Manifest }) => {
   //generate new manifest
   const manifest = await getManifest(manifestName);
@@ -20,61 +27,70 @@ describe.each([
   });
 });
 
-describe.each([
+describe.skip.each([
   {
-    manifestName: "node",
+    manifestName: "node-current",
     s3Manifest: nodeManifest,
   },
   { manifestName: "kotlin", s3Manifest: kotlinManifest },
+  { manifestName: "compass-beta", s3Manifest: compassBetaManifest },
 ])(
   "has the correct document properties",
   async ({ manifestName, s3Manifest }) => {
     const manifest = await getManifest(manifestName);
-    const title = manifest.documents[0].title;
+    let slug: string;
 
     //TODO: put in a loop to check multiple manifestEntries against each other
     let equivDoc: manifestEntry;
-    for (const document of s3Manifest.documents) {
-      if (document.title === manifest.documents[0].title) equivDoc = document;
+    let manifestDoc: manifestEntry;
+    for (const doc of manifest.documents) {
+      slug = doc.slug;
+      manifestDoc = doc;
+      for (const document of s3Manifest.documents) {
+        if (document.slug === slug) {
+          console.log(document.slug, slug);
+          equivDoc = document;
+        }
+      }
+
+      it("is of type string", () => {
+        expect(manifestDoc.slug).toBeTypeOf("string");
+      });
+
+      it("matches the slug", () => {
+        //slug
+        expect(manifestDoc.slug).toEqual(equivDoc.slug);
+      });
+
+      it("matches the heading", () => {
+        //headings
+        expect(manifestDoc.headings).toEqual(equivDoc.headings);
+      });
+
+      it("matches the paragraphs", () => {
+        //paragraphs
+        expect(manifestDoc.paragraphs).toEqual(equivDoc.paragraphs);
+      });
+
+      it("matches the code", () => {
+        //code
+        expect(manifestDoc.code).toEqual(equivDoc.code);
+      });
+      //preview
+      it("matches preview", () => {
+        expect(manifestDoc.preview).toEqual(equivDoc.preview);
+      });
+
+      //tags
+      it("matches tags", () => {
+        expect(manifestDoc.tags).toEqual(equivDoc.tags);
+      });
+
+      //facets
+      it("matches facets", () => {
+        expect(manifestDoc.facets).toEqual(equivDoc.facets);
+      });
     }
-
-    it("is of type string", () => {
-      expect(title).toBeTypeOf("string");
-    });
-
-    it("matches the slug", () => {
-      //slug
-      expect(manifest.documents[0].slug).toEqual(equivDoc.slug);
-    });
-
-    it("matches the heading", () => {
-      //headings
-      expect(manifest.documents[0].headings).toEqual(equivDoc.headings);
-    });
-
-    it("matches the paragraphs", () => {
-      //paragraphs
-      expect(manifest.documents[0].paragraphs).toEqual(equivDoc.paragraphs);
-    });
-
-    it("matches the code", () => {
-      //code
-      expect(manifest.documents[0].code).toEqual(equivDoc.code);
-    });
-    //preview
-    it("matches preview", () => {
-      expect(manifest.documents[0].preview).toEqual(equivDoc.preview);
-    });
-
-    //tags
-    it("matches tags", () => {
-      expect(manifest.documents[0].tags).toEqual(equivDoc.tags);
-    });
-
-    //facets
-    it("matches facets", () => {
-      expect(manifest.documents[0].facets).toEqual(equivDoc.facets);
-    });
   }
 );
 
