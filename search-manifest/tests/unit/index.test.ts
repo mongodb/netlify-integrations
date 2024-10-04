@@ -1,7 +1,7 @@
 import { describe, expect, afterEach, test, it, vi, beforeAll } from "vitest";
 import nodeManifest from "../resources/s3Manifests/node-current.json";
 import kotlinManifest from "../resources/s3Manifests/kotlin-upcoming.json";
-import type { ManifestEntry } from "../../src/generateManifest/manifestEntry";
+import type { manifestEntry } from "../../src/types";
 import { getManifest } from "../utils/getManifest";
 
 describe.each([
@@ -33,7 +33,7 @@ describe.each([
     const title = manifest.documents[0].title;
 
     //TODO: put in a loop to check multiple manifestEntries against each other
-    let equivDoc: ManifestEntry;
+    let equivDoc: manifestEntry;
     for (const document of s3Manifest.documents) {
       if (document.title === manifest.documents[0].title) equivDoc = document;
     }

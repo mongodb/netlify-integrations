@@ -10,3 +10,5 @@ it("correctly joins base URLs with slugs", () => {
     "https://example.com/foo"
   );
 });
+
+//TODO: test assertTrailingSlash, generateHash

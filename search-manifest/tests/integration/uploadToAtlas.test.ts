@@ -156,12 +156,22 @@ describe(
       const dummyDate = new Date();
       const dummyDocs = [
         {
+          repoName: "",
+          project: "",
+          branches: [],
+          prodDeployable: true,
+          internalOnly: true,
           manifestRevisionId: dummyHash,
           lastModified: dummyDate,
           searchProperty: PROPERTY_NAME,
           slug: "dummySlug1",
         },
         {
+          repoName: "",
+          project: "",
+          branches: [],
+          prodDeployable: true,
+          internalOnly: true,
           manifestRevisionId: dummyHash,
           lastModified: dummyDate,
           searchProperty: PROPERTY_NAME,
