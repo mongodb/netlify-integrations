@@ -5,7 +5,7 @@ import {
 } from "./searchConnector";
 import type {
   BranchEntry,
-  DatabaseDocument,
+  SearchDocument,
   DocsetsDocument,
   ReposBranchesDocument,
 } from "../types";
@@ -13,7 +13,7 @@ import { assertTrailingSlash } from "../utils";
 import { deleteStaleProperties } from "./deleteStale";
 
 export const getDocsetEntry = async (
-  docsets: Collection<DatabaseDocument>,
+  docsets: Collection<SearchDocument>,
   project: string
 ) => {
   const docsetsQuery = { project: { $eq: project } };
@@ -29,7 +29,7 @@ export const getRepoEntry = async ({
   repos_branches,
 }: {
   repoName: string;
-  repos_branches: Collection<DatabaseDocument>;
+  repos_branches: Collection<SearchDocument>;
 }) => {
   const query = {
     repoName: repoName,

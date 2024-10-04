@@ -1,6 +1,6 @@
 import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
-import type { DatabaseDocument } from "../types";
+import type { SearchDocument } from "../types";
 import { getEnvVars } from "../assertEnvVars";
 
 const ENV_VARS = getEnvVars();
@@ -66,17 +66,17 @@ export const closeSearchDb = async () => {
 
 export const getDocsetsCollection = async () => {
   const dbSession = await getSnootyDb();
-  return dbSession.collection<DatabaseDocument>(ENV_VARS.DOCSETS_COLLECTION);
+  return dbSession.collection<SearchDocument>(ENV_VARS.DOCSETS_COLLECTION);
 };
 
 export const getReposBranchesCollection = async () => {
   const dbSession = await getSnootyDb();
-  return dbSession.collection<DatabaseDocument>(
+  return dbSession.collection<SearchDocument>(
     ENV_VARS.REPOS_BRANCHES_COLLECTION
   );
 };
 
 export const getDocumentsCollection = async () => {
   const dbSession = await getSearchDb();
-  return dbSession.collection<DatabaseDocument>(ENV_VARS.DOCUMENTS_COLLECTION);
+  return dbSession.collection<SearchDocument>(ENV_VARS.DOCUMENTS_COLLECTION);
 };

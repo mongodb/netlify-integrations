@@ -36,7 +36,7 @@ export const generateManifest = async () => {
     const decoded = BSON.deserialize(readFileSync(`documents/${entry}`));
 
     // Parse data into a document and format it as a Manifest document
-    const processedDoc = new Document(decoded).exportAsManifestDocument();
+    const processedDoc = new Document(decoded).exportAsManifestEntry();
     if (processedDoc) manifest.addDocument(processedDoc);
   }
   return manifest;

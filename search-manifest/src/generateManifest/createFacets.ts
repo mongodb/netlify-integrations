@@ -8,7 +8,7 @@ export class Facet {
   constructor(category: string, value: string, subFacets: Array<Facet>) {
     this.category = category;
     this.value = value;
-    this.subFacets = [];
+    this.subFacets = subFacets;
     if (subFacets) {
       for (const subFacet of subFacets) {
         this.subFacets.push(

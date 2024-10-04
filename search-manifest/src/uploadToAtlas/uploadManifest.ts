@@ -1,7 +1,7 @@
 import type { Manifest } from "../generateManifest/manifest";
 import { getDocumentsCollection } from "./searchConnector";
 import assert from "node:assert";
-import type { RefreshInfo, DatabaseDocument } from "../types";
+import type { RefreshInfo, SearchDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
@@ -22,7 +22,7 @@ const composeUpserts = async (
 
     document.strippedSlug = document.slug.replaceAll("/", "");
 
-    const newDocument: DatabaseDocument = {
+    const newDocument: SearchDocument = {
       ...document,
       lastModified: lastModified,
       url: joinUrl({ base: manifest.url, path: document.slug }),
@@ -59,7 +59,7 @@ export const uploadManifest = async (
     upserted: 0,
     modified: 0,
     dateStarted: new Date(),
-    //TODO: set elapsed ms
+    //TODO: set elapsed ms ?
     elapsedMS: 0,
   };
 

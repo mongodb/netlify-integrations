@@ -1,8 +1,7 @@
 import { JSONPath } from "jsonpath-plus";
 import { Facet } from "./createFacets";
-import { ManifestEntry } from "./manifestEntry";
 import type { BSON } from "bson";
-import type { metadata } from "../types";
+import type { manifestFacets, metadata, manifestEntry } from "../types";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -17,7 +16,7 @@ export class Document {
   headings: Array<string>;
   slug: string;
   preview: string | null;
-  facets: Facet;
+  facets: manifestFacets;
   noIndex: boolean;
   reasons: Array<string>;
 
@@ -212,33 +211,33 @@ export class Document {
     return { noIndex, reasons };
   }
 
-  exportAsManifestDocument = () => {
-    // Generate the manifest dictionary entry from the AST source
+  exportAsManifestEntry = (): manifestEntry | "" => {
+    // Generate a manifest entry from a document
 
     if (this.noIndex) {
       console.info("Refusing to index");
-      return;
+      return "";
     }
 
-    const document = new ManifestEntry({
+    const manifestEntry = {
       slug: this.slug,
       title: this.title,
       headings: this.headings,
       paragraphs: this.paragraphs,
       code: this.code,
       preview: this.preview,
-      keywords: this.keywords,
+      tags: this.keywords,
       facets: this.facets,
-    });
+    };
 
-    return document;
+    return manifestEntry;
   };
 }
 
 const deriveFacets = (tree: BSON.Document) => {
   //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
 
-  const insertKeyVals = (facet: any, prefix = "") => {
+  const insertKeyVals = (facet: Facet, prefix = "") => {
     const key = prefix + facet.category;
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
@@ -250,19 +249,15 @@ const deriveFacets = (tree: BSON.Document) => {
     }
   };
 
-  const createFacet = (facetEntry: Facet) => {
-    const facet = new Facet(
-      facetEntry.category,
-      facetEntry.value,
-      facetEntry.subFacets
-    );
-    insertKeyVals(facet);
-  };
-
-  const documentFacets: any = {};
+  const documentFacets: Record<string, Array<string>> = {};
   if (tree.facets) {
     for (const facetEntry of tree.facets) {
-      createFacet(facetEntry);
+      const facet = new Facet(
+        facetEntry.category,
+        facetEntry.value,
+        facetEntry.subFacets
+      );
+      insertKeyVals(facet);
     }
   }
   return documentFacets;
