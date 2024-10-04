@@ -10,11 +10,6 @@ import {
 import type { Collection } from 'mongodb';
 
 export const getProperties = async (repo_name: string) => {
-    //TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-    // need this so we are able to connect to AWS properly
-    // const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`; 
-    // const second_repo_name = process.env.REPO_NAME;
-
     //connect to database and get repos_branches, docsets collections
     console.log("connectiong to mongodb...");
     const dbSession = await getSnootyDb();

@@ -3,8 +3,8 @@ import * as mongodb from "mongodb";
 import type { DatabaseDocument } from "./types";
 
 // We should only ever have one client active at a time.
-
 // cached db object, so we can handle initial connection process once if unitialized
+// this file is based off of searchConnector.ts from search-manifest
 
 const ATLAS_CLUSTER0_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`;
 const SNOOTY_DB_NAME = `${process.env.MONGO_ATLAS_POOL_DB_NAME}`;

@@ -64,7 +64,9 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { status, git, run
                       [--dry-run] [--verbose] [--json] */
   try {
     console.log("Running mut-publish...");
-    // TO DO: do I need to log this command below
+    // TODO: do I need to log this command below
+    // TODO: "do I need to change the prefix to be: docsEntry.prefix.dotcomstg, or do we want to add /netlify"
+    // also, in production do we leave it as dotcomstg or what bucket should it be changed to?  
     await run(`${process.cwd()}/mut/mut-publish`, ["snooty/public", docsetEntry.bucket.dotcomstg, "--prefix=/netlify/docs-qa", "--deploy", `--deployed-url-prefix=${docsetEntry.url.dotcomstg}`, "--json", "--all-subdirectories"], {"input": "y"})
   } catch (e) {
     console.log(`Error occurred while running mut-publish: ${e}`);

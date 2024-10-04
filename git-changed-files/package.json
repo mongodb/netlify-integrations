@@ -10,7 +10,6 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.663.0",
 		"@netlify/sdk": "^1.60.2-pr-1468.3",
 		"axios": "^1.7.7",
 		"mongodb": "^6.8.0",
