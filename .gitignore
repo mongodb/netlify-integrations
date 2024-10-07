@@ -9,3 +9,7 @@ documents
 
 # Local Netlify folder
 .netlify
+
+
+.nx/cache
+.nx/workspace-data
