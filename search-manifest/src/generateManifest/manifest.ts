@@ -5,11 +5,11 @@ export class Manifest {
   global: boolean;
   documents: ManifestEntry[];
 
-	constructor(url = '', includeInGlobalSearch = false) {
-		this.url = url;
-		this.documents = [];
-		this.global = includeInGlobalSearch;
-	}
+  constructor(url = '', includeInGlobalSearch = false) {
+    this.url = url;
+    this.documents = [];
+    this.global = includeInGlobalSearch;
+  }
 
   addDocument(document: ManifestEntry) {
     //Add a document to the manifest

@@ -1,5 +1,5 @@
-import type { WithId } from "mongodb";
-import type { ManifestEntry } from "./generateManifest/manifestEntry";
+import type { WithId } from 'mongodb';
+import type { ManifestEntry } from './generateManifest/manifestEntry';
 
 export type RefreshInfo = {
   deleted: number;

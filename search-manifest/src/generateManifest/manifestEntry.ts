@@ -1,4 +1,4 @@
-import { Facet } from "./createFacets";
+import { Facet } from './createFacets';
 
 //change this to an interface
 export class ManifestEntry {

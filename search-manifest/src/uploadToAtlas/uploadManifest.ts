@@ -1,8 +1,8 @@
-import type { Manifest } from "../generateManifest/manifest";
-import { db, teardown } from "./searchConnector";
-import assert from "assert";
-import type { RefreshInfo, DatabaseDocument } from "../types";
-import { generateHash, joinUrl } from "../utils";
+import type { Manifest } from '../generateManifest/manifest';
+import { db, teardown } from './searchConnector';
+import assert from 'assert';
+import type { RefreshInfo, DatabaseDocument } from '../types';
+import { generateHash, joinUrl } from '../utils';
 
 const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
 
@@ -13,14 +13,14 @@ const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
   lastModified: Date,
-  hash: string
+  hash: string,
 ) => {
   const documents = manifest.documents;
   return documents.map((document) => {
-    assert.strictEqual(typeof document.slug, "string");
-    assert.ok(document.slug || document.slug === "");
+    assert.strictEqual(typeof document.slug, 'string');
+    assert.ok(document.slug || document.slug === '');
 
-    document.strippedSlug = document.slug.replaceAll("/", "");
+    document.strippedSlug = document.slug.replaceAll('/', '');
 
     const newDocument: DatabaseDocument = {
       ...document,
@@ -46,11 +46,11 @@ const composeUpserts = async (
 
 export const uploadManifest = async (
   manifest: Manifest,
-  searchProperty: string
+  searchProperty: string,
 ) => {
   //check that manifest documents exist
   if (!manifest?.documents?.length) {
-    return Promise.reject(new Error("Invalid manifest"));
+    return Promise.reject(new Error('Invalid manifest'));
   }
   //start a session
   let documentsColl;
@@ -59,9 +59,9 @@ export const uploadManifest = async (
       uri: ATLAS_SEARCH_URI,
       dbName: SEARCH_DB_NAME,
     });
-    documentsColl = dbSession.collection<DatabaseDocument>("documents");
+    documentsColl = dbSession.collection<DatabaseDocument>('documents');
   } catch (e) {
-    console.error("issue starting session for Search Database", e);
+    console.error('issue starting session for Search Database', e);
   }
   const status: RefreshInfo = {
     deleted: 0,
@@ -80,7 +80,7 @@ export const uploadManifest = async (
     manifest,
     searchProperty,
     lastModified,
-    hash
+    hash,
   );
   const operations = [...upserts];
 
@@ -88,8 +88,8 @@ export const uploadManifest = async (
 
   //check property types
   console.info(`Starting transaction`);
-  assert.strictEqual(typeof manifest.global, "boolean");
-  assert.strictEqual(typeof hash, "string");
+  assert.strictEqual(typeof manifest.global, 'boolean');
+  assert.strictEqual(typeof hash, 'string');
   assert.ok(hash);
 
   try {
@@ -108,7 +108,7 @@ export const uploadManifest = async (
     return status;
   } catch (e) {
     throw new Error(
-      `Error writing upserts to Search.documents collection with error ${e}`
+      `Error writing upserts to Search.documents collection with error ${e}`,
     );
   } finally {
     await teardown();
