@@ -37,7 +37,7 @@ export interface BranchEntry {
   active: boolean;
 }
 
-export interface DocsetsDocument {
+export interface DocsetsDocument extends Document {
   project: string;
   url: EnvironmentConfig;
   prefix: EnvironmentConfig;
@@ -64,7 +64,7 @@ export interface SearchDocument {
   includeInGlobalSearch: boolean;
 }
 
-export type ManifestFacets = Record<string, Array<string>> | null;
+export type ManifestFacets = Record<string, Array<string> | undefined> | null;
 
 export type ManifestEntry = {
   slug: string;

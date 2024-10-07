@@ -6,7 +6,8 @@ import {
   mockDb,
 } from "../utils/mockDB";
 
-import getProperties, {
+import {
+  getProperties,
   getBranch,
 } from "../../src/uploadToAtlas/getProperties";
 

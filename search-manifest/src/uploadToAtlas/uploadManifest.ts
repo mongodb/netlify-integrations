@@ -4,11 +4,6 @@ import assert from "node:assert";
 import type { RefreshInfo, SearchDocument } from "../types";
 import { generateHash, joinUrl } from "../utils";
 
-const ATLAS_SEARCH_URI = `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`;
-
-//TODO: change these teamwide env vars in Netlify UI when ready to move to prod
-const SEARCH_DB_NAME = `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`;
-
 const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
@@ -49,6 +44,7 @@ export const uploadManifest = async (
   searchProperty: string
 ) => {
   //check that manifest documents exist
+  //TODO: maybe check other manifest properties as well?
   if (!manifest?.documents?.length) {
     return Promise.reject(new Error("Invalid manifest"));
   }

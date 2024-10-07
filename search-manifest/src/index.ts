@@ -7,7 +7,7 @@ import { Document } from "./generateManifest/document";
 import { uploadManifest } from "./uploadToAtlas/uploadManifest";
 
 import { readdir, readFileSync } from "node:fs";
-import getProperties from "./uploadToAtlas/getProperties";
+import { getProperties } from "./uploadToAtlas/getProperties";
 import { uploadManifestToS3 } from "./uploadToS3/uploadManifest";
 import { closeSearchDb, closeSnootyDb } from "./uploadToAtlas/searchConnector";
 import type { S3UploadParams } from "./types";

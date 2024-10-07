@@ -1,4 +1,4 @@
-import type { ManifestEntry } from "./manifestEntry";
+import type { ManifestEntry } from "../types";
 
 export class Manifest {
   url: string;

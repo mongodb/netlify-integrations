@@ -1,4 +1,3 @@
-import type { Db } from "mongodb";
 import * as mongodb from "mongodb";
 import type { SearchDocument } from "../types";
 import { getEnvVars } from "../assertEnvVars";
@@ -6,7 +5,7 @@ import { getEnvVars } from "../assertEnvVars";
 const ENV_VARS = getEnvVars();
 
 let searchDb: mongodb.MongoClient;
-let snootyDb: mongodb.MongoClient;
+let clusterZeroClient: mongodb.MongoClient;
 
 export const teardown = async (client: mongodb.MongoClient) => {
   await client.close();
@@ -27,31 +26,27 @@ export const dbClient = async (uri: string) => {
 
 export const getSearchDb = async () => {
   console.log("Getting Search Db");
-  const uri = ENV_VARS.ATLAS_SEARCH_URI;
-  const dbName = ENV_VARS.SEARCH_DB_NAME;
   if (searchDb) {
     console.log("Search Db client already exists, using existing instance");
   } else {
-    searchDb = await dbClient(uri);
+    searchDb = await dbClient(ENV_VARS.ATLAS_SEARCH_URI);
   }
-  return searchDb.db(dbName);
+  return searchDb.db(ENV_VARS.SEARCH_DB_NAME);
 };
 
 export const getSnootyDb = async () => {
   console.log("Getting Snooty Db");
-  const uri = ENV_VARS.ATLAS_CLUSTER0_URI;
-  const dbName = ENV_VARS.SNOOTY_DB_NAME;
 
-  if (snootyDb) {
-    console.log("Snooty Db client already exists, using existing instance");
+  if (clusterZeroClient) {
+    console.log("Cluster Zero client already exists, using existing instance");
   } else {
-    snootyDb = await dbClient(uri);
+    clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
   }
-  return snootyDb.db(dbName);
+  return clusterZeroClient.db(ENV_VARS.SNOOTY_DB_NAME);
 };
 
 export const closeSnootyDb = async () => {
-  if (snootyDb) await teardown(snootyDb);
+  if (clusterZeroClient) await teardown(clusterZeroClient);
   else {
     console.log("No client connection open to Snooty Db");
   }

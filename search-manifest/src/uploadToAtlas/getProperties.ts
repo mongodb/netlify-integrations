@@ -77,7 +77,7 @@ export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   return branchObj;
 };
 
-const getProperties = async ({
+export const getProperties = async ({
   branchName,
   repoName,
 }: {
@@ -123,5 +123,3 @@ const getProperties = async ({
     includeInGlobalSearch,
   };
 };
-
-export default getProperties;
