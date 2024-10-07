@@ -1,5 +1,5 @@
 import { JSONPath } from "jsonpath-plus";
-import { Facet } from "./createFacets";
+import { createFacet, Facet } from "./createFacets";
 import type { BSON } from "bson";
 import type { ManifestFacets, Metadata, ManifestEntry } from "../types";
 
@@ -251,11 +251,11 @@ const deriveFacets = (tree: BSON.Document) => {
   const documentFacets: Record<string, Array<string>> = {};
   if (tree.facets) {
     for (const facetEntry of tree.facets) {
-      const facet = new Facet(
-        facetEntry.category,
-        facetEntry.value,
-        facetEntry.subFacets
-      );
+      const facet = createFacet({
+        category: facetEntry.category,
+        value: facetEntry.value,
+        subFacets: [],
+      });
       insertKeyVals(facet);
     }
     return documentFacets;
