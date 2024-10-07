@@ -11,6 +11,14 @@ export class Manifest {
     this.global = includeInGlobalSearch;
   }
 
+  setUrl(url: string) {
+    this.url = url;
+  }
+
+  setGlobalSearchValue(global: boolean) {
+    this.global = global;
+  }
+
   // Adds a document to a manifest
   addDocument(document: ManifestEntry) {
     this.documents.push(document);

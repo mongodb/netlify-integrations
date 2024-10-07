@@ -27,7 +27,7 @@ describe.each([
   });
 });
 
-describe.skip.each([
+describe.each([
   {
     manifestName: "node-current",
     s3Manifest: nodeManifest,

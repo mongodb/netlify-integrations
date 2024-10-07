@@ -89,8 +89,8 @@ integration.addBuildEventHandler(
     console.log("=========== Finished Uploading to S3  ================");
 
     try {
-      manifest.url = url;
-      manifest.global = includeInGlobalSearch;
+      manifest.setUrl(url);
+      manifest.setGlobalSearchValue(includeInGlobalSearch);
 
       console.log("=========== Uploading Manifests to Atlas =================");
       const status = await uploadManifest(manifest, searchProperty);
