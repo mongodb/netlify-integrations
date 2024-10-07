@@ -6,17 +6,17 @@ import type {
 import { getCollection, getSnootyDb } from "./searchConnector";
 import type { Collection } from "mongodb";
 
-export const getProperties = async (repo_name: string) => {
-	//connect to database and get repos_branches, docsets collections
+export const getProperties = async (repoName: string) => {
+	//connect to database and get reposBranches, docsets collections
 	console.log("connectiong to mongodb...");
 	const dbSession = await getSnootyDb();
-	const repos_branches = getCollection(dbSession, "repos_branches");
+	const reposBranches = getCollection(dbSession, "repos_branches");
 	const docsets = getCollection(dbSession, "docsets");
 
 	console.log("querying repobranches...");
 	const repo: ReposBranchesDocument = await getRepoEntry({
-		repoName: repo_name,
-		repos_branches,
+		repoName: repoName,
+		reposBranches,
 	});
 
 	console.log("querying docsets...");
@@ -40,16 +40,16 @@ export const getDocsetEntry = async (
 
 export const getRepoEntry = async ({
 	repoName,
-	repos_branches,
+	reposBranches,
 }: {
 	repoName: string;
-	repos_branches: Collection<DatabaseDocument>;
+	reposBranches: Collection<DatabaseDocument>;
 }) => {
 	const query = {
 		repoName: repoName,
 	};
 
-	const repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+	const repo = await reposBranches.findOne<ReposBranchesDocument>(query, {
 		projection: {
 			_id: 0,
 			project: 1,
@@ -61,7 +61,7 @@ export const getRepoEntry = async ({
 	});
 	if (!repo) {
 		throw new Error(
-			`Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
+			`Could not get reposBranches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
 				query,
 			)}`,
 		);
