@@ -1,8 +1,9 @@
-import { generateManifest } from '../../src';
+import { generateManifest } from "../../src";
 
 export const getManifest = async (manifestName: string) => {
-  process.chdir(`./documents/docs-${manifestName}`);
+  process.chdir(`documents/docs-${manifestName}`);
   const manifest = await generateManifest();
-  process.chdir(`../../../`);
+  // Restore cwd
+  process.chdir("../../");
   return manifest;
 };
