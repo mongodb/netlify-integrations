@@ -48,7 +48,6 @@ describe.each([
       manifestDoc = doc;
       for (const document of s3Manifest.documents) {
         if (document.slug === slug) {
-          console.log(document.slug, slug);
           equivDoc = document;
         }
       }

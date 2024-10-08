@@ -1,5 +1,5 @@
 import { JSONPath } from "jsonpath-plus";
-import { createFacet, Facet } from "./createFacets";
+import { createFacet, type Facet } from "./createFacets";
 import type { BSON } from "bson";
 import type { ManifestFacets, Metadata, ManifestEntry } from "../types";
 
