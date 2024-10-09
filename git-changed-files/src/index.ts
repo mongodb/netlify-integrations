@@ -2,11 +2,11 @@ import { NetlifyExtension } from "@netlify/sdk";
 
 const extension = new NetlifyExtension();
 
-extension.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
+extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyConfig }) => {
 	if (process.env.REPO_NAME === "docs-landing") {
 		// todo
 	}
-	console.log("repo name is:", process.env.REPO_NAME);
+	console.log("repo name is:", process.env.REPO_NAME, netlifyConfig.build.environment.SITE_NAME);
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
