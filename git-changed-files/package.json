@@ -9,15 +9,16 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@netlify/netlify-plugin-netlify-extension": "^1.0.0",
-		"@netlify/sdk": "^2.0.0",
+		"@netlify/sdk": "^2.5.0",
 		"axios": "^1.7.7",
 		"typescript": "^5.4.5"
 	},
 	"devDependencies": {
 		"@netlify/build": "^29.50.2",
+		"@netlify/netlify-plugin-netlify-extension": "^1.0.3",
 		"@types/node": "^20.14.9",
 		"execa": "^6.1.0",
+		"netlify-cli": "^17.36.4",
 		"vitest": "^2.1.0"
 	}
 }
