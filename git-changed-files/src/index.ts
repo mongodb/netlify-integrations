@@ -3,10 +3,7 @@ import { NetlifyExtension } from "@netlify/sdk";
 const extension = new NetlifyExtension();
 
 extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyConfig }) => {
-	if (process.env.REPO_NAME === "docs-landing") {
-		// todo
-	}
-	console.log("repo name is 1234:", process.env.REPO_NAME, netlifyConfig.build.environment.SITE_NAME);
+	if (netlifyConfig.build.environment.SITE_NAME === "extension-test-docs-landing-bianca") {
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
@@ -26,6 +23,7 @@ extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyCo
 			summary: markdownList.join('\n'),
 		});
 	}
+}
 });
 
 /**
