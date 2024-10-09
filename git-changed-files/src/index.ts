@@ -6,7 +6,7 @@ extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyCo
 	if (process.env.REPO_NAME === "docs-landing") {
 		// todo
 	}
-	console.log("repo name is:", process.env.REPO_NAME, netlifyConfig.build.environment.SITE_NAME);
+	console.log("repo name is 1234:", process.env.REPO_NAME, netlifyConfig.build.environment.SITE_NAME);
 	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
