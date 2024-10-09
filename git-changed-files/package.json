@@ -9,7 +9,7 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@netlify/sdk": "^2.0.0",
+		"@netlify/sdk": "^2.5.0",
 		"axios": "^1.7.7",
 		"typescript": "^5.4.5"
 	},
