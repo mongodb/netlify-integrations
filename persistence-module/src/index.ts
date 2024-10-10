@@ -6,13 +6,13 @@ const extension = new NetlifyExtension();
 const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 
 extension.addBuildEventHandler(
-  'onPreBuild',
-  async ({ utils: { cache, run } }) => {
-    try {
-      await downloadPersistenceModule(run);
-    } catch (e) {
-      console.error('Unable to run the persistence module', e);
-    }
-  },
+	'onPreBuild',
+	async ({ utils: { cache, run } }) => {
+		try {
+			await downloadPersistenceModule(run);
+		} catch (e) {
+			console.error('Unable to run the persistence module', e);
+		}
+	},
 );
 export { extension };
