@@ -1,6 +1,10 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import * as mongodb from "mongodb";
-import type { DatabaseDocument } from "../../src/types";
+import type {
+  DocsetsDocument,
+  ReposBranchesDocument,
+  SearchDocument,
+} from "../../src/types";
 
 let client: mongodb.MongoClient;
 
@@ -21,11 +25,34 @@ export async function mockDb(): Promise<mongodb.Db> {
   const dbInstance = client.db("dummy_db");
   return dbInstance;
 }
+export const getSearchDb = async () => {
+  const db = await mockDb();
+  return db;
+};
+export const getSnootyDb = async () => {
+  const db = await mockDb();
+  return db;
+};
+
+export const getDocumentsCollection = async () => {
+  const dbSession = await getSearchDb();
+  return dbSession.collection<SearchDocument>("documents");
+};
+
+export const getReposBranchesCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<SearchDocument>("repos_branches");
+};
+
+export const getDocsetsCollection = async () => {
+  const dbSession = await getSnootyDb();
+  return dbSession.collection<SearchDocument>("docsets");
+};
 
 export const insert = async (
   dbName: mongodb.Db,
   collectionName: string,
-  docs: any[]
+  docs: Array<ReposBranchesDocument> | Array<DocsetsDocument>
 ) => {
   const coll = dbName.collection(collectionName);
   const result = await coll.insertMany(docs);
@@ -35,9 +62,9 @@ export const insert = async (
 export const removeDocuments = async (collectionName: string) => {
   //delete all documents in repo
   const db = await mockDb();
-  await db.collection<DatabaseDocument>(collectionName).deleteMany({});
+  await (await getDocumentsCollection()).deleteMany({});
   const documentCount = await db
-    .collection<DatabaseDocument>("documents")
+    .collection<SearchDocument>("documents")
     .countDocuments();
   return documentCount;
 };
