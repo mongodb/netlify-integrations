@@ -1,9 +1,9 @@
 import { deserialize } from 'bson';
-import { NetlifyIntegration } from '@netlify/sdk';
+import { NetlifyExtension } from '@netlify/sdk';
 import { readFileAsync } from './utils/fs-async';
 import { buildOpenAPIPages } from './build-pages';
 
-const integration = new NetlifyIntegration();
+const extension = new NetlifyExtension();
 const BUNDLE_PATH = `${process.cwd()}/bundle`;
 const REDOC_CLI_VERSION = '1.2.3';
 
@@ -17,7 +17,7 @@ export interface OASPageMetadata {
 export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 // handle installing redoc cli if it's not already installed
-integration.addBuildEventHandler(
+extension.addBuildEventHandler(
 	'onPreBuild',
 	async ({ utils: { run, cache } }) => {
 		console.log('Running redoc prebuild');
@@ -42,7 +42,7 @@ integration.addBuildEventHandler(
 );
 
 // handle building the redoc pages
-integration.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
+extension.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
 	console.log('=========== Redoc Integration Begin ================');
 	await run.command('unzip -o bundle.zip -d bundle');
 
@@ -67,7 +67,7 @@ integration.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
 });
 
 // cache redoc
-integration.addBuildEventHandler('onSuccess', async ({ utils: { cache } }) => {
+extension.addBuildEventHandler('onSuccess', async ({ utils: { cache } }) => {
 	const hasRedoc = await cache.has('redoc');
 	if (!hasRedoc) {
 		console.log('saving redoc to cache');
@@ -75,4 +75,4 @@ integration.addBuildEventHandler('onSuccess', async ({ utils: { cache } }) => {
 	}
 });
 
-export { integration };
+export { extension };
