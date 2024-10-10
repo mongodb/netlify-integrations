@@ -2,9 +2,8 @@ import { NetlifyExtension } from "@netlify/sdk";
 
 const extension = new NetlifyExtension();
 
-extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyConfig }) => {
-	if (netlifyConfig.build.environment.SITE_NAME === "extension-test-docs-landing-bianca") {
-	console.log('Checking if any files changed on git DELETE -----');
+extension.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
+	console.log('Checking if any files changed on git -----');
 	console.log('Modified files:', git.modifiedFiles);
 
 	if (!process.env.DEPLOY_PRIME_URL) {
@@ -23,7 +22,6 @@ extension.addBuildEventHandler('onSuccess', ({ utils: { status, git }, netlifyCo
 			summary: markdownList.join('\n'),
 		});
 	}
-}
 });
 
 /**
