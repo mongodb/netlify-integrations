@@ -18,8 +18,8 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 function main() {
 
-	if (process.env.PERSISTENCE_DISABLED && process.env.PERSISTENCE_DISABLED === 'true') return;
-	
+	if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
+
 	// handle installing redoc cli if it's not already installed
 	extension.addBuildEventHandler(
 		'onPreBuild',
