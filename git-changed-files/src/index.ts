@@ -3,7 +3,7 @@ import { NetlifyExtension } from "@netlify/sdk";
 const extension = new NetlifyExtension();
 
 function main() {
-	if (process.env.PERSISTENCE_DISABLED && process.env.PERSISTENCE_DISABLED === 'true') return;
+	if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 	
 	extension.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
 		console.log('Checking if any files changed on git -----');
