@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "netlify-extension build",
-    	"dev": "netlify-extension dev --open",
+		"dev": "netlify-extension dev --open",
 		"test": "vitest"
 	},
 	"dependencies": {
@@ -17,6 +17,7 @@
 	},
 	"devDependencies": {
 		"@netlify/build": "^29.50.2",
+		"@types/minimist": "^1.2.5",
 		"@types/node": "^20.14.9",
 		"execa": "^6.1.0",
 		"mongodb-memory-server": "^9.4.0",
