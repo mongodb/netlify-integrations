@@ -18,5 +18,9 @@
   "dependencies": {
     "biome": "^0.3.3"
   },
-  "nx": {}
+  "nx": {},
+  "workspaces": [
+    "packages/*",
+    "libs/*"
+  ]
 }
