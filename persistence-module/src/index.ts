@@ -8,7 +8,7 @@ const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 
 function main() {
 
-if (process.env.PERSISTENCE_DISABLED && process.env.PERSISTENCE_DISABLED === 'true') return;
+if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 
 	extension.addBuildEventHandler(
 		'onPreBuild',
