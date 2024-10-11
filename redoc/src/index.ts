@@ -81,4 +81,6 @@ function main() {
 
 }
 
+main();
+
 export { extension };
