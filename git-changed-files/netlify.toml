@@ -1,6 +1,6 @@
 [build]
 command = "netlify-extension build -a"
-publish = ".ntli/site/static"
+environment = { PERSISTENCE_DISABLED = "true" }
 
 [functions]
 directory = "src/endpoints"
