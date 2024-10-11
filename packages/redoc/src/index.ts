@@ -25,7 +25,7 @@ integration.addBuildEventHandler(
 
 		if (hasRedoc) {
 			console.log('Restoring redoc from cache');
-			cache.restore('redoc');
+			await cache.restore('redoc');
 			return;
 		}
 
