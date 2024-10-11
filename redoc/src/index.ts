@@ -47,7 +47,7 @@ function main() {
 
 	// handle building the redoc pages
 	extension.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
-		console.log('=========== Redoc Integration Begin ================');
+		console.log('=========== Redoc Extension Begin ================');
 		await run.command('unzip -o bundle.zip -d bundle');
 
 		const siteBson = await readFileAsync(`${BUNDLE_PATH}/site.bson`);
@@ -67,7 +67,7 @@ function main() {
 
 		await buildOpenAPIPages(openapiPagesEntries, { siteTitle, siteUrl }, run);
 
-		console.log('=========== Redoc Integration End ================');
+		console.log('=========== Redoc Extension End ================');
 	});
 
 	// cache redoc
