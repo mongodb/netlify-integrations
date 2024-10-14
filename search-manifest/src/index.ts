@@ -1,16 +1,16 @@
+import { promisify } from 'node:util';
 // Documentation: https://sdk.netlify.com
 import { NetlifyIntegration } from '@netlify/sdk';
-import { Manifest } from './generateManifest/manifest';
-import { promisify } from 'node:util';
 import { BSON } from 'bson';
 import { Document } from './generateManifest/document';
+import { Manifest } from './generateManifest/manifest';
 import { uploadManifest } from './uploadToAtlas/uploadManifest';
 
-import { readdir, readFileSync } from 'node:fs';
-import { getProperties } from './uploadToAtlas/getProperties';
-import { uploadManifestToS3 } from './uploadToS3/uploadManifest';
-import { closeSearchDb, closeSnootyDb } from './uploadToAtlas/searchConnector';
+import { readFileSync, readdir } from 'node:fs';
 import type { S3UploadParams } from './types';
+import { getProperties } from './uploadToAtlas/getProperties';
+import { closeSearchDb, closeSnootyDb } from './uploadToAtlas/searchConnector';
+import { uploadManifestToS3 } from './uploadToS3/uploadManifest';
 
 const readdirAsync = promisify(readdir);
 

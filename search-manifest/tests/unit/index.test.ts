@@ -1,10 +1,10 @@
-import { describe, expect, afterEach, test, it, vi, beforeAll } from 'vitest';
-import nodeManifest from '../resources/s3Manifests/node-current.json';
-import kotlinManifest from '../resources/s3Manifests/kotlin-upcoming.json';
-import compassBetaManifest from '../resources/s3Manifests/compass-upcoming.json';
-import compassMasterManifest from '../resources/s3Manifests/compass-current.json';
-import atlasAppServicesManifest from '../resources/s3Manifests/atlas-app-services-master.json';
+import { afterEach, beforeAll, describe, expect, it, test, vi } from 'vitest';
 import type { ManifestEntry } from '../../src/types';
+import atlasAppServicesManifest from '../resources/s3Manifests/atlas-app-services-master.json';
+import compassMasterManifest from '../resources/s3Manifests/compass-current.json';
+import compassBetaManifest from '../resources/s3Manifests/compass-upcoming.json';
+import kotlinManifest from '../resources/s3Manifests/kotlin-upcoming.json';
+import nodeManifest from '../resources/s3Manifests/node-current.json';
 import { getManifest } from '../utils/getManifest';
 
 describe.each([

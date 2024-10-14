@@ -1,7 +1,7 @@
-import { deserialize } from 'bson';
 import { NetlifyIntegration } from '@netlify/sdk';
-import { readFileAsync } from './utils/fs-async';
+import { deserialize } from 'bson';
 import { buildOpenAPIPages } from './build-pages';
+import { readFileAsync } from './utils/fs-async';
 
 const integration = new NetlifyIntegration();
 const BUNDLE_PATH = `${process.cwd()}/bundle`;

@@ -1,6 +1,6 @@
 import * as mongodb from 'mongodb';
-import type { SearchDocument } from '../types';
 import { getEnvVars } from '../assertEnvVars';
+import type { SearchDocument } from '../types';
 
 const ENV_VARS = getEnvVars();
 

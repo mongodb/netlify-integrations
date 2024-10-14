@@ -1,7 +1,7 @@
 import { PutObjectCommand, type S3Client } from '@aws-sdk/client-s3';
+import type { S3UploadParams } from '../types';
 import { assertTrailingSlash } from '../utils';
 import { connectToS3 } from './connectToS3';
-import type { S3UploadParams } from '../types';
 
 const upload = async (
   client: S3Client,

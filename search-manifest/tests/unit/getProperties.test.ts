@@ -1,25 +1,25 @@
-import { describe, expect, test, vi, beforeAll, afterAll } from 'vitest';
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import {
   insert,
+  mockDb,
   removeDocuments,
   teardownMockDbClient,
-  mockDb,
 } from '../utils/mockDB';
 
 import {
-  getProperties,
   getBranch,
+  getProperties,
 } from '../../src/uploadToAtlas/getProperties';
 
-// simulate the repos_branches collection in an object
-import repos_branches from '../resources/mockCollections/repos-branches.json';
+import { afterEach } from 'node:test';
+import type { BranchEntry } from '../../src/types';
+import { getDocumentsCollection } from '../../src/uploadToAtlas/searchConnector';
+import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
 //simulate the docsests collection in an object
 import docsets from '../resources/mockCollections/docsets.json';
-import type { BranchEntry } from '../../src/types';
+// simulate the repos_branches collection in an object
+import repos_branches from '../resources/mockCollections/repos-branches.json';
 import { getManifest } from '../utils/getManifest';
-import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
-import { afterEach } from 'node:test';
-import { getDocumentsCollection } from '../../src/uploadToAtlas/searchConnector';
 
 const BRANCH_NAME_MASTER = 'master';
 const BRANCH_NAME_BETA = 'beta';

@@ -1,7 +1,14 @@
+<<<<<<< HEAD
+import type { BSON } from 'bson';
+import { JSONPath } from 'jsonpath-plus';
+import type { ManifestEntry, ManifestFacets, Metadata } from '../types';
+import { type Facet, createFacet } from './createFacets';
+=======
 import { JSONPath } from 'jsonpath-plus';
 import { createFacet, type Facet } from './createFacets';
 import type { BSON } from 'bson';
 import type { ManifestFacets, Metadata, ManifestEntry } from '../types';
+>>>>>>> main
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes

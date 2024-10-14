@@ -1,8 +1,8 @@
-import type { Manifest } from '../generateManifest/manifest';
-import { getDocumentsCollection } from './searchConnector';
 import assert from 'node:assert';
+import type { Manifest } from '../generateManifest/manifest';
 import type { RefreshInfo, SearchDocument } from '../types';
 import { generateHash, joinUrl } from '../utils';
+import { getDocumentsCollection } from './searchConnector';
 
 const composeUpserts = async (
   manifest: Manifest,
