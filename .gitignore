@@ -13,3 +13,5 @@ documents
 
 .nx/cache
 .nx/workspace-data
+
+tsconfig.tsbuildinfo

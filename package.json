@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build --workspaces",
     "lint": "biome ci"
   },
   "keywords": [],
@@ -13,7 +14,8 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.1",
     "nx": "20.0.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.2"
   },
   "dependencies": {
     "biome": "^0.3.3"

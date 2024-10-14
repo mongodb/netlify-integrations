@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "packages/git-changed-files"
+    },
+    {
+      "path": "packages/persistence-module"
+    },
+    {
+      "path": "packages/redoc"
+    }
+  ]
+}
