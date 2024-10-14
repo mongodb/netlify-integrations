@@ -1,6 +1,6 @@
-import * as mongodb from "mongodb";
-import type { SearchDocument } from "../types";
-import { getEnvVars } from "../assertEnvVars";
+import * as mongodb from 'mongodb';
+import type { SearchDocument } from '../types';
+import { getEnvVars } from '../assertEnvVars';
 
 const ENV_VARS = getEnvVars();
 
@@ -25,9 +25,9 @@ export const dbClient = async (uri: string) => {
 };
 
 export const getSearchDb = async () => {
-  console.log("Getting Search Db");
+  console.log('Getting Search Db');
   if (searchDb) {
-    console.log("Search Db client already exists, using existing instance");
+    console.log('Search Db client already exists, using existing instance');
   } else {
     searchDb = await dbClient(ENV_VARS.ATLAS_SEARCH_URI);
   }
@@ -35,10 +35,10 @@ export const getSearchDb = async () => {
 };
 
 export const getSnootyDb = async () => {
-  console.log("Getting Snooty Db");
+  console.log('Getting Snooty Db');
 
   if (clusterZeroClient) {
-    console.log("Cluster Zero client already exists, using existing instance");
+    console.log('Cluster Zero client already exists, using existing instance');
   } else {
     clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
   }
@@ -48,14 +48,14 @@ export const getSnootyDb = async () => {
 export const closeSnootyDb = async () => {
   if (clusterZeroClient) await teardown(clusterZeroClient);
   else {
-    console.log("No client connection open to Snooty Db");
+    console.log('No client connection open to Snooty Db');
   }
 };
 
 export const closeSearchDb = async () => {
   if (searchDb) await teardown(searchDb);
   else {
-    console.log("No client connection open to Search Db");
+    console.log('No client connection open to Search Db');
   }
 };
 
@@ -67,7 +67,7 @@ export const getDocsetsCollection = async () => {
 export const getReposBranchesCollection = async () => {
   const dbSession = await getSnootyDb();
   return dbSession.collection<SearchDocument>(
-    ENV_VARS.REPOS_BRANCHES_COLLECTION
+    ENV_VARS.REPOS_BRANCHES_COLLECTION,
   );
 };
 

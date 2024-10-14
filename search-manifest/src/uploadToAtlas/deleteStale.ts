@@ -1,4 +1,4 @@
-import { getDocumentsCollection } from "./searchConnector";
+import { getDocumentsCollection } from './searchConnector';
 
 export const deleteStaleDocuments = async ({
   searchProperty,
@@ -8,7 +8,7 @@ export const deleteStaleDocuments = async ({
   manifestRevisionId: string;
 }) => {
   console.log(
-    `Removing stale documents with search property ${searchProperty} `
+    `Removing stale documents with search property ${searchProperty} `,
   );
   return {
     deleteMany: {

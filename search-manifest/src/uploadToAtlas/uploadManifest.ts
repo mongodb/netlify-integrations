@@ -1,21 +1,21 @@
-import type { Manifest } from "../generateManifest/manifest";
-import { getDocumentsCollection } from "./searchConnector";
-import assert from "node:assert";
-import type { RefreshInfo, SearchDocument } from "../types";
-import { generateHash, joinUrl } from "../utils";
+import type { Manifest } from '../generateManifest/manifest';
+import { getDocumentsCollection } from './searchConnector';
+import assert from 'node:assert';
+import type { RefreshInfo, SearchDocument } from '../types';
+import { generateHash, joinUrl } from '../utils';
 
 const composeUpserts = async (
   manifest: Manifest,
   searchProperty: string,
   lastModified: Date,
-  hash: string
+  hash: string,
 ) => {
   const documents = manifest.documents;
   return documents.map((document) => {
-    assert.strictEqual(typeof document.slug, "string");
-    assert.ok(document.slug || document.slug === "");
+    assert.strictEqual(typeof document.slug, 'string');
+    assert.ok(document.slug || document.slug === '');
 
-    document.strippedSlug = document.slug.replaceAll("/", "");
+    document.strippedSlug = document.slug.replaceAll('/', '');
 
     const newDocument: SearchDocument = {
       ...document,
@@ -41,12 +41,12 @@ const composeUpserts = async (
 
 export const uploadManifest = async (
   manifest: Manifest,
-  searchProperty: string
+  searchProperty: string,
 ) => {
   //check that manifest documents exist
   //TODO: maybe check other manifest properties as well?
   if (!manifest?.documents?.length) {
-    return Promise.reject(new Error("Invalid manifest"));
+    return Promise.reject(new Error('Invalid manifest'));
   }
   const documentsColl = await getDocumentsCollection();
 
@@ -67,16 +67,16 @@ export const uploadManifest = async (
     manifest,
     searchProperty,
     lastModified,
-    hash
+    hash,
   );
   const operations = [...upserts];
 
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-  console.info("Starting transaction");
-  assert.strictEqual(typeof manifest.global, "boolean");
-  assert.strictEqual(typeof hash, "string");
+  console.info('Starting transaction');
+  assert.strictEqual(typeof manifest.global, 'boolean');
+  assert.strictEqual(typeof hash, 'string');
   assert.ok(hash);
 
   try {
@@ -95,7 +95,7 @@ export const uploadManifest = async (
     return status;
   } catch (e) {
     throw new Error(
-      `Error writing upserts to Search.documents collection with error ${e}`
+      `Error writing upserts to Search.documents collection with error ${e}`,
     );
   } finally {
     // await closeSearchDb();
