@@ -1,16 +1,16 @@
 import { type Collection, type Db, DbOptions } from 'mongodb';
+import type {
+  BranchEntry,
+  DocsetsDocument,
+  ReposBranchesDocument,
+  SearchDocument,
+} from '../types';
+import { assertTrailingSlash } from '../utils';
+import { deleteStaleProperties } from './deleteStale';
 import {
   getDocsetsCollection,
   getReposBranchesCollection,
 } from './searchConnector';
-import type {
-  BranchEntry,
-  SearchDocument,
-  DocsetsDocument,
-  ReposBranchesDocument,
-} from '../types';
-import { assertTrailingSlash } from '../utils';
-import { deleteStaleProperties } from './deleteStale';
 
 export const getDocsetEntry = async (
   docsets: Collection<SearchDocument>,

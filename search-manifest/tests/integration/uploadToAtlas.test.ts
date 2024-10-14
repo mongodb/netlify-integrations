@@ -1,19 +1,19 @@
 import {
   afterAll,
   afterEach,
+  beforeAll,
   describe,
   expect,
   test,
   vi,
-  beforeAll,
 } from 'vitest';
-import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
 import { Manifest } from '../../src/generateManifest/manifest';
-import nodeManifest from '../resources/s3Manifests/node-current.json';
-import { mockDb, insert, removeDocuments } from '../utils/mockDB';
-import { getManifest } from '../utils/getManifest';
-import { generateHash } from '../../src/utils';
 import { getDocumentsCollection } from '../../src/uploadToAtlas/searchConnector';
+import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
+import { generateHash } from '../../src/utils';
+import nodeManifest from '../resources/s3Manifests/node-current.json';
+import { getManifest } from '../utils/getManifest';
+import { insert, mockDb, removeDocuments } from '../utils/mockDB';
 
 const PROPERTY_NAME = 'dummyName';
 

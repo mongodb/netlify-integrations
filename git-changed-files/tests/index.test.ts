@@ -1,4 +1,4 @@
-import { expect, test, describe } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { createMarkdown } from '../src/index';
 
 describe('Test displaying URLs for changed files in source directory ', () => {

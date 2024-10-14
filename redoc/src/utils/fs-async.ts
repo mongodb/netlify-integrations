@@ -1,4 +1,4 @@
-import { writeFile, readFile } from 'node:fs';
+import { readFile, writeFile } from 'node:fs';
 import { promisify } from 'node:util';
 
 export const readFileAsync = promisify(readFile);

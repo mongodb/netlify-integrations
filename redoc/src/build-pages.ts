@@ -1,8 +1,8 @@
 import type { NetlifyPluginUtils } from '@netlify/build';
 import type { OASPageMetadata } from '.';
 import { getAtlasSpecUrl } from './atlas';
-import { writeFileAsync } from './utils/fs-async';
 import { db } from './utils/db';
+import { writeFileAsync } from './utils/fs-async';
 
 export interface RedocVersionOptions {
   active: {

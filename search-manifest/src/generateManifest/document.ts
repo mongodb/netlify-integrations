@@ -1,7 +1,7 @@
-import { JSONPath } from 'jsonpath-plus';
-import { createFacet, type Facet } from './createFacets';
 import type { BSON } from 'bson';
-import type { ManifestFacets, Metadata, ManifestEntry } from '../types';
+import { JSONPath } from 'jsonpath-plus';
+import type { ManifestEntry, ManifestFacets, Metadata } from '../types';
+import { type Facet, createFacet } from './createFacets';
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -71,7 +71,10 @@ export class Document {
         );
       const val = results[0];
       //check if robots, set to false if no robots
-      if ('robots' in val && (val.robots === 'None' || val.robots === 'noindex'))
+      if (
+        'robots' in val &&
+        (val.robots === 'None' || val.robots === 'noindex')
+      )
         robots = false;
 
       keywords = val?.keywords;

@@ -1,7 +1,7 @@
-import type { NetlifyPluginUtils } from '@netlify/build';
-import axios from 'axios';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
+import type { NetlifyPluginUtils } from '@netlify/build';
+import axios from 'axios';
 
 import { readFile } from 'node:fs';
 import { promisify } from 'node:util';
