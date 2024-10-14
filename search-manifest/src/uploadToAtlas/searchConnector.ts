@@ -1,6 +1,10 @@
 import * as mongodb from 'mongodb';
+import type {
+  DocsetsDocument,
+  ReposBranchesDocument,
+  SearchDocument,
+} from '../types';
 import { getEnvVars } from '../assertEnvVars';
-import type { SearchDocument } from '../types';
 
 const ENV_VARS = getEnvVars();
 
@@ -61,12 +65,12 @@ export const closeSearchDb = async () => {
 
 export const getDocsetsCollection = async () => {
   const dbSession = await getSnootyDb();
-  return dbSession.collection<SearchDocument>(ENV_VARS.DOCSETS_COLLECTION);
+  return dbSession.collection<DocsetsDocument>(ENV_VARS.DOCSETS_COLLECTION);
 };
 
 export const getReposBranchesCollection = async () => {
   const dbSession = await getSnootyDb();
-  return dbSession.collection<SearchDocument>(
+  return dbSession.collection<ReposBranchesDocument>(
     ENV_VARS.REPOS_BRANCHES_COLLECTION,
   );
 };

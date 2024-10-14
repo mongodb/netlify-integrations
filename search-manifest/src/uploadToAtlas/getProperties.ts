@@ -13,7 +13,7 @@ import {
 } from './searchConnector';
 
 export const getDocsetEntry = async (
-  docsets: Collection<SearchDocument>,
+  docsets: Collection<DocsetsDocument>,
   project: string,
 ) => {
   const docsetsQuery = { project: { $eq: project } };
@@ -29,7 +29,7 @@ export const getRepoEntry = async ({
   repos_branches,
 }: {
   repoName: string;
-  repos_branches: Collection<SearchDocument>;
+  repos_branches: Collection<ReposBranchesDocument>;
 }) => {
   const query = {
     repoName: repoName,
