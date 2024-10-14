@@ -1,5 +1,5 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import * as mongodb from 'mongodb';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let client: mongodb.MongoClient;
 
