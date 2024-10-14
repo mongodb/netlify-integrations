@@ -10,6 +10,4 @@ export interface ManifestEntry {
   preview?: string | null;
   tags: string | null;
   facets: Facet;
-
-
 }
