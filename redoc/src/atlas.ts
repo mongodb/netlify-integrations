@@ -66,7 +66,7 @@ export const getAtlasSpecUrl = async ({
         : ''
   }`;
 
-  let oasFileURL;
+  let oasFileURL: string | undefined;
   let successfulGitHash = true;
 
   try {
