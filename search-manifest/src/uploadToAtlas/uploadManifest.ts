@@ -1,8 +1,8 @@
-import type { Manifest } from "../generateManifest/manifest";
-import { getDocumentsCollection } from "./searchConnector";
-import assert from "node:assert";
-import type { RefreshInfo, SearchDocument } from "../types";
-import { generateHash, joinUrl } from "../utils";
+import type { Manifest } from '../generateManifest/manifest';
+import { getDocumentsCollection } from './searchConnector';
+import assert from 'node:assert';
+import type { RefreshInfo, SearchDocument } from '../types';
+import { generateHash, joinUrl } from '../utils';
 
 const composeUpserts = async (
   manifest: Manifest,
@@ -74,9 +74,9 @@ export const uploadManifest = async (
   //TODO: make sure url of manifest doesn't have excess leading slashes(as done in getManifests)
 
   //check property types
-  console.info("Starting transaction");
-  assert.strictEqual(typeof manifest.global, "boolean");
-  assert.strictEqual(typeof hash, "string");
+  console.info('Starting transaction');
+  assert.strictEqual(typeof manifest.global, 'boolean');
+  assert.strictEqual(typeof hash, 'string');
   assert.ok(hash);
 
   try {

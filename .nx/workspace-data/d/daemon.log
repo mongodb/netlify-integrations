@@ -1,0 +1,11 @@
+[NX Daemon Server] - 2024-10-11T18:00:20.097Z - Started listening on: /var/folders/fy/3vbdcx5j4hx5n5srvlz1pnb80000gn/T/0b486d2288d4ec2ef5af/d.sock
+[NX Daemon Server] - 2024-10-11T18:00:20.100Z - [WATCHER]: Subscribed to changes within: /Users/brandonly/Documents/gitrepos/netlify-integrations (native)
+[NX Daemon Server] - 2024-10-11T18:00:20.101Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-10-11T18:00:20.102Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-10-11T18:00:20.103Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-10-11T18:00:20.104Z - [REQUEST]: Responding to the client. Shutdown initiated
+[NX Daemon Server] - 2024-10-11T18:00:20.104Z - Done responding to the client Shutdown initiated
+[NX Daemon Server] - 2024-10-11T18:00:20.104Z - Handled FORCE_SHUTDOWN. Handling time: 0. Response time: 0.
+[NX Daemon Server] - 2024-10-11T18:00:20.105Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-10-11T18:00:20.105Z - [WATCHER]: Stopping the watcher for /Users/brandonly/Documents/gitrepos/netlify-integrations (sources)
+[NX Daemon Server] - 2024-10-11T18:00:20.105Z - [WATCHER]: Stopping the watcher for /Users/brandonly/Documents/gitrepos/netlify-integrations (outputs)

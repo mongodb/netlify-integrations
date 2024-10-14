@@ -6,22 +6,22 @@ import {
   test,
   vi,
   beforeAll,
-} from "vitest";
-import { uploadManifest } from "../../src/uploadToAtlas/uploadManifest";
-import { Manifest } from "../../src/generateManifest/manifest";
-import nodeManifest from "../resources/s3Manifests/node-current.json";
-import { mockDb, insert, removeDocuments } from "../utils/mockDB";
-import { getManifest } from "../utils/getManifest";
-import { generateHash } from "../../src/utils";
-import { getDocumentsCollection } from "../../src/uploadToAtlas/searchConnector";
+} from 'vitest';
+import { uploadManifest } from '../../src/uploadToAtlas/uploadManifest';
+import { Manifest } from '../../src/generateManifest/manifest';
+import nodeManifest from '../resources/s3Manifests/node-current.json';
+import { mockDb, insert, removeDocuments } from '../utils/mockDB';
+import { getManifest } from '../utils/getManifest';
+import { generateHash } from '../../src/utils';
+import { getDocumentsCollection } from '../../src/uploadToAtlas/searchConnector';
 
 const PROPERTY_NAME = 'dummyName';
 
 //teardown connections
 beforeAll(async () => {
-  vi.mock("../../src/uploadToAtlas/searchConnector", async () => {
+  vi.mock('../../src/uploadToAtlas/searchConnector', async () => {
     const { getSearchDb, teardownMockDbClient, getDocumentsCollection } =
-      await import("../utils/mockDB");
+      await import('../utils/mockDB');
 
     return {
       getSearchDb: getSearchDb,
@@ -86,7 +86,7 @@ describe('Upload manifest uploads to Atlas db', () => {
 
   test('Generated node manifest uploads correct number of documents', async () => {
     //get new manifest
-    manifest = await getManifest("node-current");
+    manifest = await getManifest('node-current');
 
     //  upload manifest
     const status = await uploadManifest(manifest, PROPERTY_NAME);
@@ -110,7 +110,7 @@ describe(
     );
     manifest1.documents = nodeManifest.documents;
     const documents = await getDocumentsCollection();
-    const kotlinManifest = await getManifest("kotlin");
+    const kotlinManifest = await getManifest('kotlin');
 
     test('nodeManifest uploads all documents', async () => {
       await checkCollection();
@@ -145,19 +145,19 @@ describe(
     test('stale documents from same search property are removed', async () => {
       //upload documents
       const status = await uploadManifest(manifest1, PROPERTY_NAME);
-      const status1 = await uploadManifest(kotlinManifest, "docs-kotlin");
+      const status1 = await uploadManifest(kotlinManifest, 'docs-kotlin');
       //reopen connection to count current num of documents in collection
       expect(await documents.countDocuments()).toEqual(
         kotlinManifest.documents.length + manifest1.documents.length,
       );
 
       //insert entries with random slugs
-      const dummyHash = generateHash("dummyManifest");
+      const dummyHash = generateHash('dummyManifest');
       const dummyDate = new Date();
       const dummyDocs = [
         {
-          repoName: "",
-          project: "",
+          repoName: '',
+          project: '',
           branches: [],
           prodDeployable: true,
           internalOnly: true,
@@ -167,8 +167,8 @@ describe(
           slug: 'dummySlug1',
         },
         {
-          repoName: "",
-          project: "",
+          repoName: '',
+          project: '',
           branches: [],
           prodDeployable: true,
           internalOnly: true,
@@ -179,16 +179,14 @@ describe(
         },
       ];
       const db = await mockDb();
-      insert(db, "documents", dummyDocs);
+      insert(db, 'documents', dummyDocs);
       //upload node documents again
 
       const status3 = await uploadManifest(manifest1, PROPERTY_NAME);
       expect(status3.deleted).toEqual(dummyDocs.length);
       expect(status3.modified).toEqual(manifest1.documents.length);
       //check all documents have current hash, time
-      const empty = await (
-        await getDocumentsCollection()
-      ).findOne({
+      const empty = await (await getDocumentsCollection()).findOne({
         searchProperty: PROPERTY_NAME,
         manifestRevisionId: dummyHash,
       });

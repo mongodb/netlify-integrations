@@ -1,0 +1,474 @@
+{
+  "version": "6.0",
+  "nxVersion": "20.0.0",
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {
+      "netlify-search-integration": [
+        {
+          "file": "packages/search-manifest/.env.development",
+          "hash": "4824947834821012317"
+        },
+        {
+          "file": "packages/search-manifest/.gitignore",
+          "hash": "18089014349008814965"
+        },
+        {
+          "file": "packages/search-manifest/README.md",
+          "hash": "7721262619296967379"
+        },
+        {
+          "file": "packages/search-manifest/integration.yaml",
+          "hash": "8407100651108632922"
+        },
+        {
+          "file": "packages/search-manifest/netlify.toml",
+          "hash": "16953203542955001091"
+        },
+        {
+          "file": "packages/search-manifest/package-lock.json",
+          "hash": "6197091362691570314"
+        },
+        {
+          "file": "packages/search-manifest/package.json",
+          "hash": "13040760033178326984",
+          "deps": [
+            "npm:@types/node",
+            "npm:aws-sdk-client-mock",
+            "npm:vitest",
+            "npm:@aws-sdk/client-s3",
+            "npm:@aws-sdk/lib-storage",
+            "npm:@netlify/sdk",
+            "npm:bson",
+            "npm:crypto",
+            "npm:deps",
+            "npm:fs",
+            "npm:jsonpath-plus",
+            "npm:legacy",
+            "npm:lts",
+            "npm:mongodb",
+            "npm:mongodb-memory-server@10.1.2",
+            "npm:node",
+            "npm:path",
+            "npm:peer",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/search-manifest/src/assertEnvVars.ts",
+          "hash": "17782432112323673311"
+        },
+        {
+          "file": "packages/search-manifest/src/generateManifest/createFacets.ts",
+          "hash": "3591796717404070393"
+        },
+        {
+          "file": "packages/search-manifest/src/generateManifest/document.ts",
+          "hash": "7424187204168216264"
+        },
+        {
+          "file": "packages/search-manifest/src/generateManifest/manifest.ts",
+          "hash": "3496973470332650132"
+        },
+        {
+          "file": "packages/search-manifest/src/index.ts",
+          "hash": "3286825211683791226"
+        },
+        {
+          "file": "packages/search-manifest/src/types.ts",
+          "hash": "17744239796582312750"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToAtlas/deleteStale.ts",
+          "hash": "3501117437613416540"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToAtlas/getProperties.ts",
+          "hash": "7750378487389928768"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToAtlas/searchConnector.ts",
+          "hash": "7925396580113386188"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToAtlas/uploadManifest.ts",
+          "hash": "13305200168499374468"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToS3/connectToS3.ts",
+          "hash": "11533076289628829034"
+        },
+        {
+          "file": "packages/search-manifest/src/uploadToS3/uploadManifest.ts",
+          "hash": "10063490962909034870"
+        },
+        {
+          "file": "packages/search-manifest/src/utils.ts",
+          "hash": "2676457598551653921"
+        },
+        {
+          "file": "packages/search-manifest/tests/integration/uploadToAtlas.test.ts",
+          "hash": "5059392371229052879"
+        },
+        {
+          "file": "packages/search-manifest/tests/integration/uploadToS3.test.ts",
+          "hash": "14699505008701828789"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/mockCollections/docsets.json",
+          "hash": "16458561537587560311"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/mockCollections/repos-branches.json",
+          "hash": "7195283027236042798"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/s3Manifests/atlas-app-services-master.json",
+          "hash": "12725020671612020624"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/s3Manifests/compass-current.json",
+          "hash": "7133735777037431541"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/s3Manifests/compass-upcoming.json",
+          "hash": "17479168078950950265"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/s3Manifests/kotlin-upcoming.json",
+          "hash": "16235897604439417016"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/s3Manifests/node-current.json",
+          "hash": "8406906049358605135"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/zips/docs-kotlin.zip",
+          "hash": "14367164194738677606"
+        },
+        {
+          "file": "packages/search-manifest/tests/resources/zips/node.zip",
+          "hash": "6891658137273091306"
+        },
+        {
+          "file": "packages/search-manifest/tests/snapshots/index.test.ts",
+          "hash": "7631333594148310388"
+        },
+        {
+          "file": "packages/search-manifest/tests/unit/getProperties.test.ts",
+          "hash": "11981019555677593236"
+        },
+        {
+          "file": "packages/search-manifest/tests/unit/index.test.ts",
+          "hash": "17169705796185136091"
+        },
+        {
+          "file": "packages/search-manifest/tests/unit/utils.test.ts",
+          "hash": "2123615236606250286"
+        },
+        {
+          "file": "packages/search-manifest/tests/utils/getManifest.ts",
+          "hash": "7064790172259815777"
+        },
+        {
+          "file": "packages/search-manifest/tests/utils/mockDB.ts",
+          "hash": "2678969841084801595"
+        },
+        {
+          "file": "packages/search-manifest/tsconfig.json",
+          "hash": "7820364975854383027"
+        },
+        {
+          "file": "packages/search-manifest/vitest.config.ts",
+          "hash": "1937385281757893884"
+        }
+      ],
+      "redoc-integration": [
+        {
+          "file": "packages/redoc/.gitignore",
+          "hash": "12387708621335178974"
+        },
+        {
+          "file": "packages/redoc/README.md",
+          "hash": "7721262619296967379"
+        },
+        {
+          "file": "packages/redoc/integration.yaml",
+          "hash": "19661084855452485"
+        },
+        {
+          "file": "packages/redoc/netlify.toml",
+          "hash": "16953203542955001091"
+        },
+        {
+          "file": "packages/redoc/package-lock.json",
+          "hash": "11962272918561139230"
+        },
+        {
+          "file": "packages/redoc/package.json",
+          "hash": "11515090181023175939",
+          "deps": [
+            "npm:@netlify/build",
+            "npm:@types/node",
+            "npm:execa",
+            "npm:@netlify/sdk",
+            "npm:bson",
+            "npm:mongodb",
+            "npm:node-fetch",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/redoc/src/atlas.ts",
+          "hash": "7562375407665930872"
+        },
+        {
+          "file": "packages/redoc/src/build-pages.ts",
+          "hash": "3946363633875269321"
+        },
+        {
+          "file": "packages/redoc/src/index.ts",
+          "hash": "1800079027333675107"
+        },
+        {
+          "file": "packages/redoc/src/utils/db.ts",
+          "hash": "3470113790465992390"
+        },
+        {
+          "file": "packages/redoc/src/utils/fs-async.ts",
+          "hash": "14384491650209253781"
+        },
+        {
+          "file": "packages/redoc/tsconfig.json",
+          "hash": "7820364975854383027"
+        }
+      ],
+      "snooty-cache-plugin": [
+        {
+          "file": "packages/snooty-cache/.gitignore",
+          "hash": "15360779430427914476"
+        },
+        {
+          "file": "packages/snooty-cache/README.md",
+          "hash": "7721262619296967379"
+        },
+        {
+          "file": "packages/snooty-cache/integration.yaml",
+          "hash": "12087455063774002972"
+        },
+        {
+          "file": "packages/snooty-cache/netlify.toml",
+          "hash": "16953203542955001091"
+        },
+        {
+          "file": "packages/snooty-cache/package-lock.json",
+          "hash": "10570381317479061791"
+        },
+        {
+          "file": "packages/snooty-cache/package.json",
+          "hash": "9763148900828279883",
+          "deps": [
+            "npm:@netlify/build",
+            "npm:@types/node",
+            "npm:execa",
+            "npm:vitest",
+            "npm:@netlify/sdk",
+            "npm:axios",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/snooty-cache/src/index.ts",
+          "hash": "12433012070013174210"
+        },
+        {
+          "file": "packages/snooty-cache/src/snooty-frontend-version-check.ts",
+          "hash": "8896904822521992583"
+        },
+        {
+          "file": "packages/snooty-cache/tsconfig.json",
+          "hash": "7820364975854383027"
+        }
+      ],
+      "netlify-integrations": [
+        {
+          "file": ".github/workflows/ci.yaml",
+          "hash": "155565221063612933"
+        },
+        {
+          "file": ".gitignore",
+          "hash": "452267081195697765"
+        },
+        {
+          "file": "README.md",
+          "hash": "6341068516691037168"
+        },
+        {
+          "file": "biome.json",
+          "hash": "17323491484269946876"
+        },
+        {
+          "file": "nx.json",
+          "hash": "9503067032995192201"
+        },
+        {
+          "file": "package-lock.json",
+          "hash": "8988882858867952492"
+        },
+        {
+          "file": "package.json",
+          "hash": "14198371805286239456",
+          "deps": [
+            "npm:@biomejs/biome",
+            "npm:nx",
+            "npm:typescript",
+            "npm:vitest",
+            "npm:biome"
+          ]
+        },
+        {
+          "file": "tsconfig.build.json",
+          "hash": "14171829312572146042"
+        },
+        {
+          "file": "tsconfig.json",
+          "hash": "4472114434573733271"
+        },
+        {
+          "file": "vitest.workspace.ts",
+          "hash": "3240422631607962253"
+        }
+      ],
+      "chatbot-netlify-integration": [
+        {
+          "file": "packages/persistence-module/.gitignore",
+          "hash": "12387708621335178974"
+        },
+        {
+          "file": "packages/persistence-module/.prettierrc",
+          "hash": "16267754514737964994"
+        },
+        {
+          "file": "packages/persistence-module/.vscode/launch.json",
+          "hash": "14664020060339111702"
+        },
+        {
+          "file": "packages/persistence-module/README.md",
+          "hash": "7721262619296967379"
+        },
+        {
+          "file": "packages/persistence-module/integration.yaml",
+          "hash": "10661392468088833664"
+        },
+        {
+          "file": "packages/persistence-module/netlify.toml",
+          "hash": "4950200966183370243"
+        },
+        {
+          "file": "packages/persistence-module/package-lock.json",
+          "hash": "3819725015367760316"
+        },
+        {
+          "file": "packages/persistence-module/package.json",
+          "hash": "14489582755831027305",
+          "deps": [
+            "npm:@netlify/build",
+            "npm:@types/node",
+            "npm:execa",
+            "npm:mongodb-memory-server",
+            "npm:vitest",
+            "npm:@netlify/sdk",
+            "npm:bson",
+            "npm:mongodb",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/persistence-module/src/index.ts",
+          "hash": "3074722481118225921"
+        },
+        {
+          "file": "packages/persistence-module/src/persistence.ts",
+          "hash": "892445378725521151"
+        },
+        {
+          "file": "packages/persistence-module/test/index.test.ts",
+          "hash": "17274827870358158697"
+        },
+        {
+          "file": "packages/persistence-module/test/update-pages.test.ts",
+          "hash": "6079728681438077336"
+        },
+        {
+          "file": "packages/persistence-module/test/utils/mockDb.ts",
+          "hash": "8224452365510395278"
+        },
+        {
+          "file": "packages/persistence-module/tsconfig.json",
+          "hash": "7820364975854383027"
+        },
+        {
+          "file": "packages/persistence-module/vitest.config.ts",
+          "hash": "12501918410354417347"
+        }
+      ],
+      "git-changed-files": [
+        {
+          "file": "packages/git-changed-files/.gitignore",
+          "hash": "12387708621335178974"
+        },
+        {
+          "file": "packages/git-changed-files/README.md",
+          "hash": "6774864689569703240"
+        },
+        {
+          "file": "packages/git-changed-files/details.md",
+          "hash": "18403527314333371794"
+        },
+        {
+          "file": "packages/git-changed-files/integration.yaml",
+          "hash": "12567456804373951008"
+        },
+        {
+          "file": "packages/git-changed-files/netlify.toml",
+          "hash": "4950200966183370243"
+        },
+        {
+          "file": "packages/git-changed-files/package-lock.json",
+          "hash": "2654309565701348826"
+        },
+        {
+          "file": "packages/git-changed-files/package.json",
+          "hash": "11076529566272903269",
+          "deps": [
+            "npm:@netlify/build",
+            "npm:@types/node",
+            "npm:execa",
+            "npm:vitest",
+            "npm:@netlify/sdk",
+            "npm:axios",
+            "npm:typescript"
+          ]
+        },
+        {
+          "file": "packages/git-changed-files/src/index.ts",
+          "hash": "17185288779993825006"
+        },
+        {
+          "file": "packages/git-changed-files/tests/index.test.ts",
+          "hash": "11925713626936483797"
+        },
+        {
+          "file": "packages/git-changed-files/tsconfig.json",
+          "hash": "13910171573687855059"
+        },
+        {
+          "file": "packages/git-changed-files/vitest.config.ts",
+          "hash": "1937385281757893884"
+        }
+      ]
+    },
+    "nonProjectFiles": []
+  }
+}

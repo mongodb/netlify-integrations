@@ -1,25 +1,25 @@
-import { type Collection, type Db, DbOptions } from "mongodb";
+import { type Collection, type Db, DbOptions } from 'mongodb';
 import {
   getDocsetsCollection,
   getReposBranchesCollection,
-} from "./searchConnector";
+} from './searchConnector';
 import type {
   BranchEntry,
   SearchDocument,
   DocsetsDocument,
   ReposBranchesDocument,
-} from "../types";
-import { assertTrailingSlash } from "../utils";
-import { deleteStaleProperties } from "./deleteStale";
+} from '../types';
+import { assertTrailingSlash } from '../utils';
+import { deleteStaleProperties } from './deleteStale';
 
 export const getDocsetEntry = async (
   docsets: Collection<SearchDocument>,
-  project: string
+  project: string,
 ) => {
   const docsetsQuery = { project: { $eq: project } };
   const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
   if (!docset) {
-    throw new Error("Error while getting docsets entry in Atlas");
+    throw new Error('Error while getting docsets entry in Atlas');
   }
   return docset;
 };
@@ -48,8 +48,8 @@ export const getRepoEntry = async ({
   if (!repo) {
     throw new Error(
       `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
-        query
-      )}`
+        query,
+      )}`,
     );
   }
   if (
@@ -60,7 +60,7 @@ export const getRepoEntry = async ({
     // deletestaleproperties here for ALL manifests beginning with this repo? or just for this project-version searchproperty
     await deleteStaleProperties(repo.project);
     throw new Error(
-      `Search manifest should not be generated for repo ${repoName}. Removing all associated manifests`
+      `Search manifest should not be generated for repo ${repoName}. Removing all associated manifests`,
     );
   }
 
@@ -70,7 +70,7 @@ export const getRepoEntry = async ({
 // helper function to find the associated branch
 export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
   const branchObj = branches.find(
-    (branch) => branch.gitBranchName.toLowerCase() === branchName.toLowerCase()
+    (branch) => branch.gitBranchName.toLowerCase() === branchName.toLowerCase(),
   );
   if (!branchObj)
     throw new Error(`Branch ${branchName} not found in branches object`);
@@ -98,12 +98,12 @@ export const getProperties = async ({
   const docsetEntry = await getDocsetEntry(docsets, project);
   //TODO: change based on environment
   const url = assertTrailingSlash(
-    docsetEntry.url?.dotcomprd + docsetEntry.prefix.dotcomprd
+    docsetEntry.url?.dotcomprd + docsetEntry.prefix.dotcomprd,
   );
 
   const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
     repo.branches,
-    branchName
+    branchName,
   );
 
   const includeInGlobalSearch = isStableBranch;
@@ -113,7 +113,7 @@ export const getProperties = async ({
   if (!active) {
     await deleteStaleProperties(searchProperty);
     throw new Error(
-      `Search manifest should not be generated for inactive version ${version} of repo ${repoName}. Removing all associated manifests`
+      `Search manifest should not be generated for inactive version ${version} of repo ${repoName}. Removing all associated manifests`,
     );
   }
   return {
