@@ -1,25 +1,28 @@
-import { NetlifyIntegration } from '@netlify/sdk';
+export interface Facet {
+  category: string;
+  value: string;
+  subFacets: Array<Facet> | null;
+}
 
-export class Facet {
-  category: any;
-  value: any;
-  subFacets: any;
-
-  constructor(category: string, value: string, subFacets: []) {
-    this.category = category;
-    this.value = value;
-    this.subFacets = [];
-
-    if (subFacets) {
-      for (const subFacet of subFacets) {
-        this.subFacets.push(
-          new Facet(
-            subFacet['category'],
-            subFacet['value'],
-            subFacet['sub_facets'] ?? [],
-          ),
-        );
-      }
+export const createFacet = (facet: Facet) => {
+  const category = facet.category;
+  const value = facet.value;
+  const subFacetsArr = [];
+  if (facet.subFacets) {
+    for (const subFacet of facet.subFacets) {
+      subFacetsArr.push(
+        createFacet({
+          category: subFacet.category,
+          value: subFacet.value,
+          subFacets: subFacet.subFacets ?? [],
+        })
+      );
     }
   }
-}
+  const newFacet: Facet = {
+    category: category,
+    value: value,
+    subFacets: subFacetsArr ?? null,
+  };
+  return newFacet;
+};

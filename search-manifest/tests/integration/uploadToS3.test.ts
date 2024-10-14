@@ -1,16 +1,17 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   PutObjectCommand,
-  PutObjectCommandOutput,
+  type PutObjectCommandOutput,
   S3Client,
-} from '@aws-sdk/client-s3';
-import { mockClient } from 'aws-sdk-client-mock';
-import { getManifest } from '../utils/getManifest';
-import { uploadManifestToS3 } from '../../src/uploadToS3/uploadManifest';
+} from "@aws-sdk/client-s3";
+import { mockClient } from "aws-sdk-client-mock";
+import { getManifest } from "../utils/getManifest";
+import { uploadManifestToS3 } from "../../src/uploadToS3/uploadManifest";
+import type { S3UploadParams } from "../../src/types";
 
-const MANIFEST = await getManifest('node');
-const PROJECT_NAME = `node`;
-const BRANCH = `master`;
+const MANIFEST = await getManifest("node-current");
+const PROJECT_NAME = "node";
+const BRANCH = "master";
 
 const output: PutObjectCommandOutput = {
   $metadata: {
@@ -37,10 +38,10 @@ beforeEach(async () => {
   });
 });
 
-describe('upload manifest to S3 behaves as expected', () => {
-  const uploadParams = {
-    bucket: 'docs-search-indexes-test',
-    prefix: 'search-indexes/ab-testing',
+describe("upload manifest to S3 behaves as expected", () => {
+  const uploadParams: S3UploadParams = {
+    bucket: "docs-search-indexes-test",
+    prefix: "search-indexes/ab-testing",
     fileName: `${PROJECT_NAME}-${BRANCH}.json`,
     manifest: MANIFEST.export(),
   };

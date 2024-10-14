@@ -1,0 +1,410 @@
+{
+    "url": "http://mongodb.com/docs/atlas/app-services",
+    "includeInGlobalSearch": true,
+    "documents": [
+        {
+            "slug": "graphql/migrate-neurelo",
+            "title": "Migrate GraphQL to Neurelo",
+            "headings": [],
+            "paragraphs": "Neurelo is a platform for developers designed to simplify the process of working\nwith databases. It provides a database abstraction with API-first\napproach, instantly transforming databases into REST and GraphQL APIs. Neurelo offers features such as building and managing schemas with\nText-to-Schema support, fully-documented REST and GraphQL APIs (with SDKs)\ngenerated from your schema with an API  playground, custom API endpoints for\ncomplex queries with Text-to-MQL support, multiple CI/CD environments,\nschema-aware mock data generation, and more. This abstraction layer enables developers to program with databases through\nAPIs, simplifying communication between the application and the database, and\nmaking it easier and faster to integrate databases into their applications. Refer to  Neurelo GraphQL API MongoDB Atlas Migration Guide  to\nlearn more.",
+            "code": [],
+            "preview": "Learn how to migrate your GraphQL host from Atlas App Services to Neurelo.",
+            "tags": null,
+            "facets": {
+                "genre": [
+                    "tutorial"
+                ],
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers/authentication-triggers",
+            "title": "Authentication Triggers",
+            "headings": [
+                "Create an Authentication Trigger",
+                "Configuration",
+                "Authentication Events",
+                "Example",
+                "Additional Examples"
+            ],
+            "paragraphs": "An authentication trigger fires when a user interacts with an\n authentication provider . You can\nuse authentication triggers to implement advanced user management. Some uses include: Storing new user data in your linked cluster Maintaining data integrity upon user deletion Calling a service with a user's information when they log in. To open the authentication trigger configuration screen in the Atlas App Services UI,\nclick  Triggers  in the left navigation menu, select the\n Authentication Triggers  tab, and then click  Add a\nTrigger . Configure the trigger and then click  Save  at the bottom of the\npage to add it to your current deployment draft. To create an authentication trigger with  App Services CLI : Add an authentication trigger  configuration file  to the  triggers  subdirectory of a\nlocal application directory. App Services does not enforce specific filenames for Atlas Trigger\nconfiguration files. However, once imported, App Services will\nrename each configuration file to match the name of the\ntrigger it defines, e.g.  mytrigger.json . Deploy  the trigger: Authentication Triggers have the following configuration options: Field Description Trigger Type The type of the trigger. For authentication triggers,\nset this value to  AUTHENTICATION . Trigger Name The name of the trigger. Linked Function The name of the function that the trigger\nexecutes when it fires. An  authentication\nevent object  causes the trigger to fire.\nThis object is the only argument the trigger passes to the function. Operation Type The  authentication operation\ntype  that causes the trigger to\nfire. Providers A list of one or more  authentication provider  types. The trigger only listens for\n authentication events  produced by these\nproviders. Authentication events represent user interactions with an authentication\nprovider. Each event corresponds to a single user action with one of the\nfollowing operation types: Authentication event objects have the following form: Operation Type Description LOGIN Represents a single instance of a user logging in. CREATE Represents the creation of a new user. DELETE Represents the deletion of a user. Field Description operationType The  operation type \nof the authentication event. providers The  authentication providers \nthat emitted the event. One of the following names represents each authentication provider: \"anon-user\" \"local-userpass\" \"api-key\" \"custom-token\" \"custom-function\" \"oauth2-facebook\" \"oauth2-google\" \"oauth2-apple\" Generally, only one authentication provider emits each event.\nHowever, you may need to delete a user linked to multiple providers.\nIn this case, the  DELETE  event for that user includes all linked providers. user The  user object  of the user that interacted with\nthe authentication provider. time The time at which the event occurred. An online store wants to store custom metadata for each of its customers\nin  Atlas .\nEach customer needs a document in the  store.customers  collection.\nThen, the store can record and query metadata in the customer's document. The collection must represent each customer. To guarantee this, the store\ncreates an Authentication Trigger. This Trigger listens for newly created users\nin the  email/password  authentication\nprovider. Then, it passes the\n authentication event object  to its linked\nfunction,  createNewUserDocument . The function creates a new document\nwhich describes the user and their activity. The function then inserts the document\ninto the  store.customers  collection. For additional examples of Triggers integrated into an App Services App,\ncheckout the  example Triggers on Github .",
+            "code": [
+                {
+                    "lang": "shell",
+                    "value": "appservices push"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"operationType\": <string>,\n  \"providers\": <array of strings>,\n  \"user\": <user object>,\n  \"time\": <ISODate>\n}"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "exports = async function(authEvent) {\n  const mongodb = context.services.get(\"mongodb-atlas\");\n  const customers = mongodb.db(\"store\").collection(\"customers\");\n\n  const { user, time } = authEvent;\n  const isLinkedUser = user.identities.length > 1;\n\n  if(isLinkedUser) {\n    const { identities } = user;\n    return users.updateOne(\n      { id: user.id },\n      { $set: { identities } }\n    )\n\n  } else {\n    return users.insertOne({ _id: user.id, ...user })\n     .catch(console.error)\n  }\n  await customers.insertOne(newUser);\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"type\": \"AUTHENTICATION\",\n  \"name\": \"newUserHandler\",\n  \"function_name\": \"createNewUserDocument\",\n  \"config\": {\n    \"providers\": [\"local-userpass\"],\n    \"operation_type\": \"CREATE\"\n  },\n  \"disabled\": false\n}"
+                }
+            ],
+            "preview": "An authentication trigger fires when a user interacts with an\nauthentication provider. You can\nuse authentication triggers to implement advanced user management. Some uses include:",
+            "tags": null,
+            "facets": {
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers/aws-eventbridge",
+            "title": "Send Trigger Events to AWS EventBridge",
+            "headings": [
+                "Overview",
+                "Procedure",
+                "Set Up the MongoDB Partner Event Source",
+                "Configure the Trigger",
+                "Associate the Trigger Event Source with an Event Bus",
+                "Custom Error Handling",
+                "Create a New Custom Error Handler",
+                "Create a New Error Handler",
+                "Name the New Function",
+                "Write the Function Code",
+                "Test the Function",
+                "Save the Function",
+                "Write the Error Handler",
+                "Add an Error Handler to Your Trigger Configuration",
+                "Authenticate a MongoDB Atlas User",
+                "Create a Deployment Draft (Optional)",
+                "Create the Error Handler Function",
+                "Create the AWS EventBridge Trigger",
+                "Deploy the Draft",
+                "Error Handler Parameters",
+                "error",
+                "changeEvent",
+                "Error Codes",
+                "DOCUMENT_TOO_LARGE",
+                "OTHER",
+                "Error Handler Logs",
+                "Example Event",
+                "Performance Optimization"
+            ],
+            "paragraphs": "MongoDB offers an  AWS Eventbridge  partner event source that lets\nyou send Atlas Trigger events to an event bus instead of\ncalling an Atlas Function. You can configure any Trigger type to send events to\nEventBridge. Database Triggers also support custom error handling,\nto reduce trigger suspensions due to non-critical errors. All you need to send Trigger events to EventBridge is an AWS account ID.\nThis guide walks through finding your account ID, configuring the\nTrigger, associating the Trigger event source with an event bus, and setting\nup custom error handling. This guide is based on Amazon's  Receiving Events from a\nSaaS Partner \ndocumentation. The AWS put entry for an EventBridge trigger event must be smaller than 256 KB. Learn how to reduce the size of your PutEvents entry in the  Performance Optimization  section. To send trigger events to AWS EventBridge, you need the  AWS\naccount ID  of the account that should receive the events.\nOpen the  Amazon EventBridge console  and click\n Partner event sources  in the navigation menu. Search for\nthe  MongoDB  partner event source and then click\n Set up . On the  MongoDB  partner event source page, click\n Copy  to copy your AWS account ID to the clipboard. Once you have the  AWS account ID , you can configure a\ntrigger to send events to EventBridge. In the App Services UI, create and configure a new  database\ntrigger ,  authentication\ntrigger , or  scheduled\ntrigger  and select the\n EventBridge  event type. Paste in the  AWS Account ID  that you copied from\nEventBridge and select an  AWS Region  to send the trigger events\nto. Optionally, you can configure a function for handling trigger errors.\nCustom error handling is only valid for database triggers.\nFor more details, refer to the  Custom Error Handling \nsection on this page. By default, triggers convert the BSON types in event objects into\nstandard JSON types. To preserve BSON type information, you can\nserialize event objects into  Extended JSON format  instead. Extended JSON preserves type\ninformation at the expense of readability and interoperability. To enable Extended JSON,\nclick the  Enable Extended JSON  toggle in the\n Advanced (Optional)  section. Create a  trigger configuration file \nin the  /triggers  directory. Omit the  function_name  field\nand define an  AWS_EVENTBRIDGE  event processor. Set the  account_id  field to the  AWS Account ID \nthat you copied from EventBridge and set the  region  field to\nan AWS Region. By default, triggers convert the BSON types in event objects into\nstandard JSON types. To preserve BSON type information, you can\nserialize event objects into  Extended JSON format  instead. Extended JSON preserves type\ninformation at the expense of readability and interoperability. To enable Extended JSON, set the  extended_json_enabled  field to  true . Optionally, you can configure a function for handling trigger errors.\nCustom error handling is only valid for database triggers.\nFor more details, refer to the  Custom Error Handling \nsection on this page. The trigger configuration file should resemble the following: For a full list of supported AWS regions, refer to Amazon's\n Receiving Events from a SaaS Partner \nguide. Go back to the EventBridge console and choose Partner event sources in\nthe navigation pane. In the  Partner event sources  table,\nfind and select the  Pending  trigger source and then click\n Associate with event bus . On the  Associate with event bus  screen, define any\nrequired access permissions for other accounts and organizations and\nthen click  Associate . Once confirmed, the status of the trigger event source changes from\n Pending  to  Active , and the name of the event\nbus updates to match the event source name. You can now start creating\nrules that trigger on events from that partner event source. For more\ninformation, see  Creating a Rule That Triggers on a SaaS Partner Event . You can create an error handler to be executed on a trigger failure,\nwhen retry does not succeed. Custom error handling allows you to determine\nwhether an error from AWS EventBridge is critical enough to suspend the Trigger,\nor if it is acceptable to ignore the error and continue processing other events.\nFor more information on suspended database triggers, refer to\n Suspended Triggers . Currently, only database triggers support custom error handling.\nAuthentication triggers and scheduled triggers do not support\ncustom error handling at this time. You can create the new function directly in the Create a Trigger page, as below,\nor from the Functions tab. For more information on how to define functions in\nApp Services, refer to  Define a Function . In the  Configure Error Function  section, select\n + New Function . You can also select an existing Function, if one is already defined,\nfrom the dropdown. Enter a unique, identifying name for the function in the  Name  field.\nThis name must be distinct from all other functions in the application. In the  Function  section, write the JavaScript code directly in\nthe function editor. The function editor contains a default function that\nyou can edit as needed. For more information on creating functions, refer\nto the  Functions  documentation. In the  Testing Console  tab beneath the function editor, you can\ntest the function by passing in example values to the  error  and\n changeEvent  parameters, as shown in the comments of the testing console. For more information on these paramaters, refer to the\n Error Handler Parameters \nsection on this page. Click  Run  to run the test. Once you are satisfied with the custom error handler, click\n Save . In order to update your trigger's configuration with an error handler,\nfollow these steps to  Update an App . When you\nupdate your configuration files in Step 3, do the following: Follow the steps in  Define a Function \nto write your error handler source code and configuration file. For the error handler source code, see the following template error handler: Add an  error_handler  attribute to your trigger configuration file\nin the  Triggers  folder. The trigger configuration file should\nresemble the following: For more information on trigger configuration files, see\n Trigger Configuration Files . Call the admin user authentication endpoint with your MongoDB Atlas API\nkey pair: If authentication succeeds, the response body contains a JSON object\nwith an  access_token  value: The  access_token  grants access to the App Services Admin API. You\nmust include it as a Bearer token in the  Authorization  header for\nall Admin API requests. API Authentication Documentation A draft represents a group of application changes that you\ncan deploy or discard as a single unit. If you don't create\na draft, updates automatically deploy individually. To create a draft, send a  POST  request with no body to\nthe  Create a Deployment Draft  endpoint: Create the function to handle errors for a failed AWS\nEventBridge trigger via a  POST  request to the\n Create a new\nFunction  endpoint. Create the AWS EventBridge Trigger with error handling\nenabled via a  POST  request to the\n Create a Trigger  endpoint. If you created a draft, you can deploy all changes in\nthe draft by sending a  POST  request with no body to the\n Deploy a deployment draft  endpoint.\nIf you did not create a draft as a first step, the\nindividual function and trigger requests deployed automatically. The default error handler has two parameters:  error  and  changeEvent . Has the following two attributes: code : The code for the errored EventBridge put request. For a list of\nerror codes used by the error handler, see the below section. message : The unfiltered error message from an errored EventBridge\nput request. The requested change to your data made by EventBridge. For more information\non types of change events and their configurations, see\n Change Event Types . If an error was recevied from EventBridge, the event processor will parse the\nerror as either  DOCUMENT_TOO_LARGE  or  OTHER . This parsed error is passed\nto the error handler function through the  error  parameter. If the put entry for an EventBridge trigger event is larger\nthan 256 KB, EventBridge will throw an error. The error will contain either: For more information on reducing put entry size, see the below  Performance\nOptimization  section. status code: 400  and\n total size of the entries in the request is over the limit . status code: 413 ,\nwhich indicates a too large payload. The default bucket for all other errors. You can make special error handling cases for\nyour most common error messages to optimize your error handling for\nerrors with an  OTHER  code. To determine which errors need\nspecial cases, we recommended keeping track of\nthe most common error messages you receive in  error.message . You can view  Trigger Error Handler logs  for\nyour EventBridge Trigger error handler in the application logs. To learn more about viewing application logs, see  View Application Logs . Click  Logs  in the left navigation of the App Services UI. Click the  Filter by Type  dropdown and select\n Triggers Error Handlers  to view all error handler\nlogs for the App. Pass the  trigger_error_handler  value to the  --type  flag to\nview all error handler logs for the App. Retrieve  TRIGGER_ERROR_HANDLER  type logs via a  GET  request to\nthe  Retreive App Services Logs  endpoint: The following object configures a trigger to send events to AWS\nEventbridge and handle errors: The AWS put entry for an EventBridge trigger event must be smaller than 256 KB. For more information, see the  AWS Documentation to calculate Amazon\nPutEvents event entry size . When using Database Triggers, the Project Expression can be useful reduce the document size\nbefore sending messages to EventBridge.\nThis expression lets you include only specified fields, reducing document size. Learn more in the Database Trigger Project Expression documentation.",
+            "code": [
+                {
+                    "lang": "json",
+                    "value": "{\n  \"name\": \"...\",\n  \"type\": \"...\",\n  \"event_processors\": {\n     \"AWS_EVENTBRIDGE\": {\n         \"config\": {\n            \"account_id\": \"<AWS Account ID>\",\n            \"region\": \"<AWS Region>\",\n            \"extended_json_enabled\": <boolean>\n         }\n      }\n   }\n}"
+                },
+                {
+                    "lang": "js",
+                    "value": "exports = async function(error, changeEvent) {\n   // This sample function will log additional details if the error is not\n   // a DOCUMENT_TOO_LARGE error\n   if (error.code === 'DOCUMENT_TOO_LARGE') {\n      console.log('Document too large error');\n\n      // Comment out the line below in order to skip this event and not suspend the Trigger\n      throw new Error(`Encountered error: ${error.code}`);\n   }\n\n   console.log('Error sending event to EventBridge');\n   console.log(`DB: ${changeEvent.ns.db}`);\n   console.log(`Collection: ${changeEvent.ns.coll}`);\n   console.log(`Operation type: ${changeEvent.operationType}`);\n\n   // Throw an error in your function to suspend the trigger and stop processing additional events\n   throw new Error(`Encountered error: ${error.message}`);\n};"
+                },
+                {
+                    "lang": "json",
+                    "value": "      {\n         \"name\": \"...\",\n         \"type\": \"DATABASE\",\n         \"event_processors\": {\n            \"AWS_EVENTBRIDGE\": {\n               \"config\": {\n                  \"account_id\": \"<AWS Account ID>\",\n                  \"region\": \"<AWS Region>\",\n                  \"extended_json_enabled\": <boolean>\n               }\n            }\n         },\n         \"error_handler\": {\n            \"config\": {\n               \"enabled\": <boolean>,\n               \"function_name\": \"<Error Handler Function Name>\"\n            }\n         }\n      }"
+                },
+                {
+                    "lang": "shell",
+                    "value": "curl -X POST \\\n  https://services.cloud.mongodb.com/api/admin/v3.0/auth/providers/mongodb-cloud/login \\\n  -H 'Content-Type: application/json' \\\n  -H 'Accept: application/json' \\\n  -d '{\n    \"username\": \"<Public API Key>\",\n    \"apiKey\": \"<Private API Key>\"\n  }'"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"access_token\": \"<access_token>\",\n  \"refresh_token\": \"<refresh_token>\",\n  \"user_id\": \"<user_id>\",\n  \"device_id\": \"<device_id>\"\n}"
+                },
+                {
+                    "lang": "bash",
+                    "value": "curl -X POST 'https://services.cloud.mongodb.com/api/admin/v3.0/groups/{groupId}/apps/{appId}/drafts' \\\n-H 'Content-Type: application/json' \\\n-H 'Authorization: Bearer <access_token>'"
+                },
+                {
+                    "lang": "bash",
+                    "value": "curl -X POST \\\n   https://services.cloud.mongodb.com/api/admin/v3.0/groups/{groupId}/apps/{appId}/functions \\\n   -H 'Authorization: Bearer <access_token>' \\\n   -d '{\n      \"name\": \"string\",\n      \"private\": true,\n      \"source\": \"string\",\n      \"run_as_system\": true\n      }'"
+                },
+                {
+                    "lang": "bash",
+                    "value": "curl -X POST \\\n   https://services.cloud.mongodb.com/api/admin/v3.0/groups/{groupId}/apps/{appId}/triggers \\\n   -H 'Authorization: Bearer <access_token>' \\\n   -d '{\n         \"name\": \"string\",\n         \"type\": \"DATABASE\",\n         \"config\": {\n            \"service_id\": \"string\",\n            \"database\": \"string\",\n            \"collection\": \"string\",\n            \"operation_types\": {\n               \"string\"\n            },\n            \"match\": ,\n            \"full_document\": false,\n            \"full_document_before_change\": false,\n            \"unordered\": true\n         },\n         \"event_processors\": {\n            \"AWS_EVENTBRIDGE\": {\n               \"account_id\": \"string\",\n               \"region\": \"string\",\n               \"extended_json_enabled\": false\n            },\n         },\n         \"error_handler\": {\n            \"enabled\": true,\n            \"function_id\": \"string\"\n         }\n      }'"
+                },
+                {
+                    "lang": "shell",
+                    "value": "curl -X POST \\\n'https://services.cloud.mongodb.com/api/admin/v3.0/groups/{groupId}/apps/{appId}/drafts/{draftId}/deployment' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer <access_token>' \\"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices logs list --type=trigger_error_handler"
+                },
+                {
+                    "lang": "shell",
+                    "value": "curl -X GET 'https://services.cloud.mongodb.com/api/admin/v3.0/groups/{groupId}/apps/{appId}/logs' \\\n   -H 'Content-Type: application/json' \\\n   -H 'Authorization: Bearer <access_token>'\n   -d '{\n      \"type\": \"TRIGGER_ERROR_HANDLER\"\n      }'"
+                },
+                {
+                    "lang": "json",
+                    "value": "\"event_processors\": {\n   \"AWS_EVENTBRIDGE\": {\n      \"config\": {\n         \"account_id\": \"012345678901\",\n         \"region\": \"us-east-1\"\n      }\n   }\n},\n \"error_handler\": {\n   \"config\": {\n      \"enabled\": true,\n      \"function_name\": \"myErrorHandler.js\"\n   }\n}"
+                }
+            ],
+            "preview": "Learn how to set up AWS EventBridge to handle Atlas Trigger events.",
+            "tags": null,
+            "facets": {
+                "genre": [
+                    "tutorial"
+                ],
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers/database-triggers",
+            "title": "Database Triggers",
+            "headings": [
+                "Create a Database Trigger",
+                "Configuration",
+                "Trigger Details",
+                "Trigger Source Details",
+                "Function",
+                "Advanced",
+                "Change Event Types",
+                "Database Trigger Example",
+                "Suspended Triggers",
+                "Automatically Resume a Suspended Trigger",
+                "Manually Resume a Suspended Trigger",
+                "Find the Suspended Trigger",
+                "Restart the Trigger",
+                "Pull Your App's Latest Configuration Files",
+                "Verify that the Trigger Configuration File Exists",
+                "Redeploy the Trigger",
+                "Trigger Time Reporting",
+                "Performance Optimization",
+                "Disable Event Ordering for Burst Operations",
+                "Disable Collection-Level Preimages",
+                "Use Match Expressions to Limit Trigger Invocations",
+                "Testing Match Expressions",
+                "Use Project Expressions to Reduce Input Data Size",
+                "Additional Examples"
+            ],
+            "paragraphs": "Database Triggers allow you to execute server-side logic whenever a database\nchange occurs on a linked MongoDB Atlas cluster. You can configure triggers on\nindividual collections, entire databases, and on an entire cluster. Unlike SQL data triggers, which run on the database server, triggers run\non a serverless compute layer that scales independently of the database\nserver. Triggers automatically call  Atlas Functions \nand can forward events to external handlers through AWS EventBridge. Use database triggers to implement event-driven data interactions. For\nexample, you can automatically update information in one document when a\nrelated document changes or send a request to an external service\nwhenever a new document is inserted. Database triggers use MongoDB  change streams \nto watch for real-time changes in a collection. A change stream is a\nseries of  database events  that each\ndescribe an operation on a document in the collection. Your app opens a\nsingle change stream for each collection with at least one enabled\ntrigger. If multiple triggers are enabled for a collection they all\nshare the same change stream. You control which operations cause a trigger to fire as well as what\nhappens when it does. For example, you can run a function whenever a\nspecific field of a document is updated. The function can access the\nentire change event, so you always know what changed. You can also pass\nthe change event to  AWS EventBridge  to handle\nthe event outside of Atlas. Triggers support  $match \nexpressions to filter change events and  $project \nexpressions to limit the data included in each event. There are limits on the total number of change streams you can open\non a cluster, depending on the cluster's size. Refer to  change\nstream limitations  for\nmore information. You cannot define a database trigger on a  serverless instance  or  Federated database instance  because they do not support change streams. In deployment and database level triggers, it is possible to configure triggers\nin a way that causes other triggers to fire, resulting in recursion.\nExamples include a database-level trigger writing to a collection within the\nsame database, or a cluster-level logger or log forwarder writing logs to\nanother database in the same cluster. To open the database trigger configuration screen in the App Services UI, click\n Triggers  in the left navigation menu, select the\n Database Triggers  tab, and then click  Add a\nTrigger . Configure the trigger and then click  Save  at the bottom of\nthe page to add it to your current deployment draft. To create a database trigger with the  App Services CLI : Add a database trigger  configuration file  to the  triggers  subdirectory of a\nlocal application directory. Deploy  the trigger: Atlas App Services does not enforce specific filenames for Trigger\nconfiguration files. However, once imported, Atlas App Services will rename\neach configuration file to match the name of the Trigger it defines,\ne.g.  mytrigger.json . Database Triggers have the following configuration options: Field Description Trigger Type The type of the Trigger. Set this value to  Database  for\ndatabase Triggers Name The name of the Trigger. Enabled by default. Used to enable or disable the trigger. Skip Events On Re-Enable Disabled by default. If enabled, any change events that occurred while this\ntrigger was disabled will not be processed. Event Ordering If enabled, trigger events are processed in the order in which they occur.\nIf disabled, events can be processed in parallel, which is faster when\nmany events occur at the same time. If event ordering is enabled, multiple executions of this Trigger will occur\nsequentially based on the timestamps of the change events. If event ordering is\ndisabled, multiple executions of this Trigger will occur independently. Improve performance for Triggers that respond to bulk database operations\nby disabling event ordering.\n Learn more. Within the  Trigger Source Details  section, you first select the\n Watch Against , based on the level of granularity you want. Your\noptions are: Depending on which source type you are using, the additional options differ. The\nfollowing table describes these options. Collection , when a change occurs on a specified collection Database , when a change occurs on any collection in a\nspecified database Deployment , when deployment changes occur on a specified\ncluster. If you select the Deployment source type, the following\ndatabases are  not watched  for changes: The admin databases  admin ,  local , and  config The sync databases  __realm_sync  and  __realm_sync_<app_id> The deployment-level source type is only available on dedicated tiers. Source Type Options Collection Cluster Name . The name of the MongoDB cluster that the\nTrigger is associated with. Database Name . The MongoDB database that contains the watched\ncollection. Collection Name . The MongoDB collection to watch. Optional.\nIf you leave this option blank, the Source Type changes to \"Database.\" Operation Type . The  operation types  that cause the Trigger to fire.\nSelect the operation types you want the trigger to respond to. Options\ninclude: Insert Update Replace Delete Update operations executed from MongoDB Compass or the MongoDB Atlas\nData Explorer fully replace the previous document. As a result,\nupdate operations from these clients will generate  Replace \nchange events rather than  Update  events. Full Document . If enabled,  Update  change events include\nthe latest  majority-committed \nversion of the modified document  after  the change was applied in\nthe  fullDocument  field. Regardless of this setting,  Insert  and  Replace  events always\ninclude the  fullDocument  field.  Delete  events never include\nthe  fullDocument  field. Document Preimage . When enabled, change events include a\ncopy of the modified document from immediately  before  the change was\napplied in the  fullDocumentBeforeChange  field. This has\n performance considerations . All change events\nexcept for  Insert  events include the document preimage. Database Cluster Name . The name of the MongoDB cluster that the\nTrigger is associated with. Database Name . The MongoDB database to watch. Optional.\nIf you leave this option blank, the Source Type changes to \"Deployment,\"\nunless you are on a shared tier, in which case App Services will not\nlet you save the trigger. Operation Type . The  operation types  that cause the Trigger to fire.\nSelect the operation types you want the  trigger to respond to.\nOptions include: Create Collection Modify Collection Rename Collection Drop Collection Shard Collection Reshard Collection Refine Collection Shard Key Update operations executed from MongoDB Compass or the MongoDB Atlas\nData Explorer fully replace the previous document. As a result,\nupdate operations from these clients will generate  Replace \nchange events rather than  Update  events. Full Document . If enabled,  Update  change events include\nthe latest  majority-committed \nversion of the modified document  after  the change was applied in\nthe  fullDocument  field. Regardless of this setting,  Insert  and  Replace  events always\ninclude the  fullDocument  field.  Delete  events never include\nthe  fullDocument  field. Document Preimage . When enabled, change events include a\ncopy of the modified document from immediately  before  the change was\napplied in the  fullDocumentBeforeChange  field. This has\n performance considerations . All change events\nexcept for  Insert  events include the document preimage. Disabled\nfor Database and Deployment sources to limit unnecessary watches on the\ncluster for a new collection being created. Deployment Cluster Name . The name of the MongoDB cluster that the\nTrigger is associated with. Operation Type . The  operation types  that occur in the cluster that cause\nthe Trigger to fire. Select the operation types you want the  trigger\nto respond to. Options include: Drop Database Full Document . If enabled,  Update  change events include\nthe latest  majority-committed \nversion of the modified document  after  the change was applied in\nthe  fullDocument  field. Regardless of this setting,  Insert  and  Replace  events always\ninclude the  fullDocument  field.  Delete  events never include\nthe  fullDocument  field. Document Preimage . When enabled, change events include a\ncopy of the modified document from immediately  before  the change was\napplied in the  fullDocumentBeforeChange  field. This has\n performance considerations . All change events\nexcept for  Insert  events include the document preimage. Disabled\nfor Database and Deployment sources to limit unnecessary watches on the\ncluster for a new collection being created. Preimages require additional storage overhead that may affect\nperformance. If you're not using preimages on a collection,\nyou should disable preimages. To learn more, see  Disable\nCollection-Level Preimages . Document preimages are supported on non-sharded Atlas clusters running\nMongoDB 4.4+, and on sharded Atlas clusters running MongoDB 5.3 and later.\nYou can upgrade a non-sharded cluster (with preimages) to a\nsharded cluster, as long as the cluster is running 5.3 or later. Within the  Function  section, you choose what action is taken when\nthe trigger fires. You can choose to run a  function  or use\n AWS EventBridge . Within the  Advanced  section, the following  optional  configuration\noptions are available: Field Description Match Expression A  $match  expression document\nthat App Services uses to filter which change events cause the Trigger to\nfire. The Trigger evaluates all change event objects that it receives against\nthis match expression and only executes if the expression evaluates to  true \nfor a given change event. MongoDB performs a full equality match for embedded documents in a match\nexpression. If you want to match a specific field in an embedded document,\nrefer to the field directly using  dot-notation . For more information, see\n Query on Embedded Documents  in\nthe MongoDB server manual. Limit the number of fields that the Trigger processes by using a\n $match  expression.\n Learn more. Project Expression A  $project \nexpression that selects a subset of fields from each event in the change\nstream. You can use this to  optimize the trigger's execution . The expression is an object that maps the name of fields in the change\nevent to either a  0 , which excludes the field, or a  1 , which\nincludes it. An expression can have values of either  0  or  1  but\nnot both together. This splits projections into two categories,\ninclusive and exclusive: An  inclusive  project expression specifies fields to include in each\nchange event document. The expression is an object that maps the name\nof fields to include to a  1 . If you don't include a field, it is\nnot included in the projected change event. The following projection includes only the  _id  and\n fullDocument  fields: An  exclusive  project expression specifies fields to exclude from\neach change event document. The expression is an object that maps the\nname of fields to include to a  0 . If you don't exclude a field, it\nis included in the projected change event. The following projection excludes the  _id  and\n fullDocument  fields: You cannot exclude the  operation_type  field with a projection.\nThis ensures that the trigger can always check if it should run for\na given event's operation type. Auto-Resume Triggers If enabled, when this Trigger's resume token\ncannot be found in the cluster's oplog, the Trigger automatically resumes\nprocessing events at the next relevant change stream event.\nAll change stream events from when the Trigger was suspended until the Trigger\nresumes execution do not have the Trigger fire for them. Maximum Throughput Triggers If the linked data source is a dedicated server (M10+ Tier),\nyou can increase the  maximum throughput \nbeyond the default 10,000 concurrent processes. Before increasing the maximum throughput, consider whether one or more of\nyour triggers are calling a rate-limited external API. Increasing the\ntrigger rate might result in exceeding those limits. Increasing the throughput may also add a larger workload, affecting\noverall cluster performance. To enable maximum throughput, you must disable Event Ordering. Database change events represent individual changes in a specific\ncollection of your linked MongoDB Atlas cluster. Every database event has the same operation type and structure as the\n change event  object that was\nemitted by the underlying change stream. Change events have the\nfollowing operation types: Database change event objects have the following general form: Operation Type Description Insert Document  (All trigger types) Represents a new document added to the collection. Update Document  (All trigger types) Represents a change to an existing document in the collection. Delete Document  (All trigger types) Represents a document deleted from the collection. Replace Document  (All trigger types) Represents a new document that replaced a document in the collection. Create Collection  (Database and Deployment trigger types only) Represents the creation of a new collection. Modify Collection  (Database and Deployment trigger types only) Represents the modification collection. Rename Collection  (Database and Deployment trigger types only) Represents collection being renamed. Drop Collection  (Database and Deployment trigger types only) Represents a collection being dropped. Shard Collection  (Database and Deployment trigger types only) Represents a collection changing from unsharded to sharded. Reshard Collection  (Database and Deployment trigger types only) Represents a change to a collection's sharding. Refine Collection Shard Key  (Database and Deployment trigger types only) Represents a change in the shard key of a collection. Create Indexes  (Database and Deployment trigger types only) Represents the creation of a new index. Drop Indexes  (Database and Deployment trigger types only) Represents an index being dropped. Drop Database  (Deployment trigger type only) Represents a database being dropped. An online store wants to notify its customers whenever one of their\norders changes location. They record each order in the  store.orders \ncollection as a document that resembles the following: To automate this process, the store creates a Database Trigger that\nlistens for  Update  change events in the  store.orders  collection.\nWhen the trigger observes an  Update  event, it passes the\n change event object  to its associated Function,\n textShippingUpdate . The Function checks the change event for any\nchanges to the  shippingLocation  field and, if it was updated, sends\na text message to the customer with the new location of the order. Database Triggers may enter a suspended state in response to an event\nthat prevents the Trigger's change stream from continuing. Events that\ncan suspend a Trigger include: In the event of a suspended or failed trigger, Atlas App Services sends the\nproject owner an email alerting them of the issue. invalidate events \nsuch as  dropDatabase ,  renameCollection , or those caused by\na network disruption. the  resume token  required to resume the change stream is no longer in the\ncluster  oplog . The App logs\nrefer to this as a  ChangeStreamHistoryLost  error. You can configure a Trigger to automatically resume if the Trigger was suspended\nbecause the resume token is no longer in the oplog.\nThe Trigger does not process any missed change stream events between\nwhen the resume token is lost and when the resume process completes. When  creating or updating a Database Trigger \nin the App Services UI, navigate to the configuration page of the Trigger\nyou want to automatically resume if suspended. In the  Advanced (Optional)  section, select  Auto-Resume Triggers . Save and deploy the changes. When  creating or updating a Database Trigger \nwith the Realm CLI, create or navigate to the configuration file for the Trigger\nyou want to automatically resume if suspended. In the  Trigger's configuration file ,\ninclude the following: Deploy the changes with the following command: When you manually resume a suspended Trigger, your App attempts to resume the Trigger\nat the next change stream event after the change stream stopped.\nIf the resume token is no longer in the cluster oplog, the Trigger\nmust be started without a resume token. This means the Trigger begins\nlistening to new events but does not process any missed past events. You can adjust the oplog size to keep the resume token for more time after\na suspension by  scaling your Atlas cluster .\nMaintain an oplog size a few times greater than\nyour cluster's peak oplog throughput (GB/hour) to reduce the risk of a\nsuspended trigger's resume token dropping off the oplog\nbefore the trigger executes.\nView your cluster's oplog throughput in the  Oplog GB/Hour  graph in the\n Atlas cluster metrics . You can attempt to restart a suspended Trigger from the App Services UI or by\nimporting an application directory with the  App Services CLI . On the  Database Triggers  tab of the  Triggers \npage, find the trigger that you want to resume in the list of\ntriggers. App Services marks suspended triggers\nwith a  Status  of  Suspended . Click  Restart  in the trigger's  Actions  column.\nYou can choose to restart the trigger with a change stream\n resume token  or\nopen a new change stream. Indicate whether or not to use a resume\ntoken and then click  Resume Database Trigger . If you use a  resume token , App Services\nattempts to resume the trigger's underlying change\nstream at the event immediately following the last\nchange event it processed. If successful, the trigger\nprocesses any events that occurred while it was\nsuspended. If you do not use a resume token, the\ntrigger begins listening for new events but will not\nfire for any events that occurred while it was\nsuspended. If you exported a new copy of your application, it should already\ninclude an up-to-date configuration file for the suspended trigger.\nYou can confirm that the configuration file exists by looking\nin the  /triggers  directory for a  trigger configuration file  with the same name as the trigger. After you have verified that the trigger configuration file exists,\npush the configuration back to your app. App Services\nautomatically attempts to resume any suspended triggers included\nin the deployment. The list of Triggers in the Atlas App Services UI shows three timestamps: Last Modified This is the time the Trigger was created or most recently changed. Latest Heartbeat Atlas App Services keeps track of the last time a trigger was run. If the trigger\nis not sending any events, the server sends a heartbeat to ensure the trigger's\nresume token stays fresh. Whichever event is most recent is shown as the\n Latest Heartbeat . Last Cluster Time Processed Atlas App Services also keeps track of the  Last Cluster Time Processed ,\nwhich is the last time the change stream backing a Trigger emitted an event. It\nwill be older than the  Latest Heartbeat  if there have been no events\nsince the most recent heartbeat. Consider disabling event ordering if your trigger fires on a collection that\nreceives short bursts of events (e.g. inserting data as part of a daily batch\njob). Ordered Triggers wait to execute a Function for a particular event until\nthe Functions of previous events have finished executing. As a\nconsequence, ordered Triggers are effectively rate-limited by the run\ntime of each sequential Trigger function. This may cause a significant\ndelay between the database event appearing on the change stream and the\nTrigger firing. In certain extreme cases, database events might fall off\nthe oplog before a long-running ordered trigger processes them. Unordered Triggers execute functions in parallel if possible, which can be\nsignificantly faster (depending on your use case) but does not guarantee that\nmultiple executions of a Trigger Function occur in event order. Document preimages require your cluster to record additional data about\neach operation on a collection. Once you enable preimages for any\ntrigger on a collection, your cluster stores preimages for every\noperation on the collection. The additional storage space and compute overhead may degrade trigger\nperformance depending on your cluster configuration. To avoid the storage and compute overhead of preimages, you must disable\npreimages for the entire underlying MongoDB collection. This is a\nseparate setting from any individual trigger's preimage setting. If you disable collection-level preimages, then no active trigger on\nthat collection can use preimages. However, if you delete or disable all\npreimage triggers on a collection, then you can also disable\ncollection-level preimages. To learn how, see  Disable Preimages for a Collection . You can limit the number of Trigger invocations by specifying a  $match  expression in the  Match\nExpression  field. App Services evaluates the match expression against the\nchange event document and invokes the Trigger only if the expression evaluates\nto true for the given change event. The match expression is a JSON document that specifies the query conditions\nusing the  MongoDB read query syntax . We recommend only using match expressions when the volume of Trigger events\nmeasurably becomes a performance issue. Until then, receive all events and\nhandle them individually in the Trigger function code. The exact shape of the change event document depends on the event that caused\nthe trigger to fire. For details, see the reference for each event type: insert update replace delete create modify rename drop shardCollection reshardCollection refineCollectionShardKey dropDatabase The following match expression allows the Trigger to fire\nonly if the change event object specifies that the  status  field in\na document changed. updateDescription  is a field of the  update Event object . The following match expression allows the Trigger to fire only when a\ndocument's  needsTriggerResponse  field is  true . The  fullDocument \nfield of the  insert ,\n update , and  replace  events represents a document after the\ngiven operation. To receive the  fullDocument  field, you must enable\n Full Document  in your Trigger configuration. The following procedure shows one way to test whether your match expression\nworks as expected: Download  the MongoDB Shell (mongosh)  and use it to\n connect to your cluster . Replacing  DB_NAME  with your database name,  COLLECTION_NAME  with your\ncollection name, and  YOUR_MATCH_EXPRESSION  with the match expression you\nwant to test, paste the following into mongosh to open a change stream on an\nexisting collection: In another terminal window, use mongosh to make changes to some test\ndocuments in the collection. Observe what the change stream filters in and out. In the  Project Expression  field,\nlimit the number of fields that the Trigger processes by using a\n $project  expression. When using Triggers, a projection expression is inclusive  only .\nProject does not support mixing inclusions and exclusions.\nThe project expression must be inclusive because Triggers require you\nto include  operationType . If you want to exclude a single field, the projection expression must\ninclude every field  except  the one you want to exclude.\nYou can only explicitly exclude  _id , which is included by default. A trigger is configured with the following  Project Expression : The change event object that App Services passes to the trigger function\nonly includes the fields specifed in the projection, as in the following\nexample: For additional examples of Triggers integrated into an App Services App,\ncheckout the  example Triggers on Github .",
+            "code": [
+                {
+                    "lang": "shell",
+                    "value": "appservices push"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "{\n  _id: 1,\n  fullDocument: 1\n}"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "{\n  _id: 0,\n  fullDocument: 0\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n   _id : <ObjectId>,\n   \"operationType\": <string>,\n   \"fullDocument\": <document>,\n   \"fullDocumentBeforeChange\": <document>,\n   \"ns\": {\n      \"db\" : <string>,\n      \"coll\" : <string>\n   },\n   \"documentKey\": {\n     \"_id\": <ObjectId>\n   },\n   \"updateDescription\": <document>,\n   \"clusterTime\": <Timestamp>\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  _id: ObjectId(\"59cf1860a95168b8f685e378\"),\n  customerId: ObjectId(\"59cf17e1a95168b8f685e377\"),\n  orderDate: ISODate(\"2018-06-26T16:20:42.313Z\"),\n  shipDate: ISODate(\"2018-06-27T08:20:23.311Z\"),\n  orderContents: [\n    { qty: 1, name: \"Earl Grey Tea Bags - 100ct\", price: NumberDecimal(\"10.99\") }\n  ],\n  shippingLocation: [\n    { location: \"Memphis\", time: ISODate(\"2018-06-27T18:22:33.243Z\") },\n  ]\n}"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "exports = async function (changeEvent) {\n  // Destructure out fields from the change stream event object\n  const { updateDescription, fullDocument } = changeEvent;\n\n  // Check if the shippingLocation field was updated\n  const updatedFields = Object.keys(updateDescription.updatedFields);\n  const isNewLocation = updatedFields.some(field =>\n    field.match(/shippingLocation/)\n  );\n\n  // If the location changed, text the customer the updated location.\n  if (isNewLocation) {\n    const { customerId, shippingLocation } = fullDocument;\n    const mongodb = context.services.get(\"mongodb-atlas\");\n    const customers = mongodb.db(\"store\").collection(\"customers\");\n    const { location } = shippingLocation.pop();\n    const customer = await customers.findOne({ _id: customerId });\n\n    const twilio = require('twilio')(\n      // Your Account SID and Auth Token from the Twilio console:\n      context.values.get(\"TwilioAccountSID\"),\n      context.values.get(\"TwilioAuthToken\"),\n    );\n\n    await twilio.messages.create({\n      To: customer.phoneNumber,\n      From: context.values.get(\"ourPhoneNumber\"),\n      Body: `Your order has moved! The new location is ${location}.`\n    })\n  }\n};"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"type\": \"DATABASE\",\n  \"name\": \"shippingLocationUpdater\",\n  \"function_name\": \"textShippingUpdate\",\n  \"config\": {\n    \"service_name\": \"mongodb-atlas\",\n    \"database\": \"store\",\n    \"collection\": \"orders\",\n    \"operation_types\": [\"UPDATE\"],\n    \"unordered\": false,\n    \"full_document\": true,\n    \"match\": {}\n  },\n  \"disabled\": false\n}"
+                },
+                {
+                    "lang": "js",
+                    "value": "{\n  \"name\": \"<Trigger Name>\",\n  \"type\": \"DATABASE\",\n  \"config\": {\n    \"tolerate_resume_errors\": true,\n    // ...rest of Database Trigger configuration\n  },\n  // ...rest of Trigger general configuration\n}"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices push --remote=<App ID>"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices pull --remote=<App ID>"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices push"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "{\n  \"updateDescription.updatedFields.status\": {\n    \"$exists\": true\n  }\n}"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "{\n  \"fullDocument.needsTriggerResponse\": true\n}"
+                },
+                {
+                    "lang": "js",
+                    "value": "db.getSiblingDB(DB_NAME).COLLECTION_NAME.watch([{$match: YOUR_MATCH_EXPRESSION}])\nwhile (!watchCursor.isClosed()) {\n  if (watchCursor.hasNext()) {\n    print(tojson(watchCursor.next()));\n  }\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"_id\": 0,\n  \"operationType\": 1,\n  \"updateDescription.updatedFields.status\": 1\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"operationType\": \"update\",\n  \"updateDescription\": {\n    \"updatedFields\": {\n      \"status\": \"InProgress\"\n    }\n  }\n}"
+                }
+            ],
+            "preview": "Use Database Triggers to execute server-side logic when database changes occur",
+            "tags": null,
+            "facets": {
+                "genre": [
+                    "reference"
+                ],
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers/disable",
+            "title": "Disable a Trigger",
+            "headings": [
+                "Overview",
+                "Find the Trigger",
+                "Disable the Trigger",
+                "Deploy Your Changes",
+                "Pull Your App's Latest Configuration Files",
+                "Verify that the Trigger Configuration File Exists",
+                "Disable the Trigger",
+                "Deploy Your Changes",
+                "Restoring from a Snapshot"
+            ],
+            "paragraphs": "Triggers may enter a  suspended  state in response to\nan event that prevents the Trigger's change stream from continuing, such\nas a network disruption or change to the underlying cluster. When a\nTrigger enters a suspended state, it does not receive change events and will not\nfire. You can suspend a Trigger from the Atlas App Services UI or by\nimporting an application directory with the  App Services CLI . In the event of a suspended or failed trigger, Atlas App Services sends the\nproject owner an email alerting them of the issue. On the  Database Triggers  tab of the  Triggers \npage, find the trigger that you want to disable in the list of\nTriggers. Switch the  Enabled  toggle to the \"off\" setting. If Development Mode is not enabled, press the\n review draft & deploy  button to release your changes. If you exported a new copy of your application, it should already include an\nup-to-date configuration file for the suspended trigger. You can confirm that\nthe configuration file exists by looking in the  /triggers  directory for a\n trigger configuration file  with the same name\nas the trigger. After you have verified that the trigger configuration file exists, add\na field named  \"disabled\"  with the value  true  to the top level\nof the trigger json definition: Finally, push the configuration back to your app: Consider the following scenario: In this case, the trigger picks up all of the newly-added documents and fires\nfor each document. It will not fire again for events that have already been\nprocessed. A database trigger is disabled or suspended. New documents are added while the trigger is disabled. The database is restored from a snapshot to a time prior to the new documents\nbeing added. The database trigger is restarted. If a previously-enabled database trigger is running during snapshot restoration,\nyou will see an error in the Edit Trigger section of the Atlas UI because the\ntrigger cannot connect to the Atlas cluster during the restore process. Once\nsnapshot restoration completes, the error disappears and the trigger continues\nto execute normally.",
+            "code": [
+                {
+                    "lang": "shell",
+                    "value": "appservices pull --remote=<App ID>"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n   \"id\": \"6142146e2f052a39d38e1605\",\n   \"name\": \"steve\",\n   \"type\": \"SCHEDULED\",\n   \"config\": {\n      \"schedule\": \"*/1 * * * *\"\n   },\n   \"function_name\": \"myFunc\",\n   \"disabled\": true\n}"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices push"
+                }
+            ],
+            "preview": "Triggers may enter a suspended state in response to\nan event that prevents the Trigger's change stream from continuing, such\nas a network disruption or change to the underlying cluster. When a\nTrigger enters a suspended state, it does not receive change events and will not\nfire.",
+            "tags": null,
+            "facets": {
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers/scheduled-triggers",
+            "title": "Scheduled Triggers",
+            "headings": [
+                "Create a Scheduled Trigger",
+                "Configuration",
+                "CRON Expressions",
+                "Expression Syntax",
+                "Format",
+                "Field Values",
+                "Example",
+                "Performance Optimization",
+                "Additional Examples"
+            ],
+            "paragraphs": "Scheduled triggers allow you to execute server-side logic on a\n regular schedule that you define .\nYou can use scheduled triggers to do work that happens on a periodic\nbasis, such as updating a document every minute, generating a nightly\nreport, or sending an automated weekly email newsletter. To create a scheduled Trigger in the Atlas App Services UI: Click  Triggers  under  Build  in the\nleft navigation menu. Click  Add a Trigger  to open the Trigger configuration page. Select  Scheduled  for the  Trigger Type . To create a scheduled Trigger with the  App Services CLI : Add a scheduled Trigger  configuration file  to the  triggers  subdirectory of a local\napplication directory. Scheduled Trigger configuration files have the following form: You cannot create a Trigger that runs on a  Basic \nschedule using App Services CLI. All imported scheduled Trigger\nconfigurations must specify a  CRON expression . Deploy  the trigger: Scheduled Triggers have the following configuration options: Field Description Select  Scheduled . The name of the trigger. Enabled by default. Used to enable or disable the trigger. Disabled by default. If enabled, any change events that occurred while\nthis trigger was disabled will not be processed. Required. You can select  Basic  or  Advanced . A Basic\nschedule executes the Trigger periodically based on the interval you set,\nsuch as \"every five minutes\" or \"every Monday\". An Advanced schedule runs the Trigger based on the custom\n CRON expression  that you define. Within the  Function  section, you choose what action is taken when\nthe trigger fires. You can choose to run a  function  or use\n AWS EventBridge . A Scheduled Trigger does not pass any arguments to its linked\nFunction. CRON expressions are user-defined strings that use standard\n cron  job syntax to define when a  scheduled\ntrigger  should execute.\nApp Services executes Trigger CRON expressions based on  UTC time .\nWhenever all of the fields in a CRON expression match the current date and time,\nApp Services fires the trigger associated with the expression. CRON expressions are strings composed of five space-delimited fields.\nEach field defines a granular portion of the schedule on which its\nassociated trigger executes: Field Valid Values Description minute [0 - 59] Represents one or more minutes within an hour. If the  minute  field of a CRON expression has a value of\n 10 , the field matches any time ten minutes after the hour\n(e.g.  9:10 AM ). hour [0 - 23] Represents one or more hours within a day on a 24-hour clock. If the  hour  field of a CRON expression has a value of\n 15 , the field matches any time between  3:00 PM  and\n 3:59 PM . dayOfMonth [1 - 31] Represents one or more days within a month. If the  dayOfMonth  field of a CRON expression has a value\nof  3 , the field matches any time on the third day of the\nmonth. month Represents one or more months within a year. A month can be represented by either a number (e.g.  2  for\nFebruary) or a three-letter string (e.g.  APR  for April). If the  month  field of a CRON expression has a value of\n 9 , the field matches any time in the month of September. weekday Represents one or more days within a week. A weekday can be represented by either a number (e.g.  2  for a\nTuesday) or a three-letter string (e.g.  THU  for a Thursday). If the  weekday  field of a CRON expression has a value of\n 3 , the field matches any time on a Wednesday. Each field in a CRON expression can contain either a specific value or\nan expression that evaluates to a set of values. The following table\ndescribes valid field values and expressions: Expression Type Description Matches all possible field values. Available in all expression fields. The following CRON expression schedules a trigger to execute\nonce every minute of every day: Matches a specific field value. For fields other than  weekday \nand  month  this value will always be an integer. A  weekday \nor  month  field can be either an integer or a three-letter\nstring (e.g.  TUE  or  AUG ). Available in all expression fields. The following CRON expression schedules a trigger to execute\nonce every day at 11:00 AM UTC: Matches a list of two or more field expressions or specific\nvalues. Available in all expression fields. The following CRON expression schedules a trigger to execute\nonce every day in January, March, and July at 11:00 AM UTC: Matches a continuous range of field values between and including\ntwo specific field values. Available in all expression fields. The following CRON expression schedules a trigger to execute\nonce every day from January 1st through the end of April at\n11:00 AM UTC: Matches any time where the step value evenly divides the\nfield value with no remainder (i.e. when  Value % Step == 0 ). Available in the  minute  and  hour  expression fields. The following CRON expression schedules a trigger to execute\non the 0th, 25th, and 50th minutes of every hour: An online store wants to generate a daily report of all sales from the\nprevious day. They record all orders in the  store.orders  collection\nas documents that resemble the following: To generate the daily report, the store creates a scheduled Trigger\nthat fires every day at  7:00 AM UTC . When the\nTrigger fires, it calls its linked Atlas Function,\n generateDailyReport , which runs an aggregation\nquery on the  store.orders  collection to generate the report. The\nFunction then stores the result of the aggregation in the\n store.reports  collection. Use the Query API with a a  $match \nexpression to reduce the number of documents your Function looks at.\nThis helps your Function improve performance and not reach\n Function memory limits . Refer the Example section for a Scheduled Trigger using a $match expression. For additional examples of Triggers integrated into an App Services App,\ncheckout the  example Triggers on Github .",
+            "code": [
+                {
+                    "lang": "none",
+                    "value": "{\n   \"type\": \"SCHEDULED\",\n   \"name\": \"<Trigger Name>\",\n   \"function_name\": \"<Trigger Function Name>\",\n   \"config\": {\n     \"schedule\": \"<CRON expression>\"\n   },\n   \"disabled\": <boolean>\n}"
+                },
+                {
+                    "lang": "shell",
+                    "value": "appservices push"
+                },
+                {
+                    "lang": "text",
+                    "value": "* * * * *\n\u2502 \u2502 \u2502 \u2502 \u2514\u2500\u2500 weekday...........[0 (SUN) - 6 (SAT)]\n\u2502 \u2502 \u2502 \u2514\u2500\u2500\u2500\u2500 month.............[1 (JAN) - 12 (DEC)]\n\u2502 \u2502 \u2514\u2500\u2500\u2500\u2500\u2500\u2500 dayOfMonth........[1 - 31]\n\u2502 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 hour..............[0 - 23]\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 minute............[0 - 59]"
+                },
+                {
+                    "lang": "text",
+                    "value": "* * * * *"
+                },
+                {
+                    "lang": "text",
+                    "value": "0 11 * * *"
+                },
+                {
+                    "lang": "text",
+                    "value": "0 11 * 1,3,7 *"
+                },
+                {
+                    "lang": "text",
+                    "value": "0 11 * 1-4 *"
+                },
+                {
+                    "lang": "text",
+                    "value": "*/25 * * * *"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  _id: ObjectId(\"59cf1860a95168b8f685e378\"),\n  customerId: ObjectId(\"59cf17e1a95168b8f685e377\"),\n  orderDate: ISODate(\"2018-06-26T16:20:42.313Z\"),\n  shipDate: ISODate(\"2018-06-27T08:20:23.311Z\"),\n  orderContents: [\n    { qty: 1, name: \"Earl Grey Tea Bags - 100ct\", price: Decimal128(\"10.99\") }\n  ],\n  shippingLocation: [\n    { location: \"Memphis\", time: ISODate(\"2018-06-27T18:22:33.243Z\") },\n  ]\n}"
+                },
+                {
+                    "lang": "javascript",
+                    "value": "exports = function() {\n  // Instantiate MongoDB collection handles\n  const mongodb = context.services.get(\"mongodb-atlas\");\n  const orders = mongodb.db(\"store\").collection(\"orders\");\n  const reports = mongodb.db(\"store\").collection(\"reports\");\n\n  // Generate the daily report\n  return orders.aggregate([\n    // Only report on orders placed since yesterday morning\n    { $match: {\n        orderDate: {\n          $gte: makeYesterdayMorningDate(),\n          $lt: makeThisMorningDate()\n        }\n    } },\n    // Add a boolean field that indicates if the order has already shipped\n    { $addFields: {\n        orderHasShipped: {\n          $cond: {\n            if: \"$shipDate\", // if shipDate field exists\n            then: 1,\n            else: 0\n          }\n        }\n    } },\n    // Unwind individual items within each order\n    { $unwind: {\n        path: \"$orderContents\"\n    } },\n    // Calculate summary metrics for yesterday's orders\n    { $group: {\n        _id: \"$orderDate\",\n        orderIds: { $addToSet: \"$_id\" },\n        numSKUsOrdered: { $sum: 1 },\n        numItemsOrdered: { $sum: \"$orderContents.qty\" },\n        totalSales: { $sum: \"$orderContents.price\" },\n        averageOrderSales: { $avg: \"$orderContents.price\" },\n        numItemsShipped: { $sum: \"$orderHasShipped\" },\n    } },\n    // Add the total number of orders placed\n    { $addFields: {\n        numOrders: { $size: \"$orderIds\" }\n    } }\n  ]).next()\n    .then(dailyReport => {\n      reports.insertOne(dailyReport);\n    })\n    .catch(err => console.error(\"Failed to generate report:\", err));\n};\n\nfunction makeThisMorningDate() {\n  return setTimeToMorning(new Date());\n}\n\nfunction makeYesterdayMorningDate() {\n  const thisMorning = makeThisMorningDate();\n  const yesterdayMorning = new Date(thisMorning);\n  yesterdayMorning.setDate(thisMorning.getDate() - 1);\n  return yesterdayMorning;\n}\n\nfunction setTimeToMorning(date) {\n  date.setHours(7);\n  date.setMinutes(0);\n  date.setSeconds(0);\n  date.setMilliseconds(0);\n  return date;\n}"
+                },
+                {
+                    "lang": "json",
+                    "value": "{\n  \"type\": \"SCHEDULED\",\n  \"name\": \"reportDailyOrders\",\n  \"function_name\": \"generateDailyReport\",\n  \"config\": {\n    \"schedule\": \"0 7 * * *\"\n  },\n  \"disabled\": false\n}"
+                }
+            ],
+            "preview": "Scheduled triggers allow you to execute server-side logic on a\nregular schedule that you define.\nYou can use scheduled triggers to do work that happens on a periodic\nbasis, such as updating a document every minute, generating a nightly\nreport, or sending an automated weekly email newsletter.",
+            "tags": null,
+            "facets": {
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        },
+        {
+            "slug": "triggers",
+            "title": "Atlas Triggers",
+            "headings": [
+                "Trigger Types",
+                "Limitations",
+                "Atlas Function Constraints Apply",
+                "Event Processing Throughput",
+                "Number of Triggers Cannot Exceed Available Change Streams",
+                "Diagnose Duplicate Events"
+            ],
+            "paragraphs": "Atlas Triggers execute application and database logic. Triggers\ncan respond to events or use pre-defined schedules. Triggers listen for events of a configured type. Each Trigger links to a\nspecific  Atlas Function .\nWhen a Trigger observes an event that matches your\nconfiguration, it  \"fires\" . The Trigger passes this event object as the\nargument to its linked Function. A Trigger might fire on: App Services keeps track of the latest execution time for each\nTrigger and guarantees that each event is processed at least once. A specific  operation type  in a given Collection. An authentication event, such as user creation or deletion. A scheduled time. App Services supports three types of triggers: Database triggers \nrespond to document insert, changes, or deletion. You can configure\nDatabase Triggers for each linked MongoDB collection. Authentication triggers \nrespond to user creation, login, or deletion. Scheduled triggers \nexecute functions according to a pre-defined schedule. Triggers invoke Atlas Functions. This means they have the same\nconstraints as all Atlas Functions. Learn more about Atlas Function constraints. Triggers process events when capacity becomes available. A Trigger's\ncapacity is determined by its event ordering configuration: Trigger capacity is not a direct measure of throughput or a guaranteed\nexecution rate. Instead, it is a threshold for the maximum number of\nevents that a Trigger can process at one time. In practice, the rate at\nwhich a Trigger can process events depends on the Trigger function's run\ntime logic and the number of events that it receives in a given\ntimeframe. To increase the throughput of a Trigger, you can try to: Ordered triggers process events from the change stream one at a time\nin sequence. The next event begins processing only after the previous\nevent finishes processing. Unordered triggers can process multiple events concurrently, up to\n10,000 at once by default. If your Trigger data source is an M10+\nAtlas cluster, you can configure individual unordered triggers to\nexceed the 10,000 concurrent event threshold. To learn more, see\n Maximum Throughput Triggers . Optimize the Trigger function's run time behavior. For example, you\nmight reduce the number of network calls that you make. Reduce the size of each event object with the Trigger's\n projection filter . For the best\nperformance, limit the size of each change event to 2KB or less. Use a match filter to reduce the number of events that the Trigger\nprocesses. For example, you might want to do something only if a\nspecific field changed. Instead of matching every update event and\nchecking if the field changed in your Function code, you can use the\nTrigger's match filter to fire only if the field is included in the\nevent's  updateDescription.updatedFields  object. App Services limits the total number of Database Triggers. The size of your\nAtlas cluster drives this limit. Each Atlas cluster tier has a maximum number of supported change\nstreams. A Database Trigger requires its own change stream. Other App Services\nalso use change streams, such as Atlas Device Sync. Database Triggers\nmay not exceed the number of available change streams. Learn more about the number of supported change streams for Atlas tiers. During normal Trigger operation, Triggers do not send duplicate events.\nHowever, when some failure or error conditions occur, Triggers may deliver\nduplicate events. You may see a duplicate Trigger event when: If you notice duplicate Trigger events, check the  App Logs  for suspended\nTriggers or server failures. A server responsible for processing and tracking events experiences a\nfailure. This failure prevents the server from recording its progress in a\ndurable or long-term storage system, making it \"forget\" it has processed\nsome of the latest events. Using unordered processing where events 1 through 10 are sent simultaneously.\nIf event 9 fails and leads to Trigger suspension, events like event 10 might\nget processed again when the system resumes from event 9. This can lead to\nduplicates, as the system doesn't strictly follow the sequence of events and\nmay reprocess already-handled events.",
+            "code": [],
+            "preview": "Use Atlas Triggers to execute application and database logic in response to events or schedules.",
+            "tags": null,
+            "facets": {
+                "target_product": [
+                    "atlas"
+                ],
+                "target_product>atlas>sub_product": [
+                    "atlas-app-services"
+                ]
+            }
+        }
+    ]
+}

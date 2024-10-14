@@ -1,36 +1,44 @@
-import { JSONPath } from 'jsonpath-plus';
-import { Facet } from './createFacets';
-import { ManifestEntry } from './manifestEntry';
-import { BSON } from 'bson';
+import { JSONPath } from "jsonpath-plus";
+import { createFacet, type Facet } from "./createFacets";
+import type { BSON } from "bson";
+import type { ManifestFacets, Metadata, ManifestEntry } from "../types";
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
-  tree: any;
-  robots: any;
-  keywords: any;
-  description: any;
+
+  tree: BSON.Document;
+  robots: boolean;
+  keywords: string | null;
+  description?: string;
   paragraphs: string;
-  code: { lang: string; value: any }[];
-  title: any;
-  headings: any;
+  code: Array<{ lang: string; value: string }>;
+  title: string;
+  headings: Array<string>;
   slug: string;
-  preview?: string;
-  facets: any;
-  noIndex: any;
-  reasons: any;
+  preview: string | null;
+  facets: ManifestFacets;
+  noIndex: boolean;
+  reasons: Array<string>;
 
   constructor(doc: BSON.Document) {
     this.tree = doc;
 
     //find metadata
-    [this.robots, this.keywords, this.description] = this.findMetadata();
+    const { robots, keywords, description } = this.findMetadata();
+
+    this.robots = robots;
+    this.keywords = keywords;
+    this.description = description;
     //find paragraphs
     this.paragraphs = this.findParagraphs();
+
     //find code
     this.code = this.findCode();
 
     //find title, headings
-    [this.title, this.headings] = this.findHeadings();
+    const { title, headings } = this.findHeadings();
+    this.title = title;
+    this.headings = headings;
 
     //derive slug
     this.slug = this.deriveSlug();
@@ -42,13 +50,15 @@ export class Document {
     this.facets = deriveFacets(this.tree);
 
     //noindex, reasons
-    [this.noIndex, this.reasons] = this.getNoIndex();
+    const { noIndex, reasons } = this.getNoIndex();
+    this.noIndex = noIndex;
+    this.reasons = reasons;
   }
 
-  findMetadata() {
+  findMetadata = (): Metadata => {
     let robots = true; //can be set in the rst if the page is supposed to be crawled
     let keywords: string | null = null; //keywords is an optional list of strings
-    let description: string | null = null; //this can be optional??
+    let description: string | undefined; //this can be optional??
 
     const results = JSONPath({
       path: "$..children[?(@.name=='meta')]..options",
@@ -57,22 +67,22 @@ export class Document {
     if (results.length) {
       if (results.length > 1)
         console.log(
-          "length of results is greater than one, it's: " + results.length,
+          `length of results is greater than one, length =  ${results.length}`
         );
       const val = results[0];
       //check if robots, set to false if no robots
-      if ('robots' in val && (val.robots == 'None' || val.robots == 'noindex'))
+      if ("robots" in val && (val.robots == "None" || val.robots === "noindex"))
         robots = false;
 
       keywords = val?.keywords;
       description = val?.description;
     }
 
-    return [robots, keywords, description];
-  }
+    return { robots, keywords, description };
+  };
 
   findParagraphs() {
-    let paragraphs = '';
+    let paragraphs = "";
 
     const results = JSONPath({
       path: "$..children[?(@.type=='paragraph')]..value",
@@ -80,7 +90,7 @@ export class Document {
     });
 
     for (const r of results) {
-      paragraphs += ' ' + r;
+      paragraphs += ` ${r}`;
     }
     return paragraphs.trim();
   }
@@ -93,6 +103,7 @@ export class Document {
 
     const codeContents = [];
     for (const r of results) {
+      // when will there be no value for language?? do we want to set to null if that happens??
       const lang = r.lang ?? null;
       codeContents.push({ lang: lang, value: r.value });
     }
@@ -100,8 +111,8 @@ export class Document {
   }
 
   findHeadings() {
-    const headings: string[] = [];
-    let title = '';
+    const headings: Array<string> = [];
+    let title = "";
     // Get the children of headings nodes
 
     const results = JSONPath({
@@ -110,12 +121,12 @@ export class Document {
     });
 
     //no heading nodes found?? page doesn't have title, or headings
-    if (!results.length) return [title, headings];
+    if (!results.length) return { title, headings };
 
     for (const r of results) {
       const heading = [];
       const parts = JSONPath({
-        path: '$..value',
+        path: "$..value",
         json: r,
       });
 
@@ -127,13 +138,13 @@ export class Document {
       headings.push(heading.join());
     }
 
-    title = headings.shift() ?? '';
-    return [title, headings];
+    title = headings.shift() ?? "";
+    return { title, headings };
   }
 
   deriveSlug() {
-    let pageId = this.tree['filename']?.split('.')[0];
-    if (pageId == 'index') pageId = '';
+    let pageId = this.tree.filename?.split(".")[0];
+    if (pageId === "index") pageId = "";
     return pageId;
   }
 
@@ -164,14 +175,14 @@ export class Document {
 
       //get value in results
       const first = JSONPath({
-        path: '$..value',
+        path: "$..value",
         json: results[0],
       });
 
       for (const f of first) {
         strList.push(f);
       }
-      return strList.join('');
+      return strList.join("");
     }
 
     //else, give up and don't provide a preview
@@ -187,45 +198,45 @@ export class Document {
     //if :robots: None in metadata, do not index
     if (!this.robots) {
       noIndex = true;
-      reasons.push('robots=None or robots=noindex in meta directive');
+      reasons.push("robots=None or robots=noindex in meta directive");
     }
 
     //if page has no title, do not index
     if (!this.title) {
       noIndex = true;
-      reasons.push('This page has no headings');
+      reasons.push("This page has no headings");
     }
 
-    return [noIndex, reasons];
+    return { noIndex, reasons };
   }
 
-  exportAsManifestDocument = () => {
-    // Generate the manifest dictionary entry from the AST source
+  exportAsManifestEntry = (): ManifestEntry | "" => {
+    // Generate a manifest entry from a document
 
     if (this.noIndex) {
-      console.info('Refusing to index');
-      return;
+      console.info("Refusing to index");
+      return "";
     }
 
-    const document = new ManifestEntry({
+    const manifestEntry = {
       slug: this.slug,
       title: this.title,
       headings: this.headings,
       paragraphs: this.paragraphs,
       code: this.code,
       preview: this.preview,
-      keywords: this.keywords,
+      tags: this.keywords,
       facets: this.facets,
-    });
+    };
 
-    return document;
+    return manifestEntry;
   };
 }
 
-const deriveFacets = (tree: any) => {
+const deriveFacets = (tree: BSON.Document) => {
   //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
 
-  const insertKeyVals = (facet: any, prefix = '') => {
+  const insertKeyVals = (facet: Facet, prefix = "") => {
     const key = prefix + facet.category;
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
@@ -233,24 +244,21 @@ const deriveFacets = (tree: any) => {
     if (!facet.subFacets) return;
 
     for (const subFacet of facet.subFacets) {
-      insertKeyVals(subFacet, key + '>' + facet.value + '>');
+      insertKeyVals(subFacet, `${key}>${facet.value}>`);
     }
   };
 
-  const createFacet = (facetEntry: any) => {
-    const facet = new Facet(
-      facetEntry.category,
-      facetEntry.value,
-      facetEntry.sub_facets,
-    );
-    insertKeyVals(facet);
-  };
-
-  const documentFacets: any = {};
-  if (tree['facets']) {
-    for (const facetEntry of tree['facets']) {
-      createFacet(facetEntry);
+  const documentFacets: Record<string, Array<string>> = {};
+  if (tree.facets) {
+    for (const facetEntry of tree.facets) {
+      const facet = createFacet({
+        category: facetEntry.category,
+        value: facetEntry.value,
+        subFacets: [],
+      });
+      insertKeyVals(facet);
     }
+    return documentFacets;
   }
-  return documentFacets;
+  return null;
 };

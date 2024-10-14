@@ -1,7 +1,7 @@
-import crypto from 'crypto';
+import crypto from "node:crypto";
 
 export function generateHash(data: string): Promise<string> {
-  const hash = crypto.createHash('sha256');
+  const hash = crypto.createHash("sha256");
 
   return new Promise((resolve) => {
     hash.on('readable', () => {
@@ -27,5 +27,9 @@ export function joinUrl({
 }
 
 export function assertTrailingSlash(path: string): string {
+<<<<<<< HEAD
   return path.endsWith('/') ? path : `${path}/`;
+=======
+  return path.endsWith("/") ? path : `${path}/`;
+>>>>>>> main
 }
