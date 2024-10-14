@@ -1,1 +1,0 @@
-{"root":["./vitest.config.ts","./src/index.ts","./src/persistence.ts","./test/index.test.ts","./test/update-pages.test.ts","./test/utils/mockdb.ts"],"errors":true,"version":"5.6.2"}
