@@ -7,8 +7,13 @@ If you haven’t already, make sure you have the Netlify CLI installed:
 
 npm install netlify-cli -g
 
-Once installed, clone the content repository, and make
+Once installed, clone the content repository. You'll want to the the `build.sh`. By default, the `build.sh` cURLs the `build-site.sh` script and executes that shell file.
+This is to allow us to centrally locate the script, and make modifications in a single place. In our case, we have to make a small modification because most of us are using a Mac, and the script downloads a Linux version of the parser.
+Netlify doesn't support using Docker, unfortunately, but it could be a good option for us as a way to develop locally.
 
+To resolve this, copy this code, and place it in the `build.sh` file in the content repository that you are working with.
+
+```sh
 PARSER_VERSION=0.18.3
 
 # This make command curls the examples for certain repos.
@@ -19,7 +24,7 @@ make examples
 
 if [ ! -d "snooty-parser" ]; then
 echo "snooty parser not installed, downloading..."
-curl -L -o snooty-parser.zip https://github.com/mongodb/snooty-parser/releases/download/v${PARSER_VERSION}/snooty-v${PARSER_VERSION}-linux_x86_64.zip
+curl -L -o snooty-parser.zip https://github.com/mongodb/snooty-parser/releases/download/v${PARSER_VERSION}/snooty-v${PARSER_VERSION}-darwin_x86_64.zip
 unzip -d ./snooty-parser snooty-parser.zip
 chmod +x ./snooty-parser/snooty
 fi
@@ -47,8 +52,9 @@ node --unhandled-rejections=strict docs-worker-pool/modules/persistence/dist/ind
 fi
 
 cd snooty && npm run build:no-prefix
+```
 
-Debugging Common Issues
+## Debugging Common Issues
 
 Site has incorrect or no netlify.toml file
 The way this manifests is the Netlify build failing with the following error in the deploy stage:
