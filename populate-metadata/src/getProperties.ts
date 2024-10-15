@@ -39,25 +39,30 @@ export const getDocsetEntry = async ({
 
 export const getRepoEntry = async ({
   repoName,
+  branchName,
   repos_branches,
 }: {
   repoName: string;
+  branchName: string;
   repos_branches: Collection<ReposBranchesDocument>;
 }) => {
   const query = {
     repoName: repoName,
   };
-
-  const repo = await repos_branches.findOne<ReposBranchesDocument>(query, {
+  const projection = {
     projection: {
       _id: 0,
-      branches: 1,
+      branches: { $elemMatch: { gitBranchName: branchName.toLowerCase() } },
       project: 1,
       search: 1,
       internalOnly: 1,
       prodDeployable: 1,
     },
-  });
+  };
+  const repo = await repos_branches.findOne<ReposBranchesDocument>(
+    query,
+    projection,
+  );
   if (!repo) {
     throw new Error(
       `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
@@ -90,7 +95,8 @@ export const getProperties = async ({
   const docsets = await getDocsetsCollection();
 
   const repo = await getRepoEntry({
-    repoName: repoName,
+    repoName,
+    branchName,
     repos_branches,
   });
 
