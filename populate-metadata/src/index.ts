@@ -34,7 +34,7 @@ extension.addBuildEventHandler(
     );
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
     netlifyConfig.build.environment.REPO = repo;
-    netlifyConfig.build.REPO_NAME = 'gibberish';
+    process.env.REPO_NAME = 'gibberish';
     console.log(
       netlifyConfig.build.environment.PRODUCTION,
       netlifyConfig.build.environment.REPO,
