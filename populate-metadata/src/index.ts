@@ -22,9 +22,9 @@ extension.addBuildEventHandler(
       const repoName =
         process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
       console.log(getBranch(branchName, repoName));
-      console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
-      netlifyConfig.build.testVar = 'TESTING';
-      console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
+      // console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
+      // netlifyConfig.build.testVar = 'TESTING';
+      // console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
     }
   },
 );
