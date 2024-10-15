@@ -9,7 +9,7 @@ const assertEnvVars = (vars: EnvVars) => {
     throw new Error(`Missing env var(s) ${JSON.stringify(missingVars)}`);
   return vars;
 };
-//TODO: make the snooty db name environment dependent, store collection names as teamwide env vars
+//TODO: store collection names, db names as teamwide env vars
 
 export const getEnvVars = () => {
   const environmentVariables = assertEnvVars({

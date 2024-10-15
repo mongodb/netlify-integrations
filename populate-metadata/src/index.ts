@@ -35,6 +35,7 @@ extension.addBuildEventHandler(
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
     netlifyConfig.build.environment.REPO = repo;
     netlifyConfig.build.environment.DOCSET = docsetEntry;
+    netlifyConfig.build.environment.BRANCH = branch;
 
     console.log(
       netlifyConfig.build.environment.PRODUCTION,
@@ -56,23 +57,3 @@ extension.addBuildEventHandler(
 );
 
 export { extension };
-
-//TODO: only persist environmentally accurate fields
-const getEnvDependentProperties = (
-  docsetEntry: DocsetsDocument,
-  isProdDeploy: boolean,
-): DocsetsDocument => {
-  return docsetEntry;
-};
-
-//TODO: check deep equality, maybe return netlify config here
-const storeMetadata = (
-  docset: DocsetsDocument,
-  repo: ReposBranchesDocument,
-  branch: BranchEntry,
-  envConfig: NetlifyPluginOptions,
-) => {
-  envConfig.docset = docset;
-  envConfig.repo = repo;
-  envConfig.branch = branch;
-};
