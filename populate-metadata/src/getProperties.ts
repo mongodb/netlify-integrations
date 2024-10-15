@@ -77,6 +77,7 @@ export const getProperties = async ({
     repoName: repoName,
     repos_branches,
   });
+  console.log(repo.branches);
 
   const { project } = repo;
 
