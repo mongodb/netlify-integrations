@@ -1,4 +1,4 @@
-import type { Collection, Db } from 'mongodb';
+import type { Collection, Db, WithId } from 'mongodb';
 import type {
   BranchEntry,
   DocsetsDocument,
@@ -10,12 +10,19 @@ import {
   getReposBranchesCollection,
 } from './atlasConnector';
 
-export const getDocsetEntry = async (
-  docsets: Collection<DocsetsDocument>,
-  project: string,
-) => {
+export const getDocsetEntry = async ({
+  docsets,
+  project,
+}: {
+  docsets: Collection<DocsetsDocument>;
+  project: string;
+}): Promise<WithId<DocsetsDocument>> => {
   const docsetsQuery = { project: { $eq: project } };
-  const docset = await docsets.findOne<DocsetsDocument>(docsetsQuery);
+  const projection = { projection: { repos: 0 } };
+  const docset = await docsets.findOne<DocsetsDocument>(
+    docsetsQuery,
+    projection,
+  );
   if (!docset) {
     throw new Error('Error while getting docsets entry in Atlas');
   }
@@ -79,16 +86,13 @@ export const getProperties = async ({
     repos_branches,
   });
 
-  const { project } = repo;
+  const docsetEntry = await getDocsetEntry({ docsets, project: repo.project });
 
-  const docsetEntry = await getDocsetEntry(docsets, project);
-
-  //TODO: STORE REPO ENTRY, DOCSETS ENTRY IN ENV VARS
   await closeSnootyDb();
 
   const branch = getBranch(repo.branches, branchName);
 
-  //TODO: store branch entry
+  //TODO: remove branches field from repos_branches
 
   return { repo, docsetEntry, branch };
 };

@@ -1,4 +1,4 @@
-import type { Document } from 'mongodb';
+import type { Document, WithId } from 'mongodb';
 
 type EnvironmentConfig = {
   dev?: string;
@@ -16,7 +16,7 @@ export interface BranchEntry {
   active: boolean;
 }
 
-export interface DocsetsDocument extends Document {
+export interface DocsetsDocument extends WithId<Document> {
   project: string;
   url: EnvironmentConfig;
   prefix: EnvironmentConfig;
