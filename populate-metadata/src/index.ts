@@ -15,7 +15,7 @@ extension.addBuildEventHandler(
     console.log('Hello there.');
 
     if (
-      netlifyConfig.build.environments.INCOMING_HOOK_UR &&
+      netlifyConfig.build.environments.INCOMING_HOOK_URL &&
       netlifyConfig.build.environments.INCOMING_HOOK_TITLE
     ) {
       const branchName = netlifyConfig.build?.environment.BRANCH;
