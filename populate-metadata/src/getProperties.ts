@@ -22,6 +22,7 @@ export const getDocsetEntry = async ({
   const projection = {
     projection: {
       project: 1,
+      _id: 0,
       bucket: envProjection,
       prefix: envProjection,
       url: envProjection,

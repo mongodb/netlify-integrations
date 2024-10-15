@@ -25,7 +25,6 @@ extension.addBuildEventHandler(
       branchName: branchName,
       repoName: repoName,
     });
-    console.log(docsetEntry);
 
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
@@ -35,10 +34,13 @@ extension.addBuildEventHandler(
     );
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
     netlifyConfig.build.environment.REPO = repo;
-    // console.log(
-    //   netlifyConfig.build.environment.PRODUCTION,
-    //   netlifyConfig.build.environment.REPO,
-    // );
+    netlifyConfig.build.environment.DOCSET = docsetEntry;
+
+    console.log(
+      netlifyConfig.build.environment.PRODUCTION,
+      netlifyConfig.build.environment.REPO,
+      netlifyConfig.build.environment.DOCSET,
+    );
 
     // const updatedDocsetEntry = getEnvDependentProperties(
     //   docsetEntry,
