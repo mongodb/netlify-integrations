@@ -13,9 +13,12 @@ extension.addBuildEventHandler(
       return;
     }
     console.log('Hello there.');
-    console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
-    netlifyConfig.build.testVar = 'TESTING';
-    console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
+    console.log('INITIAL TEST VAR:', netlifyConfig.build.environment.testVar);
+    netlifyConfig.build.environment.testVar = 'TESTING';
+    console.log(
+      'SUBSEQUENT TEST VAR:',
+      netlifyConfig.build.environment.testVar,
+    );
 
     if (
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
@@ -24,9 +27,11 @@ extension.addBuildEventHandler(
       const branchName = netlifyConfig.build?.environment.BRANCH;
       const repoName =
         process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
-      console.log(
-        await getProperties({ branchName: branchName, repoName: repoName }),
-      );
+      const siteProperties = await getProperties({
+        branchName: branchName,
+        repoName: repoName,
+      });
+
       // console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
       // netlifyConfig.build.testVar = 'TESTING';
       // console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
