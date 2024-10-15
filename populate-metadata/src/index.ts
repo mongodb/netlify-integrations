@@ -10,7 +10,7 @@ extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
     return;
   }
   console.log('Hello there.');
-  console.log(netlifyConfig?);
+  console.log(netlifyConfig);
 });
 
 export { extension };
