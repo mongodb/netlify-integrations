@@ -13,9 +13,9 @@ extension.addBuildEventHandler(
       return;
     }
     console.log('Hello there.');
-    // console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
-    // netlifyConfig.build.testVar = 'TESTING';
-    // console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
+    console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
+    netlifyConfig.build.testVar = 'TESTING';
+    console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
 
     if (
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&

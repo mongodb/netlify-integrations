@@ -5,6 +5,7 @@ import type {
   ReposBranchesDocument,
 } from './types';
 import {
+  closeSnootyDb,
   getDocsetsCollection,
   getReposBranchesCollection,
 } from './atlasConnector';
@@ -73,17 +74,17 @@ export const getProperties = async ({
   const repos_branches = await getReposBranchesCollection();
   const docsets = await getDocsetsCollection();
 
-  const repo: ReposBranchesDocument = await getRepoEntry({
+  const repo = await getRepoEntry({
     repoName: repoName,
     repos_branches,
   });
-  console.log(repo.branches);
 
   const { project } = repo;
 
   const docsetEntry = await getDocsetEntry(docsets, project);
 
   //TODO: STORE REPO ENTRY, DOCSETS ENTRY IN ENV VARS
+  await closeSnootyDb();
 
   const branch = getBranch(repo.branches, branchName);
 
