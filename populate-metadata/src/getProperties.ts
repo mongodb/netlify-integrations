@@ -17,8 +17,16 @@ export const getDocsetEntry = async ({
   docsets: Collection<DocsetsDocument>;
   project: string;
 }): Promise<WithId<DocsetsDocument>> => {
+  const envProjection = { dotcomstg: 1 };
   const docsetsQuery = { project: { $eq: project } };
-  const projection = { projection: { bucket: { dotcomstg: 1 } } };
+  const projection = {
+    projection: {
+      project: 1,
+      bucket: envProjection,
+      prefix: envProjection,
+      url: envProjection,
+    },
+  };
   const docset = await docsets.findOne<DocsetsDocument>(
     docsetsQuery,
     projection,
