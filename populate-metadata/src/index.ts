@@ -1,6 +1,6 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyExtension } from '@netlify/sdk';
-import { getBranch } from './getProperties';
+import { getBranch, getProperties } from './getProperties';
 
 const extension = new NetlifyExtension();
 
@@ -24,7 +24,9 @@ extension.addBuildEventHandler(
       const branchName = netlifyConfig.build?.environment.BRANCH;
       const repoName =
         process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
-      console.log(getBranch(branchName, repoName));
+      console.log(
+        await getProperties({ branchName: branchName, repoName: repoName }),
+      );
       // console.log('INITIAL TEST VAR:', netlifyConfig.build.testVar);
       // netlifyConfig.build.testVar = 'TESTING';
       // console.log('SUBSEQUENT TEST VAR:', netlifyConfig.build.testVar);
