@@ -1,15 +1,15 @@
 // Documentation: https://sdk.netlify.com
-import { NetlifyExtension } from "@netlify/sdk";
+import { NetlifyExtension } from '@netlify/sdk';
 
 const extension = new NetlifyExtension();
 
-extension.addBuildEventHandler("onPreBuild", () => {
+extension.addBuildEventHandler('onPreBuild', () => {
   // If the build event handler is not enabled, return early
-  if (!process.env["POPULATE_METADATA_ENABLED"]) {
+
+  if (!process.env.POPULATE_METADATA_ENABLED) {
     return;
   }
-  console.log("Hello there.");
+  console.log('Hello there.');
 });
-  
-export { extension };
 
+export { extension };
