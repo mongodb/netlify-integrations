@@ -84,12 +84,9 @@ export const getProperties = async ({
 
   //TODO: STORE REPO ENTRY, DOCSETS ENTRY IN ENV VARS
 
-  const { isStableBranch, gitBranchName, active, urlSlug } = getBranch(
-    repo.branches,
-    branchName,
-  );
+  const branch = getBranch(repo.branches, branchName);
 
   //TODO: store branch entry
 
-  return;
+  return { repo, docsetEntry, branch };
 };
