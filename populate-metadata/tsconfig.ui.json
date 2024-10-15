@@ -9,7 +9,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "verbatimModuleSyntax": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
   },
   "include": [
     "src/ui/",

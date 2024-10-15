@@ -70,7 +70,7 @@ const storeMetadata = (
   docset: DocsetsDocument,
   repo: ReposBranchesDocument,
   branch: BranchEntry,
-  envConfig: netlifyConfig.build.environment,
+  envConfig: NetlifyPluginOptions,
 ) => {
   envConfig.docset = docset;
   envConfig.repo = repo;
