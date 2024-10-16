@@ -16,7 +16,6 @@ export interface OASPageMetadata {
 
 export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
-function main() {
 
 	console.log("IN REDOC: before check");
 	if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
@@ -81,8 +80,6 @@ function main() {
 		}
 	});
 
-}
 
-main();
 
 export { extension };
