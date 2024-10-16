@@ -18,7 +18,6 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 
 	console.log("IN REDOC: before check");
-	if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 	console.log("IN REDOC: before check");
 
 	// handle installing redoc cli if it's not already installed
@@ -26,6 +25,7 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 		'onPreBuild',
 		async ({ utils: { run, cache } }) => {
 			console.log('Running redoc prebuild');
+			if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 			const hasRedoc = await cache.has('redoc');
 
 			if (hasRedoc) {
@@ -48,6 +48,7 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 	// handle building the redoc pages
 	extension.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
+		if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 		console.log('=========== Redoc Extension Begin ================');
 		await run.command('unzip -o bundle.zip -d bundle');
 
@@ -73,6 +74,7 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 	// cache redoc
 	extension.addBuildEventHandler('onSuccess', async ({ utils: { cache } }) => {
+		if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
 		const hasRedoc = await cache.has('redoc');
 		if (!hasRedoc) {
 			console.log('saving redoc to cache');
