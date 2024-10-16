@@ -43,7 +43,10 @@ extension.addBuildEventHandler(
       netlifyConfig.build.environment.BRANCH,
     );
   },
-  { if: (netlifyConfig) => netlifyConfig.POPULATE_METADATA_ENABLED === true },
+  {
+    if: (netlifyConfig) =>
+      netlifyConfig.build?.environment?.POPULATE_METADATA_ENABLED === true,
+  },
 );
 
 export { extension };
