@@ -45,8 +45,9 @@ export const generateManifest = async () => {
 extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run }, netlifyConfig }) => {
-    // Get content repo zipfile as AST representation
+    if (!process.env.EXTENSION_ENABLED) return;
 
+    // Get content repo zipfile as AST representation
     await run.command('unzip -o bundle.zip');
 
     const branchName = netlifyConfig.build?.environment.BRANCH;
