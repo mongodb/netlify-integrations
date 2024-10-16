@@ -18,14 +18,12 @@ export const getDocsetEntry = async ({
   project: string;
 }): Promise<WithId<DocsetsDocument>> => {
   let envProjection: Record<string, number>;
-  if (
-    process.env.ENV === 'dev' ||
-    process.env.ENV === 'stg' ||
-    process.env.ENV === 'dotcomstg'
-  ) {
-    envProjection = { dotcomstg: 1 };
-  } else envProjection = { dotcomprd: 1 };
 
+  if (process.env.ENV === 'dotcomstg') {
+    envProjection = { dotcomstg: 1 };
+  } else
+    envProjection =
+      process.env.ENV === 'dotcomprd' ? { dotcomprd: 1 } : { prd: 1 };
   const docsetsQuery = { project: { $eq: project } };
   const projection = {
     projection: {
@@ -82,16 +80,6 @@ export const getRepoEntry = async ({
   return repo;
 };
 
-// helper function to find the associated branch
-export const getBranch = (branches: Array<BranchEntry>, branchName: string) => {
-  const branchObj = branches.find(
-    (branch) => branch.gitBranchName.toLowerCase() === branchName.toLowerCase(),
-  );
-  if (!branchObj)
-    throw new Error(`Branch ${branchName} not found in branches object`);
-  return branchObj;
-};
-
 export const getProperties = async ({
   branchName,
   repoName,
@@ -113,9 +101,7 @@ export const getProperties = async ({
 
   await closeSnootyDb();
 
-  const branch = getBranch(repo.branches, branchName);
-
   //TODO: remove branches field from repos_branches
 
-  return { repo, docsetEntry, branch };
+  return { repo, docsetEntry, branch: repo.branches };
 };
