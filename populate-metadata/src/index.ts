@@ -20,7 +20,8 @@ extension.addBuildEventHandler(
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
 
     //get branch name, repo name from the config
-    const branchName = netlifyConfig.build?.environment.BRANCH;
+    const branchName =
+      process.env.BRANCH_NAME ?? netlifyConfig.build?.environment.BRANCH;
     const repoName =
       process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
 
