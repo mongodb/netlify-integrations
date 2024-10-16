@@ -18,7 +18,9 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 
 function main() {
 
+	console.log("IN REDOC: before check");
 	if (process.env.EXTENSION_DISABLED && process.env.EXTENSION_DISABLED === 'true') return;
+	console.log("IN REDOC: before check");
 
 	// handle installing redoc cli if it's not already installed
 	extension.addBuildEventHandler(
