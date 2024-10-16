@@ -1,4 +1,5 @@
 config:
+  use_cjs_shims: true
   name: redoc-extension
   description: creates redoc pages  from OpenAPI spec
   slug: '-spg1kfd-redoc-extension'
