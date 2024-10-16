@@ -18,7 +18,11 @@ export const getDocsetEntry = async ({
   project: string;
 }): Promise<WithId<DocsetsDocument>> => {
   let envProjection: Record<string, number>;
-  if (process.env.ENV === 'dev' || process.env.ENV === 'stg') {
+  if (
+    process.env.ENV === 'dev' ||
+    process.env.ENV === 'stg' ||
+    process.env.ENV === 'dotcomstg'
+  ) {
     envProjection = { dotcomstg: 1 };
   } else envProjection = { dotcomprd: 1 };
 

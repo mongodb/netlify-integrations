@@ -1,11 +1,6 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyExtension } from '@netlify/sdk';
-import { getBranch, getProperties } from './getProperties';
-import type {
-  BranchEntry,
-  DocsetsDocument,
-  ReposBranchesDocument,
-} from './types';
+import { getProperties } from './getProperties';
 
 const extension = new NetlifyExtension();
 
@@ -24,7 +19,7 @@ extension.addBuildEventHandler(
     );
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
 
-    //get bracnh name, repo name from the config
+    //get branch name, repo name from the config
     const branchName = netlifyConfig.build?.environment.BRANCH;
     const repoName =
       process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
@@ -48,17 +43,6 @@ extension.addBuildEventHandler(
       netlifyConfig.build.environment.REPO,
       netlifyConfig.build.environment.DOCSET,
     );
-
-    // const updatedDocsetEntry = getEnvDependentProperties(
-    //   docsetEntry,
-    //   isProdDeploy,
-    // );
-    // storeMetadata(
-    //   updatedDocsetEntry,
-    //   repo,
-    //   branch,
-    //   netlifyConfig.build.environment,
-    // );
   },
 );
 
