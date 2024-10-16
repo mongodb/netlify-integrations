@@ -20,8 +20,9 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 extension.addBuildEventHandler(
 	'onPreBuild',
 	async ({ utils: { run, cache } }) => {
-		console.log('Running redoc prebuild');
 		if (!process.env.EXTENSION_ENABLED) return;
+		
+		console.log('Running redoc prebuild');
 		const hasRedoc = await cache.has('redoc');
 
 		if (hasRedoc) {
