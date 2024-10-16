@@ -24,13 +24,11 @@ extension.addBuildEventHandler(
     const repoName =
       process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
 
-    console.log(netlifyConfig.build);
-    if (repoName === 'mongodb-snooty') {
-      //TODO: get dev or stg from context
-      process.env.ENV = 'dotcomstg';
-    } else {
-      process.env.ENV = 'dotcomprd';
-    }
+    //set environment to dotcomprd or prd if it is a writer build
+    process.env.ENV =
+      (repoName !== 'mongodb-snooty' ?? isProdDeploy) ? 'dotcomprd' : 'prd';
+    console.log();
+
     const { repo, docsetEntry, branch } = await getProperties({
       branchName: branchName,
       repoName: repoName,
