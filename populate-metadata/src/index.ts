@@ -23,6 +23,8 @@ extension.addBuildEventHandler(
     const branchName = netlifyConfig.build?.environment.BRANCH;
     const repoName =
       process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
+
+    console.log(netlifyConfig.build);
     if (repoName === 'mongodb-snooty') {
       //TODO: get dev or stg from context
       process.env.ENV = 'dotcomstg';
@@ -42,6 +44,7 @@ extension.addBuildEventHandler(
       netlifyConfig.build.environment.PRODUCTION,
       netlifyConfig.build.environment.REPO,
       netlifyConfig.build.environment.DOCSET,
+      netlifyConfig.build.environment.BRANCH,
     );
   },
 );
