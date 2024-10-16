@@ -1,7 +1,7 @@
 config:
   name: redoc-extension
   description: creates redoc pages  from OpenAPI spec
-  slug: '-spg1kfd-redoc-integration'
+  slug: '-spg1kfd-redoc-extension'
   scopes:
     site:
       - read
