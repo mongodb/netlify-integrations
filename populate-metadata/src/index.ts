@@ -6,7 +6,7 @@ const extension = new NetlifyExtension();
 
 extension.addBuildEventHandler(
   'onPreBuild',
-  async ({ netlifyConfig, buildContext }) => {
+  async ({ netlifyConfig }) => {
     // If the build event handler is not enabled on given site, return early
     if (!process.env.POPULATE_METADATA_ENABLED) {
       return;
@@ -19,7 +19,6 @@ extension.addBuildEventHandler(
     );
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
 
-    //get branch name, repo name from the config
     const branchName =
       process.env.BRANCH_NAME ?? netlifyConfig.build?.environment.BRANCH;
     const repoName =
@@ -28,12 +27,12 @@ extension.addBuildEventHandler(
     //set environment to dotcomprd or prd if it is a writer build, only Mongodb-Snooty site name pre-configured
     process.env.ENV ??= isProdDeploy ? 'dotcomprd' : 'prd';
 
-    const { repo, docsetEntry, branch } = await getProperties({
+    const { repo, docsetEntry } = await getProperties({
       branchName: branchName,
       repoName: repoName,
     });
-
-    netlifyConfig.build.environment.REPO = repo;
+    const { branches: branch, ...repoEntry } = repo;
+    netlifyConfig.build.environment.REPO = repoEntry;
     netlifyConfig.build.environment.DOCSET = docsetEntry;
     netlifyConfig.build.environment.BRANCH = branch;
 
@@ -44,6 +43,7 @@ extension.addBuildEventHandler(
       netlifyConfig.build.environment.BRANCH,
     );
   },
+  { if: (netlifyConfig) => netlifyConfig.POPULATE_METADATA_ENABLED === true },
 );
 
 export { extension };

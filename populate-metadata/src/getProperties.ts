@@ -103,5 +103,5 @@ export const getProperties = async ({
 
   //TODO: remove branches field from repos_branches
 
-  return { repo, docsetEntry, branch: repo.branches };
+  return { repo, docsetEntry };
 };
