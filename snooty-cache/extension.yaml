@@ -7,4 +7,3 @@ config:
     site:
       - read
       - write
-  integrationLevel: site
