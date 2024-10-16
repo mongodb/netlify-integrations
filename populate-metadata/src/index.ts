@@ -44,7 +44,7 @@ extension.addBuildEventHandler(
     );
   },
   {
-    if: (netlifyConfig) => true,
+    if: (netlifyConfig) => netlifyConfig.build,
   },
 );
 
