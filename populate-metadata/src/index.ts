@@ -45,7 +45,7 @@ extension.addBuildEventHandler(
   },
   {
     if: (netlifyConfig) =>
-      netlifyConfig.build?.environment?.POPULATE_METADATA_ENABLED === 'true',
+      netlifyConfig.build?.environment?.POPULATE_METADATA_ENABLED,
   },
 );
 
