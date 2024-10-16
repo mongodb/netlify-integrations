@@ -17,8 +17,11 @@ export const getDocsetEntry = async ({
   docsets: Collection<DocsetsDocument>;
   project: string;
 }): Promise<WithId<DocsetsDocument>> => {
-  //TODO: make this env dependent IF the name is snooty
-  const envProjection = { dotcomstg: 1 };
+  let envProjection: Record<string, number>;
+  if (process.env.ENV === 'dev' || process.env.ENV === 'stg') {
+    envProjection = { dotcomstg: 1 };
+  } else envProjection = { dotcomprd: 1 };
+
   const docsetsQuery = { project: { $eq: project } };
   const projection = {
     projection: {

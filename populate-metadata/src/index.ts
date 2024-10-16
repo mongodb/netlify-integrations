@@ -16,16 +16,6 @@ extension.addBuildEventHandler(
     if (!process.env.POPULATE_METADATA_ENABLED) {
       return;
     }
-
-    //get bracnh name, repo name from the config
-    const branchName = netlifyConfig.build?.environment.BRANCH;
-    const repoName =
-      process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
-    const { repo, docsetEntry, branch } = await getProperties({
-      branchName: branchName,
-      repoName: repoName,
-    });
-
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
@@ -33,6 +23,22 @@ extension.addBuildEventHandler(
       netlifyConfig.build.environment?.INCOMING_HOOK_BODY
     );
     netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
+
+    //get bracnh name, repo name from the config
+    const branchName = netlifyConfig.build?.environment.BRANCH;
+    const repoName =
+      process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
+    if (repoName === 'mongodb-snooty') {
+      //TODO: get dev or stg from context
+      process.env.ENV = 'dotcomstg';
+    } else {
+      process.env.ENV = 'dotcomprd';
+    }
+    const { repo, docsetEntry, branch } = await getProperties({
+      branchName: branchName,
+      repoName: repoName,
+    });
+
     netlifyConfig.build.environment.REPO = repo;
     netlifyConfig.build.environment.DOCSET = docsetEntry;
     netlifyConfig.build.environment.BRANCH = branch;

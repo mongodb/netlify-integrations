@@ -9,17 +9,16 @@ const assertEnvVars = (vars: EnvVars) => {
     throw new Error(`Missing env var(s) ${JSON.stringify(missingVars)}`);
   return vars;
 };
-//TODO: store collection names, db names as teamwide env vars
 
 export const getEnvVars = () => {
   const environmentVariables = assertEnvVars({
     ATLAS_CLUSTER0_URI: `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`,
-    SNOOTY_DB_NAME: `${process.env.MONGO_ATLAS_POOL_DB_NAME}`,
     ATLAS_SEARCH_URI: `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`,
     SEARCH_DB_NAME: `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`,
-    REPOS_BRANCHES_COLLECTION: 'repos_branches',
-    DOCSETS_COLLECTION: 'docsets',
-    DOCUMENTS_COLLECTION: 'documents',
+    SNOOTY_DB_NAME: `${process.env.MONGO_ATLAS_POOL_DB_NAME}`,
+    REPOS_BRANCHES_COLLECTION: `${process.env.REPOS_BRANCHES_COLLECTION}`,
+    DOCSETS_COLLECTION: `${process.env.DOCSETS_COLLECTION}`,
+    DOCUMENTS_COLLECTION: `${process.env.DOCUMENTS_COLLECTION}`,
   });
   return environmentVariables;
 };
