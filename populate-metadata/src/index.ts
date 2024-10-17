@@ -6,11 +6,16 @@ const extension = new NetlifyExtension();
 
 extension.addBuildEventHandler(
   'onPreBuild',
-  async ({ netlifyConfig }) => {
+  async ({ netlifyConfig, buildConfig, buildContext }) => {
     // If the build event handler is not enabled on given site, return early
+
     if (!process.env.POPULATE_METADATA_ENABLED) {
       return;
     }
+
+    console.log(`Build config is : ${buildConfig}`);
+    console.log(`builtContext is  : ${buildContext}`);
+
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
