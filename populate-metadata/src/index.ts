@@ -50,4 +50,4 @@ extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
   );
 });
 
-export { extension };
+export { extension, otherExtension };
