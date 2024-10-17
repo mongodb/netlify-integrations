@@ -1,6 +1,5 @@
 [build]
 command="netlify-extension build -a"
-environment = { EXTENSION_DISABLED = "true" }
 
 [functions]
 directory = "src/endpoints"

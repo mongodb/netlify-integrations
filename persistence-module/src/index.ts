@@ -9,7 +9,7 @@ const ZIP_PATH = `${process.cwd()}/bundle/documents`;
 extension.addBuildEventHandler(
 	'onPreBuild',
 	async ({ utils: {  run } }) => {
-		if (!process.env.EXTENSION_ENABLED) return;
+		if (!process.env.PERSISTENCE_MODULE_ENABLED) return;
 		try {
 			await downloadPersistenceModule(run);
 		} catch (e) {
