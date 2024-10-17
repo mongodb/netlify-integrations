@@ -3,7 +3,7 @@ import { NetlifyExtension } from '@netlify/sdk';
 import { getProperties } from './getProperties';
 
 const extension = new NetlifyExtension();
-const EXTENSION_ENABLED = process.env.METADATA_ENABLED;
+const EXTENSION_ENABLED = process.env.POPULATE_METADATA_ENABLED;
 console.log(EXTENSION_ENABLED);
 const testingVar = true;
 
