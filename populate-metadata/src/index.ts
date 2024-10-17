@@ -13,8 +13,9 @@ extension.addBuildEventHandler(
       return;
     }
     console.log(
-      process.env.METADATA_ENABLED,
+      process.env.POPULATE_METADATA_ENABLED,
       typeof process.env.POPULATE_METADATA_ENABLED,
+      process.env.POPULATE_METADATA_ENABLED === 'true',
     );
 
     //check if build was triggered by a webhook (If so, it was a prod deploy);
@@ -56,7 +57,8 @@ extension.addBuildEventHandler(
           'HELLO',
           process.env.POPULATE_METADATA_ENABLED,
           !!process.env.POPULATE_METADATA_ENABLED === true,
-        ) !== null
+        ) !== null &&
+        true
       )
         return true;
     },
