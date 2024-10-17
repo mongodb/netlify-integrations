@@ -1,13 +1,12 @@
-import { NetlifyExtension } from "@netlify/sdk";
+import { NetlifyExtension } from '@netlify/sdk';
 
 const extension = new NetlifyExtension();
 
-	
 extension.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
-	if (!process.env.EXTENSION_ENABLED) return;
-	
-	console.log('Checking if any files changed on git -----');
-	console.log('Modified files:', git.modifiedFiles);
+  if (!process.env.EXTENSION_ENABLED) return;
+
+  console.log('Checking if any files changed on git -----');
+  console.log('Modified files:', git.modifiedFiles);
 
   if (!process.env.DEPLOY_PRIME_URL) {
     console.error('ERROR! process.env.DEPLOY_PRIME_URL is not defined.');
@@ -19,14 +18,13 @@ extension.addBuildEventHandler('onSuccess', ({ utils: { status, git } }) => {
     process.env.DEPLOY_PRIME_URL,
   );
 
-	if (markdownList.length !== 0) {
-		status.show({
-			title: 'URLs to Changed Files',
-			summary: markdownList.join('\n'),
-		});
-	}
+  if (markdownList.length !== 0) {
+    status.show({
+      title: 'URLs to Changed Files',
+      summary: markdownList.join('\n'),
+    });
+  }
 });
-
 
 /**
  * Function to convert git modifed files to links of the staged files. Needs to be in markdown
@@ -58,7 +56,6 @@ export function createMarkdown(
     }
   }
 
-	return markdownList;
-
+  return markdownList;
 }
 export { extension };
