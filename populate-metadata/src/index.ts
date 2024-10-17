@@ -58,7 +58,8 @@ extension.addBuildEventHandler(
           process.env.POPULATE_METADATA_ENABLED,
           !!process.env.POPULATE_METADATA_ENABLED === true,
         ) !== null &&
-        true
+        true &&
+        !!process.env.POPULATE_METADATA_ENABLED === true
       )
         return true;
     },
