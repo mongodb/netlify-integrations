@@ -3,6 +3,8 @@ import { NetlifyExtension } from '@netlify/sdk';
 import { getProperties } from './getProperties';
 
 const extension = new NetlifyExtension();
+const EXTENSION_ENABLED = process.env.METADATA_ENABLED;
+console.log(EXTENSION_ENABLED);
 
 extension.addBuildEventHandler(
   'onPreBuild',
@@ -12,11 +14,6 @@ extension.addBuildEventHandler(
     if (!process.env.POPULATE_METADATA_ENABLED) {
       return;
     }
-    console.log(
-      process.env.POPULATE_METADATA_ENABLED,
-      typeof process.env.POPULATE_METADATA_ENABLED,
-      process.env.POPULATE_METADATA_ENABLED === 'true',
-    );
 
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
@@ -55,11 +52,11 @@ extension.addBuildEventHandler(
       if (
         console.log(
           'HELLO',
-          process.env.POPULATE_METADATA_ENABLED,
-          !!process.env.POPULATE_METADATA_ENABLED === true,
+          EXTENSION_ENABLED,
+          !!EXTENSION_ENABLED === true,
         ) !== null &&
         true &&
-        !!process.env.POPULATE_METADATA_ENABLED === true
+        !!EXTENSION_ENABLED === true
       )
         return true;
     },
