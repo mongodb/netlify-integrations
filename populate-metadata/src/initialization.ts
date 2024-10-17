@@ -6,7 +6,7 @@ export class Extension extends NetlifyExtension {
 
   constructor(envVar: string | undefined) {
     super();
-    console.log(envVar, typeof envVar, envVar === 'true');
     this.extensionEnabled = envVar === 'true';
+    console.log('Extension enabled:', this.extensionEnabled);
   }
 }
