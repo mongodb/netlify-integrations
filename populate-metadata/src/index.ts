@@ -55,8 +55,7 @@ extension.addBuildEventHandler(
           EXTENSION_ENABLED,
           !!EXTENSION_ENABLED === true,
         ) !== null &&
-        true &&
-        !!EXTENSION_ENABLED === true
+        true
       )
         return true;
     },
