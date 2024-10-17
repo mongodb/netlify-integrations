@@ -11,8 +11,10 @@ if (extension.extensionEnabled) {
   );
 }
 
-extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
-  updateConfigReal(netlifyConfig);
-});
+if (extension.extensionEnabled) {
+  extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
+    updateConfigReal(netlifyConfig);
+  });
+}
 
 export { extension };
