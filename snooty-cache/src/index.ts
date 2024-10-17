@@ -19,7 +19,7 @@ const extension = new NetlifyExtension();
 extension.addBuildEventHandler(
   'onPreBuild',
   async ({ utils: { cache, run } }) => {
-    if (!process.env.EXTENSION_ENABLED) return;
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
 
     const files: string[] = await cache.list();
 
@@ -42,7 +42,7 @@ extension.addBuildEventHandler(
 extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run, cache } }) => {
-    if (!process.env.EXTENSION_ENABLED) return;
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
 
     console.log('Creating cache files...');
     await run.command('./snooty-parser/snooty/snooty create-cache .');
@@ -63,7 +63,7 @@ extension.addBuildEventHandler(
 extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run, status } }) => {
-    if (!process.env.EXTENSION_ENABLED) return;
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
 
     const redirectErrs = '';
 
@@ -89,7 +89,7 @@ extension.addBuildEventHandler(
 extension.addBuildEventHandler(
   'onEnd',
   async ({ utils: { run, status } }) => {
-    if (!process.env.EXTENSION_ENABLED) return;
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
     
     console.log('Creating cache files...');
     const { all, stderr, stdout } = await run.command(
