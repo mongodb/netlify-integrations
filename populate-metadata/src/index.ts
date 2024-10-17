@@ -9,7 +9,7 @@ extension.addBuildEventHandler(
   async ({ netlifyConfig, buildConfig, buildContext }) => {
     // If the build event handler is not enabled on given site, return early
 
-    if (!process.env.POPULATE_METADATA_ENABLED) {
+    if (process.env.POPULATE_METADATA_ENABLED !== 'true') {
       return;
     }
 
@@ -49,15 +49,8 @@ extension.addBuildEventHandler(
     );
   },
   {
-    if: (buildConfig) => {
-      if (
-        console.log(
-          'HELLO',
-          buildConfig,
-          process.env.POPULATE_METADATA_ENABLED,
-        ) !== null
-      )
-        return true;
+    if: () => {
+      return process.env.POPULATE_METADATA_ENABLED === 'true';
     },
   },
 );
