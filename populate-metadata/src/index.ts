@@ -12,9 +12,13 @@ if (extension.extensionEnabled) {
 }
 
 if (extension.extensionEnabled) {
-  extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
-    updateConfigReal(netlifyConfig);
-  });
+  extension.addBuildEventHandler(
+    'onPreBuild',
+    async ({ netlifyConfig }) => {
+      updateConfigReal(netlifyConfig);
+    },
+    { if: () => process.env.POPULATE_METADATA_ENABLED === 'true' },
+  );
 }
 
 export { extension };
