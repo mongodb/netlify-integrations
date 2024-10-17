@@ -5,6 +5,7 @@ import { getProperties } from './getProperties';
 const extension = new NetlifyExtension();
 const EXTENSION_ENABLED = process.env.METADATA_ENABLED;
 console.log(EXTENSION_ENABLED);
+const testingVar = true;
 
 extension.addBuildEventHandler(
   'onPreBuild',
@@ -55,7 +56,7 @@ extension.addBuildEventHandler(
           EXTENSION_ENABLED,
           !!EXTENSION_ENABLED === true,
         ) !== null &&
-        true
+        testingVar
       )
         return true;
     },
