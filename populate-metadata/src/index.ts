@@ -14,10 +14,8 @@ if (extension.extensionEnabled) {
 if (extension.extensionEnabled) {
   console.log('HELLO');
 }
-if (extension.extensionEnabled) {
-  extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) =>
-    updateConfigReal(netlifyConfig),
-  );
-}
+extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
+  if (this.extensionEnabled) updateConfigReal(netlifyConfig);
+});
 
 export { extension };
