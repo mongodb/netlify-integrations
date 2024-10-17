@@ -4,8 +4,8 @@ import { NetlifyExtension, type BuildHookType } from '@netlify/sdk';
 export class Extension extends NetlifyExtension {
   extensionEnabled: boolean;
 
-  constructor() {
+  constructor(envVar: string | undefined) {
     super();
-    this.extensionEnabled = !!process.env;
+    this.extensionEnabled = envVar === 'true';
   }
 }
