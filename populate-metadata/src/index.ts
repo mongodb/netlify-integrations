@@ -11,6 +11,7 @@ if (extension.extensionEnabled) {
   );
 }
 
+console.log(extension.extensionEnabled);
 extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) =>
   updateConfigReal(netlifyConfig),
 );
