@@ -15,7 +15,7 @@ export const createFacet = (facet: Facet) => {
           category: subFacet.category,
           value: subFacet.value,
           subFacets: subFacet.subFacets ?? [],
-        })
+        }),
       );
     }
   }

@@ -1,5 +1,5 @@
-import type { NetlifyPluginUtils } from '@netlify/build';
 import { existsSync } from 'node:fs';
+import type { NetlifyPluginUtils } from '@netlify/build';
 
 const WORKER_POOL_PATH = `${process.cwd()}/docs-worker-pool`;
 const PERSISTENCE_PATH = `${WORKER_POOL_PATH}/modules/persistence`;
