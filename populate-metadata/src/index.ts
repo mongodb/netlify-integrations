@@ -49,8 +49,15 @@ extension.addBuildEventHandler(
     );
   },
   {
-    if: (netlifyConfig) => {
-      if (console.log('HELLO', netlifyConfig) !== null) return true;
+    if: (buildConfig) => {
+      if (
+        console.log(
+          'HELLO',
+          buildConfig,
+          process.env.POPULATE_METADATA_ENABLED,
+        ) !== null
+      )
+        return true;
     },
   },
 );
