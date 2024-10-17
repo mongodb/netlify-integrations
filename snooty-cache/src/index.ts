@@ -1,6 +1,6 @@
 // Documentation: https://sdk.netlify.com
 
-import { NetlifyIntegration } from '@netlify/sdk';
+import { NetlifyExtension } from '@netlify/sdk';
 
 import { readdir } from 'node:fs';
 
@@ -14,11 +14,13 @@ const MUT_VERSION = '0.11.4';
 const getCacheFilePaths = (filesPaths: string[]): string[] =>
   filesPaths.filter((filePath) => filePath.endsWith('.cache.gz'));
 
-const integration = new NetlifyIntegration();
+const extension = new NetlifyExtension();
 
-integration.addBuildEventHandler(
+extension.addBuildEventHandler(
   'onPreBuild',
   async ({ utils: { cache, run } }) => {
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
+
     const files: string[] = await cache.list();
 
     const cacheFiles = getCacheFilePaths(files);
@@ -37,9 +39,11 @@ integration.addBuildEventHandler(
   },
 );
 
-integration.addBuildEventHandler(
+extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run, cache } }) => {
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
+
     console.log('Creating cache files...');
     await run.command('./snooty-parser/snooty/snooty create-cache .');
     console.log('Cache files created');
@@ -56,9 +60,11 @@ integration.addBuildEventHandler(
   },
 );
 
-integration.addBuildEventHandler(
+extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run, status } }) => {
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
+
     const redirectErrs = '';
 
     console.log('Downloading Mut...');
@@ -80,9 +86,11 @@ integration.addBuildEventHandler(
   },
 );
 
-integration.addBuildEventHandler(
+extension.addBuildEventHandler(
   'onEnd',
   async ({ utils: { run, status } }) => {
+    if (!process.env.SNOOTY_CACHE_ENABLED) return;
+    
     console.log('Creating cache files...');
     const { all, stderr, stdout } = await run.command(
       './snooty-parser/snooty/snooty create-cache .',
@@ -115,4 +123,4 @@ integration.addBuildEventHandler(
   },
 );
 
-export { integration };
+export { extension };
