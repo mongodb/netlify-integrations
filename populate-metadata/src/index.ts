@@ -1,13 +1,19 @@
 // Documentation: https://sdk.netlify.com
 import { NetlifyExtension } from '@netlify/sdk';
 import { getProperties } from './getProperties';
+import { Extension } from './initialization';
 
 const extension = new NetlifyExtension();
+const otherExtension = new Extension();
+otherExtension.addBuildEventHandler('onPreBuild', () => {
+  if (!process.env.POPULATE_METADATA_ENABLED) return;
+  console.log('IN BUILD HANDLER OF OTHER EXTENSION');
+});
 
 extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
   // If the build event handler is not enabled on given site, return early
 
-  if (!process.env.POPULATE_METADATA_ENABLED) {
+  if (process.env.POPULATE_METADATA_ENABLED !== 'true') {
     return;
   }
 
