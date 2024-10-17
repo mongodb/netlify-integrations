@@ -47,12 +47,17 @@ extension.addBuildEventHandler(
   },
   {
     if: () => {
-      if (process.env.POPULATE_METADATA_ENABLED) return true;
+      if (
+        console.log(
+          'HELLO',
+          process.env.POPULATE_METADATA_ENABLED,
+          !!process.env.POPULATE_METADATA_ENABLED === true,
+        ) !== null &&
+        !!process.env.POPULATE_METADATA_ENABLED
+      )
+        return true;
     },
   },
 );
 
 export { extension };
-
-// process.env.POPULATE_METADATA_ENABLED,
-// !!process.env.POPULATE_METADATA_ENABLED === true,
