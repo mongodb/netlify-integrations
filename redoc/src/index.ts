@@ -20,7 +20,7 @@ export type OASPagesMetadata = Record<string, OASPageMetadata>;
 extension.addBuildEventHandler(
 	'onPreBuild',
 	async ({ utils: { run, cache } }) => {
-		if (!process.env.EXTENSION_ENABLED) return;
+		if (!process.env.REDOC_ENABLED) return;
 		
 		console.log('Running redoc prebuild');
 		const hasRedoc = await cache.has('redoc');
@@ -45,7 +45,7 @@ extension.addBuildEventHandler(
 
 // handle building the redoc pages
 extension.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
-	if (!process.env.EXTENSION_ENABLED) return;
+	if (!process.env.REDOC_ENABLED) return;
 	console.log('=========== Redoc Extension Begin ================');
 	await run.command('unzip -o bundle.zip -d bundle');
 
@@ -71,7 +71,7 @@ extension.addBuildEventHandler('onPostBuild', async ({ utils: { run } }) => {
 
 // cache redoc
 extension.addBuildEventHandler('onSuccess', async ({ utils: { cache } }) => {
-	if (!process.env.EXTENSION_ENABLED) return;
+	if (!process.env.REDOC_ENABLED) return;
 	const hasRedoc = await cache.has('redoc');
 	if (!hasRedoc) {
 		console.log('saving redoc to cache');
