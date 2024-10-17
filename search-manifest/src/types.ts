@@ -1,4 +1,4 @@
-import type { Document, WithId } from "mongodb";
+import type { Document, WithId } from 'mongodb';
 
 export type RefreshInfo = {
   deleted: number;

@@ -1,7 +1,7 @@
-import { JSONPath } from "jsonpath-plus";
-import { createFacet, type Facet } from "./createFacets";
-import type { BSON } from "bson";
-import type { ManifestFacets, Metadata, ManifestEntry } from "../types";
+import type { BSON } from 'bson';
+import { JSONPath } from 'jsonpath-plus';
+import type { ManifestEntry, ManifestFacets, Metadata } from '../types';
+import { type Facet, createFacet } from './createFacets';
 
 export class Document {
   //Return indexing data from a page's JSON-formatted AST for search purposes
@@ -67,11 +67,14 @@ export class Document {
     if (results.length) {
       if (results.length > 1)
         console.log(
-          `length of results is greater than one, length =  ${results.length}`
+          `length of results is greater than one, length =  ${results.length}`,
         );
       const val = results[0];
       //check if robots, set to false if no robots
-      if ("robots" in val && (val.robots == "None" || val.robots === "noindex"))
+      if (
+        'robots' in val &&
+        (val.robots === 'None' || val.robots === 'noindex')
+      )
         robots = false;
 
       keywords = val?.keywords;
@@ -82,7 +85,7 @@ export class Document {
   };
 
   findParagraphs() {
-    let paragraphs = "";
+    let paragraphs = '';
 
     const results = JSONPath({
       path: "$..children[?(@.type=='paragraph')]..value",
@@ -112,7 +115,7 @@ export class Document {
 
   findHeadings() {
     const headings: Array<string> = [];
-    let title = "";
+    let title = '';
     // Get the children of headings nodes
 
     const results = JSONPath({
@@ -126,7 +129,7 @@ export class Document {
     for (const r of results) {
       const heading = [];
       const parts = JSONPath({
-        path: "$..value",
+        path: '$..value',
         json: r,
       });
 
@@ -138,13 +141,13 @@ export class Document {
       headings.push(heading.join());
     }
 
-    title = headings.shift() ?? "";
+    title = headings.shift() ?? '';
     return { title, headings };
   }
 
   deriveSlug() {
-    let pageId = this.tree.filename?.split(".")[0];
-    if (pageId === "index") pageId = "";
+    let pageId = this.tree.filename?.split('.')[0];
+    if (pageId === 'index') pageId = '';
     return pageId;
   }
 
@@ -175,14 +178,14 @@ export class Document {
 
       //get value in results
       const first = JSONPath({
-        path: "$..value",
+        path: '$..value',
         json: results[0],
       });
 
       for (const f of first) {
         strList.push(f);
       }
-      return strList.join("");
+      return strList.join('');
     }
 
     //else, give up and don't provide a preview
@@ -198,24 +201,24 @@ export class Document {
     //if :robots: None in metadata, do not index
     if (!this.robots) {
       noIndex = true;
-      reasons.push("robots=None or robots=noindex in meta directive");
+      reasons.push('robots=None or robots=noindex in meta directive');
     }
 
     //if page has no title, do not index
     if (!this.title) {
       noIndex = true;
-      reasons.push("This page has no headings");
+      reasons.push('This page has no headings');
     }
 
     return { noIndex, reasons };
   }
 
-  exportAsManifestEntry = (): ManifestEntry | "" => {
+  exportAsManifestEntry = (): ManifestEntry | '' => {
     // Generate a manifest entry from a document
 
     if (this.noIndex) {
-      console.info("Refusing to index");
-      return "";
+      console.info('Refusing to index');
+      return '';
     }
 
     const manifestEntry = {
@@ -236,7 +239,7 @@ export class Document {
 const deriveFacets = (tree: BSON.Document) => {
   //Format facets for ManifestEntry from bson entry tree['facets'] if it exists
 
-  const insertKeyVals = (facet: Facet, prefix = "") => {
+  const insertKeyVals = (facet: Facet, prefix = '') => {
     const key = prefix + facet.category;
     documentFacets[key] = documentFacets[key] ?? [];
     documentFacets[key].push(facet.value);
