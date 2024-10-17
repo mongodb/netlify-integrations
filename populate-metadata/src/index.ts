@@ -47,14 +47,7 @@ extension.addBuildEventHandler(
   },
   {
     if: () => {
-      if (
-        console.log(
-          'HELLO',
-          process.env.POPULATE_METADATA_ENABLED,
-          !!process.env.POPULATE_METADATA_ENABLED === true,
-        ) !== null
-      )
-        return true;
+      return !!process.env.POPULATE_METADATA_ENABLED;
     },
   },
 );
