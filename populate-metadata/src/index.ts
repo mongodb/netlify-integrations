@@ -7,12 +7,6 @@ const extension = new NetlifyExtension();
 extension.addBuildEventHandler(
   'onPreBuild',
   async ({ netlifyConfig, buildConfig, buildContext }) => {
-    // If the build event handler is not enabled on given site, return early
-
-    if (process.env.POPULATE_METADATA_ENABLED !== 'true') {
-      return;
-    }
-
     console.log(`Build config is : ${buildConfig}`);
     console.log(`builtContext is  : ${buildContext}`);
 
