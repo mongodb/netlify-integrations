@@ -49,7 +49,9 @@ extension.addBuildEventHandler(
     );
   },
   {
-    if: (netlifyConfig) => !!netlifyConfig,
+    if: (netlifyConfig) => {
+      if (console.log('HELLO', netlifyConfig) !== null) return true;
+    },
   },
 );
 

@@ -1,14 +1,10 @@
-import type { Collection, Db, WithId } from 'mongodb';
-import type {
-  BranchEntry,
-  DocsetsDocument,
-  ReposBranchesDocument,
-} from './types';
+import type { Collection, WithId } from 'mongodb';
 import {
   closeSnootyDb,
   getDocsetsCollection,
   getReposBranchesCollection,
 } from './atlasConnector';
+import type { DocsetsDocument, ReposBranchesDocument } from './types';
 
 export const getDocsetEntry = async ({
   docsets,
@@ -100,8 +96,6 @@ export const getProperties = async ({
   const docsetEntry = await getDocsetEntry({ docsets, project: repo.project });
 
   await closeSnootyDb();
-
-  //TODO: remove branches field from repos_branches
 
   return { repo, docsetEntry };
 };

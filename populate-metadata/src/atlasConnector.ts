@@ -1,10 +1,9 @@
 import * as mongodb from 'mongodb';
-import type { DocsetsDocument, ReposBranchesDocument } from './types';
 import { getEnvVars } from './assertEnvVars';
+import type { DocsetsDocument, ReposBranchesDocument } from './types';
 
 const ENV_VARS = getEnvVars();
 
-let searchDb: mongodb.MongoClient;
 let clusterZeroClient: mongodb.MongoClient;
 
 export const teardown = async (client: mongodb.MongoClient) => {
