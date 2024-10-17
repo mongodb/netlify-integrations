@@ -45,7 +45,7 @@ export const generateManifest = async () => {
 extension.addBuildEventHandler(
   'onSuccess',
   async ({ utils: { run }, netlifyConfig }) => {
-    if (!process.env.EXTENSION_ENABLED) return;
+    if (!process.env.SEARCH_MANIFEST_ENABLED) return;
 
     // Get content repo zipfile as AST representation
     await run.command('unzip -o bundle.zip');
