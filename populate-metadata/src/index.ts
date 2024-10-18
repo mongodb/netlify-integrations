@@ -9,7 +9,7 @@ const extension = new Extension(process.env.POPULATE_METADATA_ENABLED);
 extension.addBuildEventHandler(
   'onPreBuild',
   async ({ netlifyConfig }) => {
-    updateConfig(netlifyConfig);
+    await updateConfig(netlifyConfig);
   },
   { if: () => extension.extensionEnabled },
 );
