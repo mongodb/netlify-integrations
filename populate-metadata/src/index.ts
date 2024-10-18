@@ -16,7 +16,7 @@ extension.addBuildEventHandler(
   async ({ netlifyConfig }) => {
     updateConfig(netlifyConfig);
   },
-  // { if: () => process.env.POPULATE_METADATA_ENABLED === 'true' },
+  { if: () => extension.extensionEnabled },
 );
 
 export { extension };
