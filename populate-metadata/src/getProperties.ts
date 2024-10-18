@@ -64,11 +64,12 @@ export const getRepoEntry = async ({
   };
   const repo = await repos_branches.findOne<ReposBranchesDocument>(
     query,
-    projection,
+    // projection,
   );
+  console.log(await repos_branches.findOne<ReposBranchesDocument>());
   if (!repo) {
     throw new Error(
-      `Could not get repos_branches entry for repo ${repoName}, ${repo}, ${JSON.stringify(
+      `Could not get repos_branches entry for repo ${repoName}, ${JSON.stringify(
         query,
       )}`,
     );
