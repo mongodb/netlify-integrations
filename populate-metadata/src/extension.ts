@@ -8,8 +8,11 @@ import {
 import type z from 'zod';
 import type { NetlifyPluginOptions } from '@netlify/build';
 
-export const envVarToBool = (envVar: 'false') => {
-  JSON.parse(envVar) as boolean;
+export const envVarToBool = (envVar: boolean | string = 'false') => {
+  if (typeof envVar === 'boolean') {
+    return envVar;
+  }
+  return JSON.parse(envVar) as boolean;
 };
 
 export type ExtensionOptions = {

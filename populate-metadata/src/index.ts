@@ -1,14 +1,12 @@
 // Documentation: https://sdk.netlify.com
-import { Extension } from './extension';
+import { envVarToBool, Extension } from './extension';
 import { updateConfig } from './updateConfig';
 
 const extension = new Extension({
-  isEnabled: JSON.parse(
-    process.env.POPULATE_METADATA_ENABLED ?? 'false',
-  ) as boolean,
+  isEnabled: envVarToBool(process.env.POPULATE_METADATA_ENABLED),
 });
 
-extension.addBuildEventHandler('onPreBuild', async (netlifyConfig) => {
+extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
   await updateConfig(netlifyConfig);
 });
 
