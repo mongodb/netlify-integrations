@@ -3,7 +3,6 @@ import { getProperties } from './getProperties';
 
 export const updateConfig = async (netlifyConfig: any) => {
   {
-    if (!process.env.POPULATE_METADATA_ENABLED) return;
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
