@@ -86,7 +86,7 @@ export const getProperties = async ({
   //connect to database and get repos_branches, docsets collections
   const repos_branches = await getReposBranchesCollection();
   const docsets = await getDocsetsCollection();
-  console.log(await repos_branches.findOne());
+  console.log('Got repos branches and docsets collections');
 
   const repo = await getRepoEntry({
     repoName,
