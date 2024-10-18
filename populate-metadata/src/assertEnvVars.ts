@@ -20,5 +20,6 @@ export const getEnvVars = () => {
     DOCSETS_COLLECTION: `${process.env.DOCSETS_COLLECTION}`,
     DOCUMENTS_COLLECTION: `${process.env.DOCUMENTS_COLLECTION}`,
   });
+  console.log(environmentVariables);
   return environmentVariables;
 };

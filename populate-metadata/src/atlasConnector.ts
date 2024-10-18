@@ -32,6 +32,7 @@ export const getSnootyDb = async () => {
   } else {
     console.info('Creating new instance of Snooty database');
     clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
+    console.log(clusterZeroClient);
   }
   return clusterZeroClient.db(ENV_VARS.SNOOTY_DB_NAME);
 };
