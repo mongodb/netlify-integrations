@@ -24,11 +24,12 @@ export const dbClient = async (uri: string) => {
 };
 
 export const getSnootyDb = async () => {
-  console.log('Getting Snooty Db');
+  console.info('Getting Snooty Db');
 
   if (clusterZeroClient) {
-    console.log('Cluster Zero client already exists, using existing instance');
+    console.info('Cluster Zero client already exists, using existing instance');
   } else {
+    console.info('Creating new instance of Snooty database');
     clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
   }
   return clusterZeroClient.db(ENV_VARS.SNOOTY_DB_NAME);

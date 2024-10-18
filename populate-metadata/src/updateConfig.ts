@@ -1,23 +1,8 @@
 import { NetlifyExtension } from '@netlify/sdk';
 import { getProperties } from './getProperties';
 
-export const updateConfig = async () => {
-  // If the build event handler is not enabled on given site, return early
-
-  if (process.env.POPULATE_METADATA_ENABLED !== 'true') {
-    return;
-  }
-  console.log('In update config function');
-};
-
-export const updateConfigReal = async (netlifyConfig: any) => {
+export const updateConfig = async (netlifyConfig: any) => {
   {
-    // If the build event handler is not enabled on given site, return early
-    if (process.env.POPULATE_METADATA_ENABLED !== 'true') return;
-    const environmentConfig = netlifyConfig.build.environment;
-
-    console.log(environmentConfig);
-
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
       netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
@@ -30,6 +15,8 @@ export const updateConfigReal = async (netlifyConfig: any) => {
       process.env.BRANCH_NAME ?? netlifyConfig.build?.environment.BRANCH;
     const repoName =
       process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
+
+    console.log(branchName);
 
     //set environment to dotcomprd or prd if it is a writer build, only Mongodb-Snooty site name pre-configured
     process.env.ENV ??= isProdDeploy ? 'dotcomprd' : 'prd';
