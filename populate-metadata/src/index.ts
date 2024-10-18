@@ -6,8 +6,11 @@ const extension = new Extension({
   isEnabled: envVarToBool(process.env.POPULATE_METADATA_ENABLED),
 });
 
-extension.addBuildEventHandler('onPreBuild', async ({ netlifyConfig }) => {
-  await updateConfig(netlifyConfig);
-});
+await extension.addBuildEventHandler(
+  'onPreBuild',
+  async ({ netlifyConfig }) => {
+    await updateConfig(netlifyConfig);
+  },
+);
 
 export { extension };

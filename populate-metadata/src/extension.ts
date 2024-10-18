@@ -36,18 +36,18 @@ export class Extension<
     console.log('Extension enabled:', this.isEnabled);
   }
 
-  addBuildEventHandler = (
+  addBuildEventHandler = async (
     type: BuildHookType,
     func: BuildHookWithContext<
       Zod.infer<BuildContext>,
       Zod.infer<BuildConfigSchema>
     >,
     options?: BuildHookOptions,
-  ): void => {
+  ): Promise<void> => {
     super.addBuildEventHandler(
       type,
       async (args) => {
-        func(args);
+        await func(args);
       },
       {
         ...options,

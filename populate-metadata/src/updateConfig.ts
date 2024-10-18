@@ -55,9 +55,11 @@ export const updateConfig = async (config: DocsConfig) => {
   const branchName =
     process.env.BRANCH_NAME ?? config.build?.environment.BRANCH;
   const repoName = process.env.REPO_NAME ?? config.build?.environment.SITE_NAME;
+
   if (!branchName || !repoName) {
     throw new Error('RepoName or branch name missing from deploy');
   }
+
   //check if build was triggered by a webhook (If so, it was a prod deploy);
   const isProdDeploy = !!(
     config.build.environment?.INCOMING_HOOK_URL &&
@@ -65,7 +67,7 @@ export const updateConfig = async (config: DocsConfig) => {
     config.build.environment?.INCOMING_HOOK_BODY
   );
   config.build.environment.PRODUCTION = isProdDeploy;
-  //set environment to dotcomprd or prd if it is a writer build, only Mongodb-Snooty site name pre-configured
+  //set environment to dotcomprd or prd if it is a writer build, only the Mongodb-Snooty site name is pre-configured (to dotcomstg)
   process.env.ENV ??= isProdDeploy ? 'dotcomprd' : 'prd';
 
   const { repo, docsetEntry } = await getProperties({
