@@ -1,55 +1,5 @@
-import { NetlifyExtension } from '@netlify/sdk';
-import type { NetlifyConfig } from '@netlify/build';
-
 import { getProperties } from './getProperties';
-import type {
-  BranchEntry,
-  DocsetsDocument,
-  ReposBranchesDocument,
-} from './types';
-
-type configEnvironmentVariables = Partial<{
-  BRANCH: string;
-  SITE_NAME: string;
-  INCOMING_HOOK_URL: string;
-  INCOMING_HOOK_TITLE: string;
-  INCOMING_HOOK_BODY: string;
-  PRODUCTION: boolean;
-  REPO_ENTRY: ReposBranchesDocument;
-  DOCSET_ENTRY: DocsetsDocument;
-  BRANCH_ENTRY: BranchEntry[];
-}>;
-
-export interface Build {
-  command?: string;
-  publish: string;
-  base: string;
-  services: Record<string, unknown>;
-  ignore?: string;
-  edge_handlers?: string;
-  edge_functions?: string;
-  environment: configEnvironmentVariables;
-  processing: {
-    skip_processing?: boolean;
-    css: {
-      bundle?: boolean;
-      minify?: boolean;
-    };
-    js: {
-      bundle?: boolean;
-      minify?: boolean;
-    };
-    html: {
-      pretty_url?: boolean;
-    };
-    images: {
-      compress?: boolean;
-    };
-  };
-}
-interface DocsConfig extends Omit<NetlifyConfig, 'build'> {
-  build: Build;
-}
+import type { DocsConfig } from './types';
 
 export const updateConfig = async (config: DocsConfig) => {
   const branchName =
@@ -74,6 +24,7 @@ export const updateConfig = async (config: DocsConfig) => {
     branchName: branchName,
     repoName: repoName,
   });
+
   console.log(repo, docsetEntry);
   const { branches: branch, ...repoEntry } = repo;
   config.build.environment.REPO_ENTRY = repoEntry;

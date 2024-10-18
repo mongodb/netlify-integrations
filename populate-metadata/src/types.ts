@@ -1,4 +1,5 @@
 import type { Document, WithId } from 'mongodb';
+import type { NetlifyConfig } from '@netlify/build';
 
 type EnvironmentConfig = {
   dev?: string;
@@ -43,3 +44,46 @@ export type EnvVars = {
   DOCSETS_COLLECTION: string;
   DOCUMENTS_COLLECTION: string;
 };
+
+type configEnvironmentVariables = Partial<{
+  BRANCH: string;
+  SITE_NAME: string;
+  INCOMING_HOOK_URL: string;
+  INCOMING_HOOK_TITLE: string;
+  INCOMING_HOOK_BODY: string;
+  PRODUCTION: boolean;
+  REPO_ENTRY: ReposBranchesDocument;
+  DOCSET_ENTRY: DocsetsDocument;
+  BRANCH_ENTRY: BranchEntry[];
+}>;
+
+export interface Build {
+  command?: string;
+  publish: string;
+  base: string;
+  services: Record<string, unknown>;
+  ignore?: string;
+  edge_handlers?: string;
+  edge_functions?: string;
+  environment: configEnvironmentVariables;
+  processing: {
+    skip_processing?: boolean;
+    css: {
+      bundle?: boolean;
+      minify?: boolean;
+    };
+    js: {
+      bundle?: boolean;
+      minify?: boolean;
+    };
+    html: {
+      pretty_url?: boolean;
+    };
+    images: {
+      compress?: boolean;
+    };
+  };
+}
+export interface DocsConfig extends Omit<NetlifyConfig, 'build'> {
+  build: Build;
+}
