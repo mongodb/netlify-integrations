@@ -13,8 +13,10 @@ export const teardown = async (client: mongodb.MongoClient) => {
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const dbClient = async (uri: string) => {
   const client = new mongodb.MongoClient(uri);
+  console.log('Client is: ', client);
   try {
     await client.connect();
+    console.log('connected to client: ', client);
     return client;
   } catch (error) {
     const err = `Error at client connection: ${error} `;
@@ -32,7 +34,7 @@ export const getSnootyDb = async () => {
   } else {
     console.info('Creating new instance of Snooty database');
     clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
-    console.log('Got new instance of database');
+    console.log('Got new instance of database:', clusterZeroClient);
   }
   return clusterZeroClient.db(ENV_VARS.SNOOTY_DB_NAME);
 };
