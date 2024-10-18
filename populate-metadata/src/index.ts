@@ -16,7 +16,7 @@ extension.addBuildEventHandler(
   async ({ netlifyConfig }) => {
     updateConfig(netlifyConfig);
   },
-  { if: () => extension.extensionEnabled },
+  // { if: () => extension.extensionEnabled },
 );
 
 export { extension };
