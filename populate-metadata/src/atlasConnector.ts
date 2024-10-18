@@ -50,6 +50,7 @@ export const getDocsetsCollection = async () => {
 
 export const getReposBranchesCollection = async () => {
   const dbSession = await getSnootyDb();
+  console.log('Returning instance of repos branches collection');
   return dbSession.collection<ReposBranchesDocument>(
     ENV_VARS.REPOS_BRANCHES_COLLECTION,
   );
