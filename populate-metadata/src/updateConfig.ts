@@ -1,20 +1,20 @@
 import { NetlifyExtension } from '@netlify/sdk';
 import { getProperties } from './getProperties';
 
-export const updateConfig = async (netlifyConfig: any) => {
+export const updateConfig = async (config: any) => {
   {
     //check if build was triggered by a webhook (If so, it was a prod deploy);
     const isProdDeploy = !!(
-      netlifyConfig.build.environment?.INCOMING_HOOK_URL &&
-      netlifyConfig.build.environment?.INCOMING_HOOK_TITLE &&
-      netlifyConfig.build.environment?.INCOMING_HOOK_BODY
+      config.build.environment?.INCOMING_HOOK_URL &&
+      config.build.environment?.INCOMING_HOOK_TITLE &&
+      config.build.environment?.INCOMING_HOOK_BODY
     );
-    netlifyConfig.build.environment.PRODUCTION = isProdDeploy;
+    config.build.environment.PRODUCTION = isProdDeploy;
 
     const branchName =
-      process.env.BRANCH_NAME ?? netlifyConfig.build?.environment.BRANCH;
+      process.env.BRANCH_NAME ?? config.build?.environment.BRANCH;
     const repoName =
-      process.env.REPO_NAME ?? netlifyConfig.build?.environment.SITE_NAME;
+      process.env.REPO_NAME ?? config.build?.environment.SITE_NAME;
 
     console.log(branchName);
 
@@ -27,15 +27,15 @@ export const updateConfig = async (netlifyConfig: any) => {
     });
     console.log(repo, docsetEntry);
     const { branches: branch, ...repoEntry } = repo;
-    netlifyConfig.build.environment.REPO = repoEntry;
-    netlifyConfig.build.environment.DOCSET = docsetEntry;
-    netlifyConfig.build.environment.BRANCH = branch;
+    config.build.environment.REPO = repoEntry;
+    config.build.environment.DOCSET = docsetEntry;
+    config.build.environment.BRANCH = branch;
 
     console.log(
-      netlifyConfig.build.environment.PRODUCTION,
-      netlifyConfig.build.environment.REPO,
-      netlifyConfig.build.environment.DOCSET,
-      netlifyConfig.build.environment.BRANCH,
+      config.build.environment.PRODUCTION,
+      config.build.environment.REPO,
+      config.build.environment.DOCSET,
+      config.build.environment.BRANCH,
     );
   }
 };

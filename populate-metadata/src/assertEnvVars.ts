@@ -12,7 +12,7 @@ const assertEnvVars = (vars: EnvVars) => {
 
 export const getEnvVars = () => {
   const environmentVariables = assertEnvVars({
-    ATLAS_CLUSTER0_URI: `mongodb+srv://anabella:${process.env.AB_PWD}@cluster0-ylwlz.mongodb.net/?retryWrites=true&w=majority`,
+    ATLAS_CLUSTER0_URI: `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_CLUSTER0_HOST}/?retryWrites=true&w=majority`,
     ATLAS_SEARCH_URI: `mongodb+srv://${process.env.MONGO_ATLAS_USERNAME}:${process.env.MONGO_ATLAS_PASSWORD}@${process.env.MONGO_ATLAS_SEARCH_HOST}/?retryWrites=true&w=majority`,
     SEARCH_DB_NAME: `${process.env.MONGO_ATLAS_SEARCH_DB_NAME}`,
     SNOOTY_DB_NAME: `${process.env.MONGO_ATLAS_POOL_DB_NAME}`,
