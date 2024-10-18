@@ -96,7 +96,5 @@ export const getProperties = async ({
 
   const docsetEntry = await getDocsetEntry({ docsets, project: repo.project });
 
-  await closeSnootyDb();
-
   return { repo, docsetEntry };
 };

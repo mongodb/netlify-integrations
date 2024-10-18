@@ -15,7 +15,7 @@ export const dbClient = async (uri: string) => {
   const client = new mongodb.MongoClient(uri);
   console.log('Client is: ', client);
   try {
-    await client.connect();
+    console.log(await client.connect());
     await client.db(ENV_VARS.SNOOTY_DB_NAME).command({ ping: 1 });
     console.log('connected to client: ', client);
     return client;
