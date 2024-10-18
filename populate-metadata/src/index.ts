@@ -1,17 +1,15 @@
 // Documentation: https://sdk.netlify.com
-import { NetlifyExtension } from '@netlify/sdk';
-import { getProperties } from './getProperties';
-import { Extension } from './initialization';
+import { Extension } from './extension';
 import { updateConfig } from './updateConfig';
 
-const extension = new Extension(process.env.POPULATE_METADATA_ENABLED);
+const extension = new Extension({
+  isEnabled: JSON.parse(
+    process.env.POPULATE_METADATA_ENABLED ?? 'false',
+  ) as boolean,
+});
 
-extension.addBuildEventHandler(
-  'onPreBuild',
-  async (netlifyConfig) => {
-    await updateConfig(netlifyConfig);
-  },
-  { if: () => extension.extensionEnabled },
-);
+extension.addBuildEventHandler('onPreBuild', async (netlifyConfig) => {
+  await updateConfig(netlifyConfig);
+});
 
 export { extension };
