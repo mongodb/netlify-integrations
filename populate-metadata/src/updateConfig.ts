@@ -25,6 +25,7 @@ export const updateConfig = async (netlifyConfig: any) => {
       branchName: branchName,
       repoName: repoName,
     });
+    console.log(repo, docsetEntry);
     const { branches: branch, ...repoEntry } = repo;
     netlifyConfig.build.environment.REPO = repoEntry;
     netlifyConfig.build.environment.DOCSET = docsetEntry;

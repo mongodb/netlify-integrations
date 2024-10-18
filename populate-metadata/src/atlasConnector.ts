@@ -23,6 +23,7 @@ export const dbClient = async (uri: string) => {
   }
 };
 
+//TODO: change names from snooty
 export const getSnootyDb = async () => {
   console.info('Getting Snooty Db');
 
