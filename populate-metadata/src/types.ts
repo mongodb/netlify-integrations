@@ -29,7 +29,7 @@ export interface ReposBranchesDocument {
     categoryTitle: string;
     categoryName?: string;
   };
-  branches: Array<BranchEntry>;
+  branches?: Array<BranchEntry>;
   prodDeployable: boolean;
   internalOnly: boolean;
 }

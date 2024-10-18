@@ -13,11 +13,8 @@ export const teardown = async (client: mongodb.MongoClient) => {
 // Handles memoization of db object, and initial connection logic if needs to be initialized
 export const dbClient = async (uri: string) => {
   const client = new mongodb.MongoClient(uri);
-  console.log('Client is: ', client);
   try {
-    console.log(await client.connect());
-    await client.db(ENV_VARS.SNOOTY_DB_NAME).command({ ping: 1 });
-    console.log('connected to client: ', client);
+    await client.connect();
     return client;
   } catch (error) {
     const err = `Error at client connection: ${error} `;
@@ -28,14 +25,11 @@ export const dbClient = async (uri: string) => {
 
 //TODO: change names from snooty
 export const getSnootyDb = async () => {
-  console.info('Getting Snooty Db');
-
   if (clusterZeroClient) {
     console.info('Cluster Zero client already exists, using existing instance');
   } else {
-    console.info('Creating new instance of Snooty database');
+    console.info('Creating new instance of Cluster Zero client');
     clusterZeroClient = await dbClient(ENV_VARS.ATLAS_CLUSTER0_URI);
-    console.log('Got new instance of database:', clusterZeroClient);
   }
   return clusterZeroClient.db(ENV_VARS.SNOOTY_DB_NAME);
 };
@@ -43,7 +37,7 @@ export const getSnootyDb = async () => {
 export const closeSnootyDb = async () => {
   if (clusterZeroClient) await teardown(clusterZeroClient);
   else {
-    console.log('No client connection open to Snooty Db');
+    console.info('No client connection open to Snooty Db');
   }
 };
 
@@ -54,7 +48,6 @@ export const getDocsetsCollection = async () => {
 
 export const getReposBranchesCollection = async () => {
   const dbSession = await getSnootyDb();
-  console.log('Returning instance of repos branches collection');
   return dbSession.collection<ReposBranchesDocument>(
     ENV_VARS.REPOS_BRANCHES_COLLECTION,
   );
