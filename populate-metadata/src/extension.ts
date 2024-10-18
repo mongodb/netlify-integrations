@@ -6,7 +6,6 @@ import {
   type BuildHookWithContext,
 } from '@netlify/sdk';
 import type z from 'zod';
-import type { NetlifyPluginOptions } from '@netlify/build';
 
 export const envVarToBool = (envVar: boolean | string = 'false') => {
   if (typeof envVar === 'boolean') {
@@ -53,6 +52,7 @@ export class Extension<
       {
         ...options,
         if: (buildConfig) => {
+          console.log(this.isEnabled);
           if (!this.isEnabled) {
             return false;
           }
